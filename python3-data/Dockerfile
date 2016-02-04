@@ -1,6 +1,6 @@
 # docker build -t zppz/python3-data .
 
-FROM python:3
+FROM python:3.4
 
 RUN pip3 install --upgrade pip
 
@@ -14,17 +14,15 @@ RUN pip3 install pytest
 RUN pip3 install numpy
 RUN pip3 install pandas
 
-RUN apt-get install -y libatlas-base-dev liblapack-dev gfortran
+RUN apt-get install -y --no-install-recommends libatlas-base-dev liblapack-dev gfortran
 RUN pip3 install scipy
 RUN pip3 install patsy statsmodels
 RUN pip3 install scikit-learn
 RUN pip3 install matplotlib seaborn
 
-# failed to install cvxpy
-# 'multiprocess' is not in python-3.5.
-# should work in python-3.4.
-#RUN apt-get install -y python-dev
-#RUN pip3 install cvxpy
+# As of 2/04/2016, cvxpy has trouble
+# installing on Python-3.5.
+RUN pip3 install cvxpy
 
 # database
 RUN pip3 install sqlalchemy
@@ -32,15 +30,15 @@ RUN pip3 install sqlalchemy
 # web
 RUN pip3 install requests
 RUN pip3 install flask
-RUN pip3 install wtforms flask-login flask-openid \
-    flask-mail flask-sqlalchemy flask-wtf
 RUN pip3 install bokeh
 
 # HDF5
-RUN apt-get install -y python3-h5py
+RUN apt-get install -y --no-install-recommends libhdf5-8 libhdf5-dev
+RUN pip3 install h5py
 
 # cleanup
-RUN apt-get -y remove libatlas-base-dev liblapack-dev gfortran
+RUN dpkg-reconfigure -au
+RUN apt-get -y purge libatlas-base-dev liblapack-dev gfortran libhdf5-dev
 RUN apt-get -y autoremove
-RUN apt-get -y clean
+RUN apt-get clean
 
