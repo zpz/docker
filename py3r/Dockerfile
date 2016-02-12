@@ -7,7 +7,9 @@
 FROM python:3.5.1-slim
 
 
-ENV R_BASE_VERSION 3.2.3-4
+ENV PYTHON_VERSION 3.5.1
+ENV R_VERSION 3.2.3-4
+
 
 RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
 
@@ -20,26 +22,38 @@ RUN apt-get update \
         less \
         locales \
         vim-tiny \
-    && ln -s /usr/bin/vim.tiny /usr/bin/vim \
     && apt-get install -y --no-install-recommends \
-        r-base=${R_BASE_VERSION} \
-        r-base-dev=${R_BASE_VERSION} \
+        r-base=${R_VERSION} \
+        r-base-dev=${R_VERSION} \
+    && apt-get install -y --no-install-recommends \
+        libhdf5-8 libhdf5-dev hdf5-tools \
+    && ln -s /usr/bin/vim.tiny /usr/bin/vim \
+    && ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
+# Note: official Python image gets the link 'python-config' wrong.
 
 
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+#--------
+# Locale
+
+ENV TZ=America/Los_Angeles
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+
+RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
+    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
     && locale-gen en_US.utf8 \
     && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-
-
 #------------
 # Python
+
+# NOTE the special treatment for 'matplotlib';
+# without the workaround a "time out" error keeps poping up.
 
 RUN apt-get update \
     && pip3 install --upgrade pip setuptools wheel \
@@ -48,7 +62,7 @@ RUN apt-get update \
     && pip3 install --no-cache-dir pandas==0.17.1 \
     && apt-get install -y --no-install-recommends \
         libfreetype6 libfreetype6-dev libxft-dev pkg-config \
-    && pip3 install --no-cache-dir matplotlib==1.5.1 \
+    && pip3 --default-timeout=100 install --no-cache-dir matplotlib==1.5.1 \
     && apt-get install -y --no-install-recommends \
         liblapack-dev gfortran \
     && pip3 install --no-cache-dir scipy==0.17.0 \
@@ -67,73 +81,17 @@ RUN apt-get update \
 #------------
 # R
 
-# Install these R packages; others are their dependencies:
-#   roxygen2
-#   futile.logger
-#   testthat
-#   rpython
-#   rhdf5
-
-
-RUN echo 'install.packages(c("roxygen2", "futile.logger", "testthat", "rpython"), \
-        repos="http://cran.us.r-project.org", dependencies=TRUE)' > /tmp/packages.R \
-    && Rscript /tmp/packages.R \
-    && echo 'install.packages(c("rhdf5"), \
-        repos="http://bioconductor.org", dependencies=TRUE)' > /tmp/packages.R \
+RUN cd /tmp \
+    && echo 'install.packages(\
+        c("roxygen2", "futile.logger", "testthat", "rPython"), \
+        repos="http://cran.us.r-project.org", \
+        dependencies=c("Depends", "Imports"), \
+        clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
+    && echo 'source("https://bioconductor.org/biocLite.R")' >> /tmp/packages.R \
+    && echo 'biocLite(c("rhdf5"), \
+        clean=TRUE, keep_outputs=FALSE)' >> /tmp/packages.R \
     && Rscript /tmp/packages.R \
     && rm -rf /tmp/*
-
-
-# ARG cran=https://cran.rstudio.com/src/contrib
-# ARG bioc=http://bioconductor.org/packages/release/bioc/src/contrib
-# 
-# ARG roxygen2=roxygen2_5.0.1.tar.gz
-# ARG stringr=stringr_1.0.0.tar.gz
-# ARG stringi=stringi_1.0-1.tar.gz
-# ARG magrittr=magrittr_1.5.tar.gz
-# ARG brew=brew_1.0-6.tar.gz
-# ARG digest=digest_0.6.9.tar.gz
-# ARG rcpp=Rcpp_0.12.3.tar.gz
-# ARG futilelogger=futile.logger_1.4.1.tar.gz
-# ARG lambda=lambda.r_1.1.7.tar.gz
-# ARG futileoptions=futile.options_1.0.0.tar.gz
-# ARG memoise=memoise_1.0.0.tar.gz
-# ARG crayon=crayon_1.3.1.tar.gz
-# ARG praise=praise_1.0.0.tar.gz
-# ARG testthat=testthat_0.11.0.tar.gz
-# ARG rhdf5=rhdf5_2.14.0.tar.gz
-# ARG zlibbioc=zlibbioc_1.16.0.tar.gz
-# ARG rpython=rPython_0.0-6.tar.gz
-# ARG rjsonio=RJSONIO_1.3-0.tar.gz
-# 
-# RUN install.r -- -c --no-docs \
-#     roxygen2 \
-#     futile.logger \
-#     testthat \
-#     rpython
-# 
-# RUN install.r -- -c --no-docs \
-#     rhdf5
-
-# RUN curl -so tmp.tar.gz ${cran}/${futileoptions}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${lambda}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${futilelogger}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${rcpp}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${digest}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${brew}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${magrittr}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${stringi}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${stringr}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${roxygen2}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${memoise}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${crayon}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${praise}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${testthat}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${rjsonio}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${rpython}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${zlibbioc}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     && curl -so tmp.tar.gz ${cran}/${rhdf5}; R CMD INSTALL -c --no-docs tmp.tar.gz \
-#     rm -f tmp.tar.gz
 
 
 #--------------
@@ -147,6 +105,7 @@ RUN echo "alias ..='cd ..'" >> /root/.bashrc \
     && echo "alias rm='rm -i'" >> /root/.bashrc \
     && echo "alias mv='mv -i'" >> /root/.bashrc \
     && echo "source /root/.bashrc" >> /root/.bash_profile
+
 
 WORKDIR /home
 
