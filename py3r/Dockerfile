@@ -13,6 +13,8 @@ ENV R_VERSION 3.2.3-4
 
 RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
 
+# Note: official Python image gets the link 'python-config' wrong.
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
@@ -25,14 +27,11 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         r-base=${R_VERSION} \
         r-base-dev=${R_VERSION} \
-    && apt-get install -y --no-install-recommends \
-        libhdf5-8 libhdf5-dev hdf5-tools \
     && ln -s /usr/bin/vim.tiny /usr/bin/vim \
     && ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
-# Note: official Python image gets the link 'python-config' wrong.
 
 
 #--------
@@ -68,6 +67,8 @@ RUN apt-get update \
     && pip3 install --no-cache-dir scipy==0.17.0 \
     && pip3 install --no-cache-dir scikit-learn==0.17 \
     && pip3 install --no-cache-dir ipython==4.1.1 notebook==4.1.0 \
+    && apt-get install -y --no-install-recommends \
+        libhdf5-8 libhdf5-dev hdf5-tools \
     && pip3 install --no-cache-dir h5py==2.5.0 \
     && pip3 install --no-cache-dir rpy2==2.7.8 \
     && pip3 install --no-cache-dir \
@@ -92,6 +93,9 @@ RUN cd /tmp \
         clean=TRUE, keep_outputs=FALSE)' >> /tmp/packages.R \
     && Rscript /tmp/packages.R \
     && rm -rf /tmp/*
+
+# TODO: rhdf5 installs its own copy of 'small' HDF5.
+# How to avoid this?
 
 
 #--------------
