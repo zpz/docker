@@ -10,33 +10,16 @@ ENV R_VERSION 3.2.3-6
 RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
 
 
-# Note: official Python image gets the link 'python-config' wrong.
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends --fix-missing \
-        build-essential \
         less \
         locales \
         vim-tiny \
     && ln -s /usr/bin/vim.tiny /usr/bin/vim \
     && ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config \
-    \
-    && apt-get install -t unstable -y --no-install-recommends --fix-missing \
-        r-base-core=${R_VERSION} \
-        r-base-dev=${R_VERSION} \
-    && echo 'install.packages(\
-        c("rPython", "futile.logger"), \
-        repos="http://cran.us.r-project.org", \
-        dependencies=c("Depends", "Imports"), \
-        clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
-    && Rscript /tmp/packages.R \
-    \
     && pip3 install --no-cache-dir --upgrade pip setuptools wheel \
-    && pip3 install --no-cache-dir --upgrade rpy2==2.7.8 \
-    && pip3 install --no-cache-dir --upgrade sh==1.11 \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get purge -y --auto-remove build-essential \
     && apt-get -y autoremove \
     && apt-get clean
 
@@ -54,6 +37,31 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && locale-gen en_US.utf8 \
     && /usr/sbin/update-locale LANG=en_US.UTF-8
 
+
+
+# Note: official Python image gets the link 'python-config' wrong.
+#
+# Do not keep 'build-essential' in an image; it makes huge images.
+
+RUN apt-get update \
+    && apt-get install -t unstable -y --no-install-recommends --fix-missing \
+        build-essential pkg-config \
+        r-base-core=${R_VERSION} \
+        r-base-dev=${R_VERSION} \
+    && echo 'install.packages(\
+        c("rPython", "futile.logger"), \
+        repos="http://cran.us.r-project.org", \
+        dependencies=c("Depends", "Imports"), \
+        clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
+    && Rscript /tmp/packages.R \
+    \
+    && pip3 install --no-cache-dir --upgrade rpy2==2.7.8 \
+    && pip3 install --no-cache-dir --upgrade sh==1.11 \
+    \
+    && apt-get purge -y --auto-remove build-essential pkg-config \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
 
 #--------------
 # Environment
