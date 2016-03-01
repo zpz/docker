@@ -1,0 +1,8 @@
+alias ..='cd ..'
+alias back='cd -'
+alias ls='ls -FGh --color'
+alias dir='ls -alg --color'
+alias cp='cp -i'
+alias rm='rm -i'
+alias mv='mv -i'
+
