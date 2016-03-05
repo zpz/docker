@@ -1,0 +1,125 @@
+syntax enable
+  " enable syntax highlighting
+
+set number
+  " show line numbers
+
+set tabstop=4
+  " set tabs to 4 spaces
+
+set shiftwidth=4
+  " when using the >> or << commands, shift lines by 4 spaces
+
+set expandtab
+  " expand tabs into spaces
+  " Insert space characters whenever the tab key is pressed;
+  " this way the tab character does not get saved in the file either.
+  " This is at odds with makefiles.
+  " To enter a real TAB, use Ctrl-V<Tab> key sequence.
+  " See also: 'au FileType make ...'
+  "
+  " After the 'expandtab' option is set, all new tabs entered will be changed
+  " to spaces (see 'tabstop').
+  " This will not affect the existing tab characters.
+  " To change all the existing tab characters to match the current tab
+  " settings, use
+  "  :retab
+  " See also: the 'expand' command (external; not in vim).
+
+"inoremap <S-Tab> <C-V><Tab>
+  " remap Shift-Tab to insert  a real tab
+  " doesn't work. don't know why.
+
+set cursorline
+  " show a visual line under the cursor's current line
+
+set ruler
+  " show position of cursor
+
+set showmatch
+  " show the matching part of the pair for [], {}, and ()
+
+let python_highlight_all = 1
+  " enable all Python syntax highlighting features
+
+set list listchars=tab:>-,trail:~,extends:<,precedes:>
+  " Show tabs, tailing spaces, unwrapped invisable lines.
+  " :help listchars for explanations.
+
+set laststatus=2
+set statusline=%F\%m%r%h%w\ \ \ \ %l/%L,%c%=(%P)
+
+set t_Co=256    " needed in some cases for molokai to work
+colorscheme molokai
+" Another good choice is monokai.
+"
+" Of default colorschemes,
+" Colorschemes whose contrast is not strong enough
+" in either day or night:
+"   pablo, desert, blue, koehler, elflord, ron, morning,
+"   peachpuff, shine, slate, default
+" Colorschemes with good contrast:
+"  torte (cursor too weak)
+"  evening (cursor too weak)
+"  delek
+"  murphy (color ugly)
+"  zellner
+
+"set gfn=Courier:h16
+  " Change fonts.
+
+set nowrap
+  " Do not automatically wrap.
+  " Instead, long lines will be signaled.
+  " See also: 'listchars'.
+
+set backspace=indent,eol,start
+  " Tells vim to allow backspacing over autoindents.
+  " Enables backspace over the end of lines. 
+  " In other words, if you are on the 1st col and press <BS>, the current line
+  " will be joined with the preceding one.
+  " Enables you to backspace over the start of an insert.
+  " In other words, you can erase more text than you entered during a single
+  " insert command.
+
+"set hlsearch
+  " This will highlight everything that matches your search as you type
+  " in search patterns. Kinda too much highlighting.
+set incsearch
+  " Show immediately where the so-far typed search pattern is matched.
+"set ignorecase
+set smartcase
+  " case is ingored if the search pattern entered is all lower case
+
+"set highlight=8r,db,es,hs,mb,Mr,nu,rs,sr,tb,vr,ws
+  " Highlight certain things like trailing spaces.
+  " It's kinda too much highlighting.
+set showcmd
+  " show the characters for the command I am typing in
+set showmode
+set shortmess+=I
+  " In addition to the default setting of 'shortmess':
+  " dont' display the intro when vim is launched.
+set autoindent
+  " indent each line the same as the preceding one
+
+filetype plugin indent on
+
+autocmd FileType make setlocal noexpandtab
+  " turn off expandtab for editting makefiles
+autocmd FileType c,cpp set formatoptions=croql cindent comments=sr:/*,mb:*,ex:*/,://
+  " (line continuation does not work.)
+autocmd FileType py set smartindent
+autocmd FileType py set textwidth=79
+
+" Turn on spell checker while editing files of specified types.
+autocmd BufNewFile,BufRead *.txt,*.tex,*.md,README,readme set spell
+
+" Command mappings for tabs
+map <C-t> :tabnew<CR>
+map <C-c> :tabclose<CR>
+map <C-p> :tabprev<CR>
+map <C-h> :tabprev<CR>
+map <C-n> :tabnext<CR>
+map <C-l> :tabnext<CR>
+
