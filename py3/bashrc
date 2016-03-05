@@ -8,4 +8,4 @@ alias rm='rm -i'
 alias mv='mv -i'
 
 export EDITOR=vim
-export PS1='[\u@\h \W] $ '
+export PS1='[\u@\h: \W] $ '

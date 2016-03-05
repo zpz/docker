@@ -1,6 +1,7 @@
 FROM python:3.5.1-slim
 
 USER root
+ENV HOME=/root
 
 # Note: official Python image gets the link 'python-config' wrong.
 
@@ -10,7 +11,7 @@ RUN apt-get update \
         less \
         locales \
         vim \
-    && mkdir -p /etc/vim/colors \
+    && mkdir -p ${HOME}/.vim/colors \
     && ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config \
     \
     && pip install --no-cache-dir --upgrade \
@@ -49,13 +50,10 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
 #-------------
 # bash and vim
 
-COPY ./bashrc /tmp/
-COPY ./vimrc /etc/vim/vimrc.local
-COPY ./vimcolors/* /etc/vim/colors/
-
-RUN echo >> /etc/bash.bashrc \
-    && cat /tmp/bashrc >> /etc/bash.bashrc \
-    && rm /tmp/bashrc
+COPY ./bashrc ${HOME}/.bashrc
+COPY ./bash_profile ${HOME}/.bash_profile
+COPY ./vimrc ${HOME}/.vimrc
+COPY ./vimcolors/* ${HOME}/.vim/colors/
 
 
 # Although we make ipython available,
@@ -64,7 +62,7 @@ RUN echo >> /etc/bash.bashrc \
 # IPython can be launched instead by either adding it to the
 # 'docker run' command or creating a dedicated command alias.
 
-WORKDIR /
+WORKDIR ${HOME}
 
 CMD ["python"]
 

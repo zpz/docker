@@ -13,18 +13,23 @@
 
 FROM zppz/py3:0.1
 
-ENV R_VERSION 3.2.3-6
-
 USER root
+ENV HOME=/root
 
-RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
+ENV R_VERSION 3.2.3.20160303-1
+# To find the latest R version available, in a container launched on the 'base' image above, do this:
+# > echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
+# > apt-get update
+# > apt-cache -t unstable search r-base
+# > apt-cache -t unstable show r-base
 
 # h5py requires numpy.
 
 # TODO: it seems 'rhdf5' installs its own copy of small HDF5. How to
 # avoid this?
 
-RUN apt-get update \
+RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential pkg-config \
         libhdf5-8 libhdf5-dev hdf5-tools \
@@ -52,7 +57,7 @@ RUN apt-get update \
     && apt-get -y autoremove \
     && apt-get clean
 
-WORKDIR /
+WORKDIR ${HOME}
 
 CMD ["/bin/bash"]
 
