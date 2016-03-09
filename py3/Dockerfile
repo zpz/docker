@@ -11,7 +11,6 @@ RUN apt-get update \
         less \
         locales \
         vim \
-    && mkdir -p ${HOME}/.vim/colors \
     && ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config \
     \
     && pip install --no-cache-dir --upgrade \
@@ -23,6 +22,7 @@ RUN apt-get update \
         ipython==4.1.1 \
         pylint==1.5.4 \
         pytest==2.9.0 \
+        pytest-cov==2.2.1 \
         pudb==2016.1 \
         requests==2.9.1 \
         sh==1.11 \
@@ -50,10 +50,9 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
 #-------------
 # bash and vim
 
-COPY ./bashrc ${HOME}/.bashrc
-COPY ./bash_profile ${HOME}/.bash_profile
-COPY ./vimrc ${HOME}/.vimrc
-COPY ./vimcolors/* ${HOME}/.vim/colors/
+COPY ./bashrc /etc/bash.bashrc
+COPY ./vimrc /etc/vim/vimrc.local
+COPY -r ./vim/* /etc/vim/
 
 
 # Although we make ipython available,
