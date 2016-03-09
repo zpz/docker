@@ -16,7 +16,7 @@ FROM zppz/py3:0.1
 USER root
 ENV HOME=/root
 
-ENV R_VERSION 3.2.3.20160303-1
+ENV R_VERSION 3.2.3.20160306-1
 # To find the latest R version available, in a container launched on the 'base' image above, do this:
 # > echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
 # > apt-get update
