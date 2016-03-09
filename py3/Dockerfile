@@ -52,7 +52,7 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
 
 COPY ./bashrc /etc/bash.bashrc
 COPY ./vimrc /etc/vim/vimrc.local
-COPY -r ./vim/* /etc/vim/
+COPY ./vim/ /etc/vim/
 
 
 # Although we make ipython available,
