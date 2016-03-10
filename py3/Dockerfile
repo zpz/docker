@@ -1,7 +1,6 @@
 FROM python:3.5.1-slim
 
 USER root
-ENV HOME=/root
 
 # Note: official Python image gets the link 'python-config' wrong.
 
@@ -50,9 +49,9 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
 #-------------
 # bash and vim
 
-COPY ./bashrc /etc/bash.bashrc
-COPY ./vimrc /etc/vim/vimrc.local
-COPY ./vim/ /etc/vim/
+COPY dotfiles/bashrc /etc/bash.bashrc
+COPY dotfiles/vimrc /etc/vim/vimrc.local
+COPY dotfiles/vim/ /etc/vim/
 
 
 # Although we make ipython available,
@@ -61,7 +60,7 @@ COPY ./vim/ /etc/vim/
 # IPython can be launched instead by either adding it to the
 # 'docker run' command or creating a dedicated command alias.
 
-WORKDIR ${HOME}
+WORKDIR /
 
 CMD ["python"]
 
