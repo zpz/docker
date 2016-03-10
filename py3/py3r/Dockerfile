@@ -10,11 +10,9 @@
 # For the latter mechanism, Python package "h5py" and R package "rhdf5"
 # are provided.
 
-
 FROM zppz/py3:0.1
 
 USER root
-ENV HOME=/root
 
 ENV R_VERSION 3.2.3.20160306-1
 # To find the latest R version available, in a container launched on the 'base' image above, do this:
@@ -57,7 +55,7 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
     && apt-get -y autoremove \
     && apt-get clean
 
-WORKDIR ${HOME}
+WORKDIR /
 
 CMD ["/bin/bash"]
 
