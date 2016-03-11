@@ -6,7 +6,9 @@ USER root
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        build-essential pkg-config \
         curl \
+        git \
         less \
         locales \
         vim \
@@ -19,6 +21,7 @@ RUN apt-get update \
     && pip install --no-cache-dir --upgrade \
         ipdb==0.9.0 \
         ipython==4.1.1 \
+        numpy==1.10.4 \
         pylint==1.5.4 \
         pytest==2.9.0 \
         pytest-cov==2.2.1 \
@@ -26,9 +29,11 @@ RUN apt-get update \
         requests==2.9.1 \
         sh==1.11 \
         six==1.10.0 \
+        toolz==0.7.4 \
         yapf==0.6.2 \
     \
     && ln -s /usr/local/bin/py.test /usr/local/bin/pytest \
+    && apt-get purge -y --auto-remove build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
