@@ -21,8 +21,6 @@ ENV R_VERSION 3.2.3.20160306-1
 # > apt-cache -t unstable search r-base
 # > apt-cache -t unstable show r-base
 
-# h5py requires numpy.
-
 # TODO: it seems 'rhdf5' installs its own copy of small HDF5. How to
 # avoid this?
 
@@ -47,7 +45,6 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
     && Rscript /tmp/packages.R \
     \
     && pip3 install --no-cache-dir --upgrade rpy2==2.7.8 \
-    && pip3 install --no-cache-dir --upgrade numpy==1.10.4 \
     && pip3 install --no-cache-dir --upgrade h5py==2.5.0 \
     \
     && apt-get purge -y --auto-remove build-essential libhdf5-dev \
