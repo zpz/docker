@@ -57,6 +57,15 @@ function git_prompt {
     fi
 }
 
+function host_prompt {
+    if [[ -n "$ENVIRONMENT_NAME" ]]; then
+        echo "$ENVIRONMENT_NAME"
+    else
+        echo '\h'
+    fi
+}
+
+
 B='\[\033['
 E='m\]'
 S="${B}0${E}"
@@ -78,7 +87,7 @@ LIGHTYELLOW="${B}0;33${E}"
 #export PS1='[\u: \w] $ '
 
 WINDOWTITLE="\[\e]2;\W\a\]"
-PS1="${WINDOWTITLE}\n\u@\h: ${BLUE}\w${S}\$(git_prompt)\n\$ "
+PS1="${WINDOWTITLE}\n\u@$(host_prompt):: ${BLUE}\w${S}\$(git_prompt)\n\$ "
   # window-title new-line
   # user-name@host-name in current-directory [branch] new-line
   # $

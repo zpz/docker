@@ -8,7 +8,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential pkg-config \
         curl \
-        git \
         less \
         locales \
         vim \
@@ -41,15 +40,15 @@ RUN apt-get update \
 #--------
 # Locale
 
-ENV TZ=America/Los_Angeles
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-
-RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone \
-    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen en_US.utf8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8
+# ENV TZ=America/Los_Angeles
+# ENV LC_ALL en_US.UTF-8
+# ENV LANG en_US.UTF-8
+# 
+# RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
+#     && echo ${TZ} > /etc/timezone \
+#     && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+#     && locale-gen en_US.utf8 \
+#     && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 #-------------
 # bash and vim
