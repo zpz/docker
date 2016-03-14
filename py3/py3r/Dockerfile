@@ -21,14 +21,15 @@ ENV R_VERSION 3.2.4-1
 # > apt-cache -t unstable search r-base
 # > apt-cache -t unstable show r-base
 
-# TODO: it seems 'rhdf5' installs its own copy of small HDF5. How to
-# avoid this?
+
+#-------------
+# R
 
 RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential pkg-config \
-        libhdf5-8 libhdf5-dev hdf5-tools \
+        libreadline6 libreadline6-dev \
     \
     && apt-get install -t unstable -y --no-install-recommends \
         r-base-core=${R_VERSION} \
@@ -40,17 +41,39 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
         repos="http://cran.us.r-project.org", \
         dependencies=c("Depends", "Imports"), \
         clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
+    && Rscript /tmp/packages.R \
+    \
+    && pip3 install --no-cache-dir --upgrade \
+        rpy2==2.7.8 \
+    \
+    && apt-get purge -y --auto-remove build-essential \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+
+
+#-------------
+# HDF5
+
+# TODO: it seems 'rhdf5' installs its own copy of small HDF5. How to
+# avoid this?
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential pkg-config \
+        libhdf5-8 libhdf5-dev hdf5-tools \
+    \
     && echo 'source("https://bioconductor.org/biocLite.R")' > /tmp/packages.R \
     && echo 'biocLite(c("rhdf5"), clean=TRUE, keep_output=FALSE)' >> /tmp/packages.R \
     && Rscript /tmp/packages.R \
     \
-    && pip3 install --no-cache-dir --upgrade rpy2==2.7.8 \
     && pip3 install --no-cache-dir --upgrade h5py==2.5.0 \
     \
     && apt-get purge -y --auto-remove build-essential libhdf5-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
+
 
 WORKDIR /
 

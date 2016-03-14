@@ -2,19 +2,44 @@ FROM python:3.5.1-slim
 
 USER root
 
+
+#-----------------
+# System and basic
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        less \
+        locales \
+        vim \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+
+
+#--------------------
+# Locale
+# default is C.UTF-8
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && locale-gen en_US.utf8 \
+    && /usr/sbin/update-locale LANG=en_US.UTF-8
+
+
+#--------------
+# Python stuff
+
 # Note: official Python image gets the link 'python-config' wrong.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential pkg-config \
-        curl \
-        less \
-        locales \
-        vim \
     && ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config \
-    \
     && pip install --no-cache-dir --upgrade \
-        pip==8.0.3 \
+        pip==8.1.0 \
         setuptools==20.2.2 \
         wheel==0.29.0 \
     && pip install --no-cache-dir --upgrade \
@@ -37,21 +62,9 @@ RUN apt-get update \
     && apt-get -y autoremove \
     && apt-get clean
 
-#--------
-# Locale
 
-# ENV TZ=America/Los_Angeles
-# ENV LC_ALL en_US.UTF-8
-# ENV LANG en_US.UTF-8
-# 
-# RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
-#     && echo ${TZ} > /etc/timezone \
-#     && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-#     && locale-gen en_US.utf8 \
-#     && /usr/sbin/update-locale LANG=en_US.UTF-8
-
-#-------------
-# bash and vim
+#--------------------------
+# bash and vim config files
 
 COPY dotfiles/bashrc /etc/bash.bashrc
 COPY dotfiles/vimrc /etc/vim/vimrc.local
