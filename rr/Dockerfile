@@ -52,13 +52,24 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
     && apt-get -y autoremove \
     && apt-get clean
 
-RUN echo 'install.packages(\
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential pkg-config \
+    && echo 'install.packages(\
         c("devtools", "futile.logger", "roxygen2", "testthat"), \
         repos="http://cran.us.r-project.org", \
         dependencies=c("Depends", "Imports"), \
         clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
     && Rscript /tmp/packages.R \
-    && rm -rf /tmp/*
+    \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+
+# TODO
+# R package installation had errors.
 
 
 #----------------------------
