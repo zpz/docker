@@ -14,16 +14,16 @@ FROM zppz/py3:0.1
 
 USER root
 
+
+#-------------
+# R
+
 ENV R_VERSION 3.2.4-1
 # To find the latest R version available, in a container launched on the 'base' image above, do this:
 # > echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list
 # > apt-get update
 # > apt-cache -t unstable search r-base
 # > apt-cache -t unstable show r-base
-
-
-#-------------
-# R
 
 RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
     && apt-get update \
@@ -34,8 +34,6 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
     && apt-get install -t unstable -y --no-install-recommends \
         r-base-core=${R_VERSION} \
         r-base-dev=${R_VERSION} \
-    && echo >> /root/.bashrc \
-    && echo "alias R='/usr/bin/R --no-save'" >> /root/.bashrc \
     && echo 'install.packages(\
         c("devtools", "futile.logger", "roxygen2", "testthat"), \
         repos="http://cran.us.r-project.org", \
@@ -46,7 +44,7 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
     && pip3 install --no-cache-dir --upgrade \
         rpy2==2.7.8 \
     \
-    && apt-get purge -y --auto-remove build-essential \
+    && apt-get purge -y --auto-remove build-essential libreadline6-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
