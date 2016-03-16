@@ -6,8 +6,8 @@ dockerdir="$( dirname "$thisdir" )"
 
 source "$dockerdir"/util.sh
 
-NAME="zppz/py3:0.1"
-CHILDREN=("py3r")
+NAME="zppz/rr:0.1"
+CHILDREN=()
 
 cp -rf "$dockerdir"/dotfiles "$thisdir"/
 build_image "$thisdir" "$NAME" "${CHILDREN[@]}"
