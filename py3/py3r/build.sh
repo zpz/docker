@@ -7,11 +7,5 @@ source "$dockerdir"/util.sh
 NAME="zppz/py3r:0.1"
 CHILDREN=()
 
-build_image "$thisdir" "$NAME" "${CHILDREN[@]}"
-retval=$?
-
-if [[ $retval == 0 ]]; then
-    build_children "$thisdir" "${CHILDREN[@]}"
-else
-    false
-fi
+build_image "$thisdir" "$NAME" "${CHILDREN[@]}" \
+    && build_children "$thisdir" "${CHILDREN[@]}"

@@ -1,3 +1,5 @@
+(
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 dockerdir="$( dirname "$thisdir" )"
@@ -12,8 +14,8 @@ build_image "$thisdir" "$NAME" "${CHILDREN[@]}"
 retval=$?
 rm -rf "$thisdir"/dotfiles
 
-if [[ $retval == 0 ]]; then
-    build_children "$thisdir" "${CHILDREN[@]}"
-else
-    false
-fi
+(( $retval == 0 )) || exit 1
+
+build_children "$thisdir" "${CHILDREN[@]}"
+
+)

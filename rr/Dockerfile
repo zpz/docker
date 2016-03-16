@@ -44,8 +44,7 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
     && apt-get install -y --no-install-recommends \
         build-essential pkg-config \
     && apt-get install -t unstable -y --no-install-recommends \
-        r-base-core=${R_VERSION} \
-        r-base-dev=${R_VERSION} \
+        r-base=${R_VERSION} \
     && apt-get purge -y --auto-remove \
         build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
@@ -54,9 +53,9 @@ RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential pkg-config \
+        build-essential \
     && echo 'install.packages(\
-        c("devtools", "futile.logger", "roxygen2", "testthat"), \
+        c("futile.logger", "roxygen2", "testthat"), \
         repos="http://cran.us.r-project.org", \
         dependencies=c("Depends", "Imports"), \
         clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
@@ -67,9 +66,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
-
-# TODO
-# R package installation had errors.
 
 
 #----------------------------

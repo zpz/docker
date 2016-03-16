@@ -30,7 +30,7 @@ build_children() {
         (
         cd "$dir"/"$child"
         if [[ -f "build.sh" ]]; then
-            source build.sh
+            bash build.sh
         fi
         ) || return $?
     done
