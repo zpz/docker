@@ -1,7 +1,7 @@
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 parentdir="$(dirname "$thisdir")"
-dockerdir="$parentdir"
+dockerdir="$(expr "$thisdir" : '\(.*/docker\).*')"
 
 source "$dockerdir"/util.sh
 

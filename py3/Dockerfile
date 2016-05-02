@@ -79,6 +79,7 @@ RUN pip install --no-cache-dir --upgrade \
         'setuptools==20.10.1' \
         'wheel==0.29.0' \
     && pip install --no-cache-dir --upgrade \
+        'ipython==4.2.0' \
         'numpy==1.11.0' \
         'pytest==2.9.1' \
         'requests==2.10.0' \

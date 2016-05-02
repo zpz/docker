@@ -12,7 +12,7 @@
 # One-way Python/R inter-op, namely calling R from Python,
 # is provisioned by the Package package 'rpy2'.
 
-FROM zppz/py3:20160430
+FROM zppz/py3-model:20160501
 
 USER root
 

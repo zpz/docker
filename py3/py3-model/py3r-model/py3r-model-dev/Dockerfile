@@ -4,13 +4,13 @@
 # DO NOT EDIT.
 #==================================
 
-FROM zppz/py3r:20160430
+FROM zppz/py3r-model:20160501
 
 USER root
 
 
 #-------------------
-# development tools
+# Development tools
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -78,6 +78,6 @@ RUN echo 'install.packages(\
 # startup
 
 USER root
-WORKDIR /root
+WORKDIr /root
 
 CMD ["/bin/bash"]

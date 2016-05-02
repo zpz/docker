@@ -1,15 +1,15 @@
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 parentdir="$(dirname "$thisdir")"
-dockerdir="$(dirname "$(dirname "$parentdir")")"
+dockerdir="$(expr "$thisdir" : '\(.*/docker\).*')"
 
 source "$dockerdir"/util.sh
 
 version=$(cat "$thisdir"/version)
 parent_version=$(cat "$parentdir"/version)
 if [[ "$version" < "$parent_version" ]]; then
-    version=$parent_version
     echo "$parent_version" > "$thisdir"/version
+    version=$parent_version
 fi
 
 PARENT=zppz/$(basename "$parentdir"):"$parent_version"
@@ -27,7 +27,7 @@ USER root
 
 
 #-------------------
-# development tools
+# Development tools
 
 ${INSTALL_VIM}
 
@@ -42,10 +42,11 @@ ${INSTALL_R_DEV}
 # startup
 
 USER ${USER}
-WORKDIR ${HOME}
+WORKDIr ${HOME}
 
 CMD ["/bin/bash"]
 EOF
 
 
 build_image "$thisdir" "$NAME"
+

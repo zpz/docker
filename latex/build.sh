@@ -8,7 +8,7 @@ source "$dockerdir"/util.sh
 version="$(cat "$thisdir"/version)"
 TAG="$version"
 PARENT="debian:jessie"
-NAME=$(basename "$thisdir"):"$TAG"
+NAME=zppz/$(basename "$thisdir"):"$TAG"
 
 echo
 echo =====================================================

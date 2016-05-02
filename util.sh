@@ -121,6 +121,7 @@ RUN pip install --no-cache-dir --upgrade \
         'setuptools==20.10.1' \
         'wheel==0.29.0' \
     && pip install --no-cache-dir --upgrade \
+        'ipython==4.2.0' \
         'numpy==1.11.0' \
         'pytest==2.9.1' \
         'requests==2.10.0' \
@@ -161,6 +162,57 @@ RUN echo '#!/usr/bin/env bash' > /usr/local/bin/notebook \
     && echo >> /usr/local/bin/notebook \
     && echo 'jupyter notebook --port=$NOTEBOOKPORT --no-browser --ip=0.0.0.0' >> /usr/local/bin/notebook \
     && chmod +x /usr/local/bin/notebook
+EOF
+
+
+read -rd '' INSTALL_PY_MODEL <<'EOF'
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        pkg-config \
+    && pip install --no-cache-dir --upgrade \
+        'pandas==0.18.0' \
+    && apt-get install -y --no-install-recommends \
+        liblapack3 \
+        liblapack-dev \
+        gfortran \
+    && pip install --no-cache-dir --upgrade \
+        'scipy==0.17.0' \
+    && pip install --no-cache-dir --upgrade \
+        'cvxpy==0.4.0' \
+        'patsy==0.4.1' \
+        'scikit-learn==0.17.1' \
+        'statsmodels==0.6.1' \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+        pkg-config \
+        liblapack-dev \
+        gfortran \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get autoremove -y \
+    && apt-get clean
+
+# freetype and xft are required by matplotlib
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        pkg-config \
+        libfreetype6 \
+        libfreetype6-dev \
+        libxft-dev \
+    && pip install --no-cache-dir --upgrade \
+        'matplotlib==1.5.1' \
+        'seaborn==0.7.0' \
+        'bokeh==0.11.1' \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+        pkg-config \
+        libfreetype6-dev \
+        libxft-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get autoremove -y \
+    && apt-get clean
 EOF
 
 
