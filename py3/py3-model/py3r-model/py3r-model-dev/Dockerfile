@@ -66,12 +66,24 @@ RUN echo '#!/usr/bin/env bash' > /usr/local/bin/notebook \
     && echo 'jupyter notebook --port=$NOTEBOOKPORT --no-browser --ip=0.0.0.0' >> /usr/local/bin/notebook \
     && chmod +x /usr/local/bin/notebook
 
-RUN echo 'install.packages(\
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        pkg-config \
+    \
+    && echo 'install.packages(\
         c("roxygen2"), \
         repos="http://cran.us.r-project.org", \
         dependencies=c("Depends", "Imports"), \
         clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
-    && Rscript /tmp/packages.R
+    && Rscript /tmp/packages.R \
+    \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+        pkg-config \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
 
 
 #-------------
