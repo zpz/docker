@@ -4,12 +4,12 @@
 # DO NOT EDIT.
 #==================================
 
-FROM py3:20160430
+FROM zppz/py3r:20160430
 
 USER root
 
 
-#------------------
+#-------------------
 # development tools
 
 RUN apt-get update \
@@ -66,9 +66,18 @@ RUN echo '#!/usr/bin/env bash' > /usr/local/bin/notebook \
     && echo 'jupyter notebook --port=$NOTEBOOKPORT --no-browser --ip=0.0.0.0' >> /usr/local/bin/notebook \
     && chmod +x /usr/local/bin/notebook
 
+RUN echo 'install.packages(\
+        c("roxygen2"), \
+        repos="http://cran.us.r-project.org", \
+        dependencies=c("Depends", "Imports"), \
+        clean=TRUE, keep_outputs=FALSE)' > /tmp/packages.R \
+    && Rscript /tmp/packages.R
+
 
 #-------------
 # startup
 
 USER root
 WORKDIR /root
+
+CMD ["/bin/bash"]

@@ -90,7 +90,7 @@ RUN pip install --no-cache-dir --upgrade \
 #---------------
 # startup
 
-CMD ["python"]
-
 USER root
 WORKDIR /root
+
+CMD ["python"]

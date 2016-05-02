@@ -2,7 +2,21 @@
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
+function build_one() {
+    if [[ -f ./build.sh && -f ./version ]]; then
+        bash ./build.sh
+        (( $? == 0 )) || exit 1
+        for f in *; do
+            if [[ -d "$f" && ! -L "$f" ]]; then
+                ( cd "$f"; build_one )
+                (( $? ==0 )) || exit 1
+            fi
+        done
+    fi
+}
+
+
 echo \
-    && bash "$thisdir"/py3/build.sh \
-    && bash "$thisdir"/py3-dev/build.sh
+    && ( cd "$thisdir"/py3; build_one ) \
+    && ( cd "$thisdir"/latex; build_one )
 

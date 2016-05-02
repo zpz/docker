@@ -77,7 +77,7 @@ ENV EDITOR vim
 #--------------
 # latex
 
-RUN apt-get update     && apt-get install -y         texlive-full         texlive-fonts-recommended         texlive-fonts-extra         texlive-latex-base         texlive-latex-extra         texlive-latex-recommended     && rm -rf /var/lib/apt/lists/* /tmp/*     && apt-get -y autoremove     && apt-get clean
+RUN apt-get update     && apt-get install -y         texlive-base         texlive-latex-base     && rm -rf /var/lib/apt/lists/* /tmp/*     && apt-get -y autoremove     && apt-get clean
 
 RUN cd /tmp     && curl -sL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz     && cp latex-master/bin/* /usr/local/bin     && chmod +x /usr/local/bin/*     && rm -rf /tmp/*
 
@@ -85,7 +85,7 @@ RUN cd /tmp     && curl -sL https://github.com/zpz/latex/archive/master.tar.gz -
 #-----------
 # startup
 
-CMD ["/bin/bash"]
-
 USER root
 WORKDIR /root
+
+CMD ["/bin/bash"]

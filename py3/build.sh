@@ -8,7 +8,7 @@ source "$dockerdir"/util.sh
 version=$(cat "$thisdir"/version)
 TAG=$version
 PARENT="python:3.5.1-slim"
-NAME=$(basename "$thisdir"):"$TAG"
+NAME=zppz/$(basename "$thisdir"):"$TAG"
 
 echo
 echo ==============================================
@@ -32,7 +32,7 @@ ${CREATE_USER}
 #------------------
 # System and basic
 
-${INSTALL_BASICS}
+${INSTALL_SYS_BASICS}
 
 
 #------------------
@@ -47,23 +47,18 @@ ${INSTALL_TINI}
 # offical Python image gets the link 'python-config' wrong.
 RUN ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config
 
-${INSTALL_PY_BASIC}
+${INSTALL_PY_BASICS}
 
 
 #---------------
 # startup
 
-CMD ["python"]
-
 USER ${USER}
 WORKDIR ${HOME}
+
+CMD ["python"]
 EOF
 
 
-echo
-echo building image "$NAME"...
-echo
-download_dotfiles "$thisdir"
-docker build -t "$NAME" "$thisdir"
-remove_dotfiles "$thisdir"
+build_image "$thisdir" "$NAME"
 

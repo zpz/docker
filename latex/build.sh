@@ -32,7 +32,7 @@ ${CREATE_USER}
 #----------------------
 # System and basic
 
-${INSTALL_BASICS}
+${INSTALL_SYS_BASICS}
 
 
 #--------------------
@@ -46,12 +46,8 @@ ${INSTALL_VIM}
 
 RUN apt-get update \
     && apt-get install -y \
-        texlive-full \
-        texlive-fonts-recommended \
-        texlive-fonts-extra \
+        texlive-base \
         texlive-latex-base \
-        texlive-latex-extra \
-        texlive-latex-recommended \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
@@ -66,17 +62,12 @@ RUN cd /tmp \
 #-----------
 # startup
 
-CMD ["/bin/bash"]
-
 USER ${USER}
 WORKDIR ${HOME}
+
+CMD ["/bin/bash"]
 EOF
 
 
-echo
-echo building image "$NAME"...
-echo
-download_dotfiles "$thisdir"
-docker build -t "$NAME" "$thisdir"
-remove_dotfiles "$thisdir"
+build_image "$thisdir" "$NAME"
 

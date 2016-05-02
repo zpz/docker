@@ -1,11 +1,7 @@
 # docker
-Docker
 
-Typical work flow:
+Some Docker images.
 
-```
-bash clean.sh
-bash setup.sh
-bash push.sh
-```
+The images are organized in a directory hierarchy.
+
 

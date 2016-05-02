@@ -1,14 +1,19 @@
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 parentdir="$(dirname "$thisdir")"
-dockerdir="$parentdir"
+dockerdir="$(dirname "$parentdir")"
 
 source "$dockerdir"/util.sh
 
-version="$(cat "$parentdir"/py3/version)"
-TAG=$version
-PARENT="py3:"$TAG
-NAME=$(basename "$thisdir"):"$TAG"
+version="$(cat "$thisdir"/version)"
+parent_version="$(cat "$parentdir"/version)"
+if [[ "$parent_version" > "$version" ]]; then
+    version="$parent_version"
+    echo "$version" > "$thisdir"/version
+fi
+
+PARENT=zppz/$(basename "$parentdir"):$parent_version
+NAME=zppz/$(basename "$thisdir"):"$version"
 
 echo
 echo ==============================================
@@ -36,13 +41,10 @@ ${INSTALL_PY_DEV}
 
 USER ${USER}
 WORKDIR ${HOME}
+
+CMD ["python"]
 EOF
 
 
-echo
-echo building image "$NAME"...
-echo
-download_dotfiles "$thisdir"
-docker build -t "$NAME" "$thisdir"
-remove_dotfiles "$thisdir"
+build_image "$thisdir" "$NAME"
 
