@@ -35,8 +35,8 @@ ${INSTALL_PY_MODEL}
 #-------------
 # startup
 
-USER ${USER}
-WORKDIr ${HOME}
+USER \${USER}
+WORKDIr \${HOME}
 
 CMD ["python"]
 EOF

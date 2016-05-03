@@ -43,8 +43,8 @@ ${INSTALL_R_BASICS}
 #-------------
 # startup
 
-USER ${USER}
-WORKDIr ${HOME}
+USER \${USER}
+WORKDIr \${HOME}
 
 CMD ["/bin/bash"]
 EOF

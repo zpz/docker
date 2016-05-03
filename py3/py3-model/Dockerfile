@@ -64,7 +64,7 @@ RUN apt-get update \
 #-------------
 # startup
 
-USER root
-WORKDIr /root
+USER ${USER}
+WORKDIr ${HOME}
 
 CMD ["python"]

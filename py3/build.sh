@@ -53,8 +53,8 @@ ${INSTALL_PY_BASICS}
 #---------------
 # startup
 
-USER ${USER}
-WORKDIR ${HOME}
+USER \${USER}
+WORKDIR \${HOME}
 
 CMD ["python"]
 EOF

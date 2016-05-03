@@ -41,8 +41,8 @@ ${INSTALL_R_DEV}
 #-------------
 # startup
 
-USER ${USER}
-WORKDIr ${HOME}
+USER \${USER}
+WORKDIr \${HOME}
 
 CMD ["/bin/bash"]
 EOF
