@@ -31,7 +31,6 @@ USER root
 
 ${INSTALL_PY_MODEL}
 
-
 #-------------
 # startup
 

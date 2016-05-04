@@ -30,10 +30,13 @@ RUN groupadd --gid 1000 ${GROUP} \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        apt-utils \
         curl \
         less \
         locales \
+    \
+    && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+    && locale-gen en_US.UTF-8 \
+    && /usr/sbin/update-locale LANG=en_US.UTF-8 \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
@@ -45,10 +48,6 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-
-RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    && locale-gen en_US.UTF-8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # bash customization
 #
@@ -76,18 +75,14 @@ ENV EDITOR vim
 #--------------
 # latex
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        texlive-base \
-        texlive-latex-base \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
+# textlive-latex-extra provides 'lastpage', among others.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        texlive-base \
+        texlive-fonts-recommended \
+        texlive-latex-base \
         texlive-latex-extra \
-        texlive-latex-recommended \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean

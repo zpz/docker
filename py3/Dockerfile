@@ -30,10 +30,13 @@ RUN groupadd --gid 1000 ${GROUP} \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        apt-utils \
         curl \
         less \
         locales \
+    \
+    && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+    && locale-gen en_US.UTF-8 \
+    && /usr/sbin/update-locale LANG=en_US.UTF-8 \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
@@ -45,10 +48,6 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-
-RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    && locale-gen en_US.UTF-8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # bash customization
 #
@@ -75,12 +74,11 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 RUN ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config
 
 RUN pip install --no-cache-dir --upgrade \
-        'pip==8.1.1' \
-        'setuptools==20.10.1' \
-        'wheel==0.29.0' \
+        pip \
+        setuptools \
+        wheel \
     && pip install --no-cache-dir --upgrade \
         'ipython==4.2.0' \
-        'numpy==1.11.0' \
         'pytest==2.9.1' \
         'requests==2.10.0' \
         'sh==1.11' \

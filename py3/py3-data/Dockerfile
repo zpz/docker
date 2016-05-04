@@ -4,42 +4,31 @@
 # DO NOT EDIT.
 #==================================
 
-FROM zppz/py3:20160430
+FROM zppz/py3:20160501
 
 USER root
 
 
 #--------------------------
-# Python modeling packages
+# Python data packages
 
-RUN apt-get update \
+RUN pip install --no-cache-dir --upgrade \
+        'numpy==1.11.0' \
+        'sqlalchemy==1.0.12' \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         pkg-config \
     && pip install --no-cache-dir --upgrade \
         'pandas==0.18.0' \
-    && apt-get install -y --no-install-recommends \
-        liblapack3 \
-        liblapack-dev \
-        gfortran \
-    && pip install --no-cache-dir --upgrade \
-        'scipy==0.17.0' \
-    && pip install --no-cache-dir --upgrade \
-        'cvxpy==0.4.0' \
-        'patsy==0.4.1' \
-        'scikit-learn==0.17.1' \
-        'statsmodels==0.6.1' \
     && apt-get purge -y --auto-remove \
         build-essential \
         pkg-config \
-        liblapack-dev \
-        gfortran \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
+    && apt-get -y autoremove \
     && apt-get clean
 
 # freetype and xft are required by matplotlib
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
@@ -49,7 +38,6 @@ RUN apt-get update \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
         'matplotlib==1.5.1' \
-        'seaborn==0.7.0' \
         'bokeh==0.11.1' \
     && apt-get purge -y --auto-remove \
         build-essential \
@@ -60,6 +48,24 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        pkg-config \
+        libhdf5-8 \
+        libhdf5-dev \
+        hdf5-tools \
+    \
+    && pip3 install --no-cache-dir --upgrade \
+        'h5py==2.6.0' \
+    \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+        pkg-config \
+        libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
 
 #-------------
 # startup

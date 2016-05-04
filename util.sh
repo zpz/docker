@@ -48,10 +48,13 @@ read -rd '' INSTALL_SYS_BASICS <<'EOF'
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        apt-utils \
         curl \
         less \
         locales \
+    \
+    && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
+    && locale-gen en_US.UTF-8 \
+    && /usr/sbin/update-locale LANG=en_US.UTF-8 \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
@@ -63,10 +66,6 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-
-RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    && locale-gen en_US.UTF-8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # bash customization
 #
@@ -117,12 +116,11 @@ EOF
 
 read -rd '' INSTALL_PY_BASICS <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
-        'pip==8.1.1' \
-        'setuptools==20.10.1' \
-        'wheel==0.29.0' \
+        pip \
+        setuptools \
+        wheel \
     && pip install --no-cache-dir --upgrade \
         'ipython==4.2.0' \
-        'numpy==1.11.0' \
         'pytest==2.9.1' \
         'requests==2.10.0' \
         'sh==1.11' \
@@ -165,35 +163,27 @@ RUN echo '#!/usr/bin/env bash' > /usr/local/bin/notebook \
 EOF
 
 
-read -rd '' INSTALL_PY_MODEL <<'EOF'
-RUN apt-get update \
+read -rd '' INSTALL_PY_DATA <<'EOF'
+RUN pip install --no-cache-dir --upgrade \
+        'numpy==1.11.0' \
+        'sqlalchemy==1.0.12' \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         pkg-config \
     && pip install --no-cache-dir --upgrade \
         'pandas==0.18.0' \
-    && apt-get install -y --no-install-recommends \
-        liblapack3 \
-        liblapack-dev \
-        gfortran \
-    && pip install --no-cache-dir --upgrade \
-        'scipy==0.17.0' \
-    && pip install --no-cache-dir --upgrade \
-        'cvxpy==0.4.0' \
-        'patsy==0.4.1' \
-        'scikit-learn==0.17.1' \
-        'statsmodels==0.6.1' \
     && apt-get purge -y --auto-remove \
         build-essential \
         pkg-config \
-        liblapack-dev \
-        gfortran \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
+    && apt-get -y autoremove \
     && apt-get clean
+EOF
 
+
+read -rd '' INSTALL_PY_PLOT <<'EOF'
 # freetype and xft are required by matplotlib
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
@@ -203,7 +193,6 @@ RUN apt-get update \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
         'matplotlib==1.5.1' \
-        'seaborn==0.7.0' \
         'bokeh==0.11.1' \
     && apt-get purge -y --auto-remove \
         build-essential \
@@ -213,6 +202,45 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean
+EOF
+
+
+read -rd '' INSTALL_PY_MODEL <<'EOF'
+# lapack and gfortran are required by scipy and a couple others.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        pkg-config \
+        liblapack3 \
+        liblapack-dev \
+        gfortran \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'scipy==0.17.0' \
+    && pip install --no-cache-dir --upgrade \
+        'cvxpy==0.4.0' \
+        'patsy==0.4.1' \
+        'scikit-learn==0.17.1' \
+        'statsmodels==0.6.1' \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'seaborn==0.7.0' \
+    \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+        pkg-config \
+        liblapack-dev \
+        gfortran \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get autoremove -y \
+    && apt-get clean
+
+#RUN pip install --no-cache-dir --upgrade \
+#    https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.8.0-cp34-cp34m-linux_x86_64.whl
+
+#       'skdata==0.0.4' \
+RUN pip install --no-cache-dir --upgrade \
+        'pydataset==0.2.0'
 EOF
 
 
@@ -290,4 +318,46 @@ RUN apt-get update \
     && apt-get clean
 EOF
 
+
+
+read -rd '' INSTALL_HDF5 <<'EOF'
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        pkg-config \
+        libhdf5-8 \
+        libhdf5-dev \
+        hdf5-tools \
+    \
+    && pip3 install --no-cache-dir --upgrade \
+        'h5py==2.6.0' \
+    \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+        pkg-config \
+        libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+EOF
+
+
+read -rd '' INSTALL_R_HDF5 <<'EOF'
+# TODO: it seems 'rhdf5' installs its own copy of small HDF5.
+# How to avoid this?
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libhdf5-dev \
+    \
+    && echo 'source("https://bioconductor.org/biocLite.R")' > /tmp/packages.R \
+    && echo 'biocLite(c("rhdf5"), clean=TRUE, keep_output=FALSE)' >> /tmp/packages.R \
+    && Rscript /tmp/packages.R \
+    \
+    && apt-get purge -y --auto-remove \
+        libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+EOF
 

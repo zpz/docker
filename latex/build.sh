@@ -46,18 +46,14 @@ cat >> "$thisdir"/Dockerfile <<'EOF'
 #--------------
 # latex
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        texlive-base \
-        texlive-latex-base \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
+# textlive-latex-extra provides 'lastpage', among others.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        texlive-base \
+        texlive-fonts-recommended \
+        texlive-latex-base \
         texlive-latex-extra \
-        texlive-latex-recommended \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
