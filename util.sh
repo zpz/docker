@@ -116,36 +116,41 @@ EOF
 
 read -rd '' INSTALL_PY_BASICS <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
-        pip \
-        setuptools \
-        wheel \
+        'pip==8.1.2' \
+        'setuptools==22.0.0' \
+        'wheel==0.29.0' \
     && pip install --no-cache-dir --upgrade \
-        'ipython==4.2.0' \
-        'pytest==2.9.1' \
+        'pytest==2.9.2' \
         'requests==2.10.0' \
         'sh==1.11' \
-        'toolz==0.7.4' \
+        'six==1.10.0' \
     && ln -s /usr/local/bin/py.test /usr/local/bin/pytest
 EOF
 
 
 read -rd '' INSTALL_PY_DEV <<'EOF'
+# graphviz is required by Sphinx to generate class hierarchy diagrams.
+# 'make' (in build-essential) is required to use Sphinx as in 'make html'.
+
 RUN pip install --no-cache-dir --upgrade \
         'ipdb==0.10.0' \
+        'ipython==4.2.0' \
         'pylint==1.5.5' \
         'pytest-cov==2.2.1' \
         'pudb==2016.1' \
-        'yapf==0.7.1' \
+        'Sphinx==1.4.2' \
+        'sphinx_rtd_theme==0.1.9' \
+        'yapf==0.9.0' \
     \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
+        graphviz \
         pkg-config \
     && pip install --no-cache-dir --upgrade \
         'line_profiler==1.0' \
         'notebook==4.2.0' \
     && apt-get purge -y --auto-remove \
-        build-essential \
         pkg-config \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
@@ -166,13 +171,13 @@ EOF
 read -rd '' INSTALL_PY_DATA <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'numpy==1.11.0' \
-        'sqlalchemy==1.0.12' \
+        'sqlalchemy==1.0.13' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         pkg-config \
     && pip install --no-cache-dir --upgrade \
-        'pandas==0.18.0' \
+        'pandas==0.18.1' \
     && apt-get purge -y --auto-remove \
         build-essential \
         pkg-config \
