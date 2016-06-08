@@ -14,6 +14,8 @@ echo
 echo ==============================================
 echo creating Dockerfile for $NAME...
 cat > "$thisdir"/Dockerfile <<EOF
+# Dockerfile for image '${NAME}'
+
 ${HEADER}
 
 FROM ${PARENT}
@@ -36,18 +38,26 @@ ${INSTALL_SYS_BASICS}
 
 
 #------------------
-# entrypoint
-
-${INSTALL_TINI}
-
-
-#------------------
 # Python
 
 # offical Python image gets the link 'python-config' wrong.
 RUN ln -s -f /usr/local/bin/python3-config /usr/local/bin/python-config
 
 ${INSTALL_PY_BASICS}
+
+
+#------------------
+# Development tools
+
+${INSTALL_VIM}
+
+${INSTALL_PY_DEV}
+
+
+#------------------
+# entrypoint
+
+${INSTALL_TINI}
 
 
 #---------------

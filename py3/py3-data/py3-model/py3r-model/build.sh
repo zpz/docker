@@ -19,6 +19,8 @@ echo
 echo =====================================================
 echo Creating Dockerfile for $NAME
 cat > "$thisdir"/Dockerfile <<EOF
+# Dockerfile for image '${NAME}'
+
 ${HEADER}
 
 # In the intended use cases of this image,
@@ -38,6 +40,12 @@ USER root
 # R
 
 ${INSTALL_R_BASICS}
+
+
+#-------------
+# R dev tools
+
+${INSTALL_R_DEV}
 
 
 #-------------

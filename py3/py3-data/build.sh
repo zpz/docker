@@ -19,6 +19,8 @@ echo
 echo =====================================================
 echo Creating Dockerfile for $NAME
 cat > "$thisdir"/Dockerfile <<EOF
+# Dockerfile for image '${NAME}'
+
 ${HEADER}
 
 FROM ${PARENT}

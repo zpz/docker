@@ -130,7 +130,7 @@ EOF
 
 read -rd '' INSTALL_PY_DEV <<'EOF'
 # graphviz is required by Sphinx to generate class hierarchy diagrams.
-# 'make' (in build-essential) is required to use Sphinx as in 'make html'.
+# 'make' is required to use Sphinx as in 'make html'.
 
 RUN pip install --no-cache-dir --upgrade \
         'ipdb==0.10.0' \
@@ -144,6 +144,7 @@ RUN pip install --no-cache-dir --upgrade \
     \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
+        make \
         build-essential \
         graphviz \
         pkg-config \
@@ -151,6 +152,7 @@ RUN pip install --no-cache-dir --upgrade \
         'line_profiler==1.0' \
         'notebook==4.2.0' \
     && apt-get purge -y --auto-remove \
+        build-essential \
         pkg-config \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
