@@ -69,8 +69,8 @@ RUN apt-get update \
 #    https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.8.0-cp34-cp34m-linux_x86_64.whl
 
 #       'skdata==0.0.4' \
-RUN pip install --no-cache-dir --upgrade \
-        'pydataset==0.2.0'
+#RUN pip install --no-cache-dir --upgrade \
+#        'pydataset==0.2.0'
 
 
 #-------------

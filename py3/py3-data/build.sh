@@ -16,7 +16,7 @@ NAME=zppz/$(basename "$thisdir"):"$version"
 echo
 echo =====================================================
 echo Creating Dockerfile for $NAME
-cat > "$thisdir"/Dockerfile <<EOF
+cat > "${thisdir}"/Dockerfile <<EOF
 # Dockerfile for image '${NAME}'
 
 #===========================
