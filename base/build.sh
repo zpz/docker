@@ -1,8 +1,11 @@
+set -o nounset
+set -o pipefail
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
 version=$(cat "${thisdir}"/version)
-PARENT="debian:jessie"
+PARENT="debian:8.5"
 NAME=zppz/$(basename "$thisdir"):"${version}"
 
 echo
@@ -43,6 +46,7 @@ RUN groupadd --gid 1000 ${GROUP} \
 
 # 'curl': about 15 MB.
 # 'locales': about 16MB.
+# 'vim': about 20MB.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -50,10 +54,20 @@ RUN apt-get update \
         less \
         locales \
         tree \
+        vim \
     \
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
     && locale-gen en_US.UTF-8 \
     && /usr/sbin/update-locale LANG=en_US.UTF-8 \
+    \
+    && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
+    && mv /tmp/linux-master /tmp/dotfiles \
+    && cp /tmp/dotfiles/bash/bashrc /etc/bash.bashrc \
+    && chmod +r /etc/bash.bashrc \
+    && mkdir -p /etc/vim \
+    && cp /tmp/dotfiles/vim/vimrc /etc/vim/vimrc.local \
+    && cp -r /tmp/dotfiles/vim/vim/* /etc/vim/ \
+    && chmod -R +rX /etc/vim \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
@@ -66,26 +80,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# bash customization
-#
 ENV SHELL=/bin/bash
-COPY ./dotfiles/bash/bashrc /etc/bash.bashrc
-RUN chmod +r /etc/bash.bashrc
-
-#-----
-# vim
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        vim \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
-
-COPY ./dotfiles/vim/vimrc /etc/vim/vimrc.local
-COPY ./dotfiles/vim/vim/ /etc/vim/
-RUN chmod -R +rX /etc/vim
-
 ENV EDITOR vim
 
 
@@ -112,8 +107,5 @@ EOF
 echo
 echo Creating image "'${NAME}'"
 echo
-curl -sL https://github.com/zpz/linux/archive/master.tar.gz -o - |tar xz -C "${thisdir}"
-mv "${thisdir}"/linux-master "${thisdir}"/dotfiles
 docker build -t "${NAME}" "${thisdir}"
-rm -rf "${thisdir}/dotfiles"
 
