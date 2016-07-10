@@ -19,8 +19,7 @@ function push_one() {
 
 echo pushing images to the cloud:
 
-echo \
-    && ( cd "$thisdir"/py3; push_one ) \
-    && ( cd "$thisdir"/latex; push_one )
+echo
+(cd "$thisdir"/base; push_one )
 
 

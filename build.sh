@@ -20,6 +20,5 @@ function build_one() {
 
 
 echo
-( cd "$thisdir"/py3; build_one )
-( cd "$thisdir"/latex; build_one )
+( cd "$thisdir"/base; build_one )
 
