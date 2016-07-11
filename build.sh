@@ -20,5 +20,5 @@ function build_one() {
 
 
 echo
-( cd "$thisdir"/base; build_one )
+( cd "${thisdir}"/base; build_one )
 

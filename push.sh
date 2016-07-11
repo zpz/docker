@@ -1,11 +1,15 @@
+set -o nounset
+set -o errexit
+set -o pipefail
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
 function push_one() {
     if [[ -f ./build.sh && -f ./version ]]; then
-        name=zppz/$(basename $(pwd)):$(cat ./version)
-        echo pushing "$name"...
-        docker push "$name"
+        local name=zppz/$(basename $(pwd)):$(cat ./version)
+        echo pushing "${name}"...
+        docker push "${name}"
         (( $? == 0 )) || exit 1
         for f in *; do
             if [[ -d "$f" && ! -L "$f" ]]; then
@@ -20,6 +24,6 @@ function push_one() {
 echo pushing images to the cloud:
 
 echo
-(cd "$thisdir"/base; push_one )
+(cd "${thisdir}"/base; push_one )
 
 

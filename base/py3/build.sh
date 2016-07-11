@@ -116,10 +116,9 @@ RUN cd /usr/local/bin \
 
 RUN pip install --no-cache-dir --upgrade \
         'ipython==4.2.0' \
+        'numpy==1.11.1' \
         'pytest==2.9.2' \
-        'requests==2.10.0' \
         'sh==1.11' \
-        'six==1.10.0' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.1' \
         'pudb==2016.2' \
