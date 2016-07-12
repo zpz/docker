@@ -13,6 +13,9 @@ USER root
 
 #--------------------------------------
 # Content of official python:3.5.2-slim
+# with minor adaptation.
+#
+# Do not include 'curl' in 'buildDeps', so that it will not be removed
 
 # remove several traces of debian python
 RUN apt-get purge -y python.*
@@ -33,7 +36,6 @@ ENV PYTHON_PIP_VERSION 8.1.2
 
 RUN set -ex \
 	&& buildDeps=' \
-		curl \
 		gcc \
 		libbz2-dev \
 		libc6-dev \
@@ -103,7 +105,6 @@ RUN pip install --no-cache-dir --upgrade \
     && apt-get purge -y --auto-remove \
         build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
     && apt-get clean
 
 

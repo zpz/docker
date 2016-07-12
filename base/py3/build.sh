@@ -44,12 +44,6 @@ USER root
 # remove several traces of debian python
 RUN apt-get purge -y python.*
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates \
-		libsqlite3-0 \
-		libssl1.0.0 \
-	&& rm -rf /var/lib/apt/lists/*
-
 # gpg: key F73C700D: public key "Larry Hastings <larry@hastings.org>" imported
 ENV GPG_KEY 97FC712E4C024BBEA48A61ED3A5CA953F73C700D
 
@@ -59,6 +53,11 @@ ENV PYTHON_VERSION 3.5.2
 ENV PYTHON_PIP_VERSION 8.1.2
 
 RUN set -ex \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+		ca-certificates \
+		libsqlite3-0 \
+		libssl1.0.0 \
 	&& buildDeps=' \
 		curl \
 		gcc \
@@ -100,7 +99,10 @@ RUN set -ex \
 		    \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
 		\) -exec rm -rf '{}' + \
 	&& apt-get purge -y --auto-remove $buildDeps \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* \
 	&& rm -rf /usr/src/python ~/.cache
+    && apt-get -y autoremove \
+    && apt-get clean \
 
 # make some useful symlinks that are expected to exist
 RUN cd /usr/local/bin \

@@ -43,64 +43,37 @@ cat >> "${thisdir}/Dockerfile" <<'EOF'
 USER root
 
 
-#-------------
-# R
-# This section is adapted from the official image r-base.
-
-## Use Debian unstable via pinning -- new style via APT::Default-Release
-RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
-	&& echo 'APT::Default-Release "testing";' > /etc/apt/apt.conf.d/default
-
-ENV R_BASE_VERSION 3.3.1
-
-## Now install R and littler, and create a link for littler in /usr/local/bin
-## Also set a default CRAN repo, and make sure littler knows about it too
-RUN apt-get update \
-	&& apt-get install -t unstable -y --no-install-recommends \
-		littler \
-        r-cran-littler \
-		r-base=${R_BASE_VERSION}* \
-    && echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site \
-    && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
-	&& ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
-	&& ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
-	&& ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
-	&& ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
-	&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
-	&& rm -rf /var/lib/apt/lists/*
-
-
-#--------------------
-# Some more.
+ENV R_BASE_VERSION 3.1.1-1
 
 RUN apt-get update \
-    && apt-get install -t unstable -y --no-install-recommends \
-        r-base-dev=${R_BASE_VERSION}* \
+    && apt-get install -y --no-install-recommends \
+        r-base=${R_BASE_VERSION} \
+        r-base-dev=${R_BASE_VERSION} \
+    \
     && pip install --no-cache-dir --upgrade \
         'rpy2==2.8.2' \
     \
-    && apt-get purge -t unstable -y --auto-remove \
+    && apt-get purge -y --auto-remove \
         r-base-dev \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
 
-RUN install.r futile.logger
+COPY ./install.r /usr/local/bin
+RUN chmod +x /usr/local/bin/install.r
 
-RUN install.r roxygen2
-
-RUN install.r testthat
-
-# RUN apt-get update \
-#     && apt-get install -t unstable -y --no-install-recommends \
-#         r-base-dev=${R_BASE_VERSION}* \
-#     && install.r \
-#         futile.logger \
-#         roxygen2 \
-#         testthat \
-#     && apt-get purge -t unstable -y --auto-remove \
-#         r-base-dev \
-#     && rm -rf /var/lib/apt/lists/* /tmp/*
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+    && install.r \
+        futile.logger \
+        roxygen2 \
+        testthat \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
 
 
 #-------------
