@@ -26,19 +26,16 @@ EOF
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 USER root
+WORKDIR /
 
 
 #------------------
 # group and user
 
-ENV GROUP=docker-users
-ENV USER=docker-user
-ENV HOME=/home/docker-user
-
-RUN groupadd --gid 1000 ${GROUP} \
-    && mkdir -p ${HOME} \
-    && useradd --uid 1000 --gid ${GROUP} --no-user-group --home ${HOME} --shell /bin/bash ${USER} \
-    && chown -R ${USER}:${GROUP} ${HOME}
+RUN groupadd --gid 1000 docker-users \
+    && mkdir -p /home/docker-user \
+    && useradd --uid 1000 --gid docker-users --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
+    && chown -R docker-user:docker-users /home/docker-user
 
 
 #------------------
@@ -97,9 +94,6 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 
 #-----------
 # startup
-
-USER ${USER}
-WORKDIR ${HOME}
 
 CMD ["/bin/bash"]
 EOF

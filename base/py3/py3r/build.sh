@@ -41,6 +41,7 @@ EOF
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 USER root
+WORKDIR /
 
 
 ENV R_BASE_VERSION 3.1.1-1
@@ -78,9 +79,6 @@ RUN apt-get update \
 
 #-------------
 # startup
-
-USER ${USER}
-WORKDIR ${HOME}
 
 CMD ["/bin/bash"]
 EOF

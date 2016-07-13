@@ -36,7 +36,7 @@ EOF
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 USER root
-
+WORKDIR /
 
 #--------------------------------------
 # Content of official python:3.5.2-slim
@@ -71,8 +71,8 @@ RUN set -ex \
 		make \
 		xz-utils \
 		zlib1g-dev \
-	' \
-	&& apt-get update && apt-get install -y $buildDeps --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+	    ' \
+	&& apt-get install -y $buildDeps --no-install-recommends \
 	&& curl -fSL "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" -o python.tar.xz \
 	&& curl -fSL "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" -o python.tar.xz.asc \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -100,9 +100,9 @@ RUN set -ex \
 		\) -exec rm -rf '{}' + \
 	&& apt-get purge -y --auto-remove $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* \
-	&& rm -rf /usr/src/python ~/.cache
+	&& rm -rf /usr/src/python ~/.cache \
     && apt-get -y autoremove \
-    && apt-get clean \
+    && apt-get clean
 
 # make some useful symlinks that are expected to exist
 RUN cd /usr/local/bin \
@@ -134,10 +134,6 @@ RUN pip install --no-cache-dir --upgrade \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
-
-
-USER ${USER}
-WORKDIr ${HOME}
 
 CMD ["python"]
 EOF
