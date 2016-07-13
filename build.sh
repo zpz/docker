@@ -8,6 +8,7 @@ thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 function build_one() {
     if [[ -f ./build.sh && -f ./version ]]; then
         bash ./build.sh
+        echo
         (( $? == 0 )) || exit 1
         for f in *; do
             if [[ -d "$f" && ! -L "$f" ]]; then

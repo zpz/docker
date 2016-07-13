@@ -10,6 +10,7 @@ function push_one() {
         local name=zppz/$(basename $(pwd)):$(cat ./version)
         echo pushing "${name}"...
         docker push "${name}"
+        echo
         (( $? == 0 )) || exit 1
         for f in *; do
             if [[ -d "$f" && ! -L "$f" ]]; then
@@ -22,7 +23,6 @@ function push_one() {
 
 
 echo pushing images to the cloud:
-
 echo
 (cd "${thisdir}"/base; push_one )
 
