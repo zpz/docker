@@ -43,6 +43,8 @@ function main {
 docker run --rm -it \\
     -e TZ=America/Los_Angeles \\
     -v "\$(pwd)":'${dockeruserhome}' \\
+    -u ${dockeruser} \\
+    -w ${dockeruserhome} \\
     ${image} \\
     \$@
 EOF

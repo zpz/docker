@@ -44,9 +44,11 @@ RUN groupadd --gid 1000 docker-users \
 # 'curl': about 15 MB.
 # 'locales': about 16MB.
 # 'vim': about 20MB.
+# 'ca-certificates' also installs 'libssl-1.0.0' and 'opssl'.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        ca-certificates \
         curl \
         less \
         locales \

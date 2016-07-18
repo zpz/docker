@@ -1,15 +1,18 @@
+set -o nounset
+set -o pipefail
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 parentdir="$( dirname "${thisdir}")"
+parent_name=zppz/$(basename "${parentdir}")
+parent_version=$(cat "${parentdir}"/version)
+PARENT="${parent_name}:${parent_version}"
 
 version=$(cat "${thisdir}"/version)
-parent_version=$(cat "${parentdir}/version")
 if [[ "${version}" < "${parent_version}" ]]; then
     echo "${parent_version}" > "${thisdir}/version"
     version=${parent_version}
 fi
-
-PARENT=zppz/$(basename "${parentdir}"):"${parent_version}"
 NAME=zppz/$(basename "${thisdir}"):"${version}"
 
 echo
@@ -30,6 +33,7 @@ EOF
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 USER root
+WORKDIR /
 
 
 #--------------
@@ -48,10 +52,13 @@ RUN apt-get update \
     && apt-get clean
 
 
-COPY ./bin/ /usr/local/bin/
-COPY ./sty/ /usr/local/share/texmf/tex/latex/zz/
-RUN chmod +x /usr/local/bin/* \
-    && texhash
+RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C /tmp/ \
+    && mv /tmp/latex-master/bin/* /usr/local/bin/ \
+    && mkdir -p /usr/local/share/texmf/tex/latex \
+    && mv /tmp/latex-master/sty /usr/local/share/texmf/tex/latex/zz \
+    && chmod +x /usr/local/bin/* \
+    && texhash \
+    && rm -rf /tmp/*
 
 
 # RUN apt-get update \
@@ -81,19 +88,11 @@ RUN chmod +x /usr/local/bin/* \
 #-----------
 # startup
 
-USER ${USER}
-WORKDIR ${HOME}
-
 CMD ["/bin/bash"]
 EOF
 
 echo
 echo Building image "'${NAME}'"
 echo
-curl -sL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C /tmp/
-mv /tmp/latex-master/bin "${thisdir}"/bin
-mv /tmp/latex-master/sty "${thisdir}"/sty
 docker build -t "${NAME}" "${thisdir}"
-rm -rf "${thisdir}"/bin "${thisdir}/sty"
-rm -rf /tmp/latex-master
 

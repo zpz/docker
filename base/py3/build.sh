@@ -40,6 +40,8 @@ WORKDIR /
 
 #--------------------------------------
 # Content of official python:3.5.2-slim
+# Adaptations:
+#  'ca-certificates', 'curl', 'libssl1.0.0' not needed, as are already installed.
 
 # remove several traces of debian python
 RUN apt-get purge -y python.*
@@ -55,11 +57,8 @@ ENV PYTHON_PIP_VERSION 8.1.2
 RUN set -ex \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-		ca-certificates \
 		libsqlite3-0 \
-		libssl1.0.0 \
 	&& buildDeps=' \
-		curl \
 		gcc \
 		libbz2-dev \
 		libc6-dev \
@@ -117,10 +116,12 @@ RUN cd /usr/local/bin \
 # Some more
 
 RUN pip install --no-cache-dir --upgrade \
-        'ipython==4.2.0' \
+        'ipython==5.0.0' \
         'numpy==1.11.1' \
         'pytest==2.9.2' \
+        'requests==2.10.0' \
         'sh==1.11' \
+        'toolz==0.8.0' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.1' \
         'pudb==2016.2' \
