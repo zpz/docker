@@ -111,31 +111,6 @@ RUN cd /usr/local/bin \
 	&& ln -s python3-config python-config
 
 
-#----------------------------------
-# Some more, including dev tools.
-
-RUN pip install --no-cache-dir --upgrade \
-        'ipython==5.0.0' \
-        'pytest==2.9.2' \
-        'requests==2.10.0' \
-        'sh==1.11' \
-        'toolz==0.8.0' \
-    && ln -s /usr/local/bin/py.test /usr/local/bin/pytest \
-    && pip install --no-cache-dir --upgrade \
-        'ipdb==0.10.1' \
-        'pudb==2016.2' \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-    && pip install --no-cache-dir --upgrade \
-        'line_profiler==1.0' \
-    && apt-get purge -y --auto-remove \
-        build-essential \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
-
-
 CMD ["python"]
 EOF
 
