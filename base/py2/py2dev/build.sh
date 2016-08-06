@@ -71,7 +71,6 @@ RUN apt-get update \
 RUN pip install --no-cache-dir --upgrade \
         'ipython==5.0.0' \
         'ipdb==0.10.1' \
-        'tornado==4.4.1' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
