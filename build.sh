@@ -2,6 +2,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+if (( $(date +%u) < 6 )); then
+    echo Today is not weekend! Please work on other things.
+    exit 1
+fi
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
