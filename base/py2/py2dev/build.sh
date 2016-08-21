@@ -39,7 +39,6 @@ WORKDIR /
 # Generally useful packages
 RUN pip install --no-cache-dir --upgrade \
         'click==6.6' \
-        'numpy==1.11.1' \
         'requests==2.11.0' \
         'sh==1.11' \
         'six==1.10.0' \

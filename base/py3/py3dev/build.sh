@@ -37,11 +37,9 @@ USER root
 WORKDIR /
 
 # Generally useful packages
-# 'numpy' takes 70M space.
 
 RUN pip install --no-cache-dir --upgrade \
         'click==6.6' \
-        'numpy==1.11.1' \
         'requests==2.11.0' \
         'sh==1.11' \
         'toolz==0.8.0'
