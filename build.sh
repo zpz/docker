@@ -4,7 +4,7 @@ set -o pipefail
 
 if (( $(date +%u) < 6 )); then
     echo Today is not weekend! Please work on other things.
-    #exit 1
+    exit 1
 fi
 
 thisfile="${BASH_SOURCE[0]}"
