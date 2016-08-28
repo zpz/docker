@@ -7,7 +7,7 @@ thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
 function push_one() {
     if [[ -f ./build.sh && -f ./version ]]; then
-        local name="$(cat .name):$(cat ./version)"
+        local name="$(cat ./name):$(cat ./version)"
         if [[ "${name}" == *'/'* ]]; then
             echo pushing "${name}"...
             docker push "${name}"
