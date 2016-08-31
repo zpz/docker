@@ -47,6 +47,7 @@ RUN pip install --no-cache-dir --upgrade \
 # Testing, Debugging, code analysis, code formatting
 
 RUN pip install --no-cache-dir --upgrade \
+        'coverage==4.2' \
         'nose==1.3.7' \
         'pudb==2016.2' \
         'pylint==1.6.4' \
