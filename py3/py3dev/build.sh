@@ -39,6 +39,7 @@ WORKDIR /
 # Generally useful packages
 
 RUN pip install --no-cache-dir --upgrade \
+        'aiohttp==1.0.2' \
         'click==6.6' \
         'requests==2.11.1' \
         'sh==1.11' \
@@ -48,12 +49,11 @@ RUN pip install --no-cache-dir --upgrade \
 
 RUN pip install --no-cache-dir --upgrade \
         'coverage==4.2' \
-        'nose==1.3.7' \
         'pudb==2016.2' \
         'pylint==1.6.4' \
-        'pytest==2.9.2' \
+        'pytest==3.0.2' \
         'pytest-cov==2.3.1' \
-        'yapf==0.11.0'
+        'yapf==0.11.1'
 
 # Documentation
 # 'graphviz' and 'make' are to be used with Sphinx.
@@ -77,7 +77,7 @@ RUN pip install --no-cache-dir --upgrade \
     && apt-get install -y --no-install-recommends \
         build-essential \
     && pip install --no-cache-dir --upgrade \
-        'notebook==4.2.2' \
+        'notebook==4.2.3' \
     && apt-get purge -y --auto-remove \
         build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
