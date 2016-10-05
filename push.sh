@@ -26,10 +26,10 @@ function push_one() {
 
 echo pushing images to the cloud:
 echo
-(cd "${thisdir}"/py2; push_one )
-(cd "${thisdir}"/py3; push_one )
-(cd "${thisdir}"/jdk; push_one )
-(cd "${thisdir}"/latex; push_one )
-(cd "${thisdir}"/jekyll; push_one )
+for f in "${thisdir}/*"; do
+    if [[ -d "$f" && ! -L "$f" ]]; then
+        ( cd "$f"; push_one )
+    fi
+done
 
 

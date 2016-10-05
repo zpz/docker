@@ -26,9 +26,9 @@ function build_one() {
 
 
 echo
-( cd "${thisdir}"/py2; build_one )
-( cd "${thisdir}"/py3; build_one )
-( cd "${thisdir}"/latex; build_one )
-( cd "${thisdir}"/jdk; build_one )
-( cd "${thisdir}"/jekyll; build_one )
+for f in "${thisdir}/*"; do
+    if [[ -d "$f" && ! -L "$f" ]]; then
+        ( cd "$f"; build_one )
+    fi
+done
 

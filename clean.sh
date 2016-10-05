@@ -33,11 +33,11 @@ function delete_one {
 
 echo deleting docker images ...
 echo
-( cd "${thisdir}"/py2; delete_one )
-( cd "${thisdir}"/py3; delete_one )
-( cd "${thisdir}"/jdk; delete_one )
-( cd "${thisdir}"/latex; delete_one )
-( cd "${thisdir}"/jekyll; delete_one )
+for f in "${thisdir}/*"; do
+    if [[ -d "$f" && ! -L "$f" ]]; then
+        ( cd "$f"; delete_one )
+    fi
+done
 
 if [[ -n "$(docker images | grep '<none>' | awk '{print $3}')" ]]; then
     echo

@@ -25,11 +25,7 @@ function install_one {
 function main {
     local thisfile="${BASH_SOURCE[0]}"
     local thisdir=$( cd "$( dirname "${thisfile}" )" && pwd )
-    ( cd "${thisdir}/py2"; install_one )
-    ( cd "${thisdir}/py3"; install_one )
-    ( cd "${thisdir}/latex"; install_one )
-    ( cd "${thisdir}/jdk"; install_one )
-    ( cd "${thisdir}/jekyll"; install_one )
+    ( cd "${thisdir}"; install_one )
 }
 
 
