@@ -40,6 +40,21 @@ function main {
     cat > "${target}" <<EOF
 #!/usr/bin/env bash
 
+# Usage: in the directory that contains the LaTeX source file, type
+#
+#   $ latex
+#
+# This is the present script and NOT the LaTeX engine command.
+# This will land in within a container, and the current directory
+# as well as all children recursively are mapped to the home direcotry
+# in the container.
+#
+# From there, do
+#
+#   $ tex2pdf source.tex
+#
+# to process, where 'source.tex' is the source file.
+
 docker run --rm -it \\
     -e TZ=America/Los_Angeles \\
     -v "\$(pwd)":'${dockeruserhome}' \\

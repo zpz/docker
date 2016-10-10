@@ -60,11 +60,8 @@ RUN curl -skL --retry 3 \
         | tar xz -C /tmp/ \
     && mv /tmp/${SPARK_PACKAGE} ${SPARK_HOME}
 
-ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-0.10.1-src.zip
+ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-0.10.3-src.zip
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
-
-RUN pip install --no-cache --upgrade \
-        'py4j==0.10.3'
 
 CMD ["/bin/bash"]
 EOF

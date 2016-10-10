@@ -78,12 +78,18 @@ RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C
 #     && chmod +x /usr/local/bin/* \
 #     && rm -rf /tmp/*
 
+EOF
+
+cat "$(dirname "${thisdir}")/img_dev_base" >> "${thisdir}/Dockerfile"
+
+cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 #-----------
 # startup
 
 CMD ["/bin/bash"]
 EOF
+
 
 echo
 echo Building image "'${NAME}'"
