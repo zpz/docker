@@ -38,10 +38,15 @@ USER root
 WORKDIR /
 
 # JAVA
+# How to find the latest version of Java:
+#   search 'oracle download java'
+#   click tab entitled 'Downloads'$
+#   download the desired file and note the URL in address bar, esp the '-bxx' part for the 'build' number.
+#
 ARG JAVA_MAJOR_VERSION=8
-ARG JAVA_UPDATE_VERSION=102
+ARG JAVA_UPDATE_VERSION=112
 ARG JAVA_VERSION=${JAVA_MAJOR_VERSION}u${JAVA_UPDATE_VERSION}
-ARG JAVA_BUILD_NUMBER=14
+ARG JAVA_BUILD_NUMBER=15
 ENV JAVA_HOME /usr/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_UPDATE_VERSION}
 ENV PATH $PATH:$JAVA_HOME/bin
 RUN curl -skL --retry 3 --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
@@ -51,7 +56,10 @@ RUN curl -skL --retry 3 --header "Cookie: oraclelicense=accept-securebackup-cook
     && rm -rf $JAVA_HOME/man
 
 # SPARK
-ENV SPARK_VERSION 2.0.1
+# How to find the latest version of spark:
+# Go to official Apache Spark site, go to 'download'.
+#
+ENV SPARK_VERSION 2.0.2
 ENV SPARK_PACKAGE spark-${SPARK_VERSION}-bin-hadoop2.7
 ENV SPARK_HOME /usr/local/spark
 ENV PATH $PATH:${SPARK_HOME}/bin
@@ -60,6 +68,7 @@ RUN curl -skL --retry 3 \
         | tar xz -C /tmp/ \
     && mv /tmp/${SPARK_PACKAGE} ${SPARK_HOME}
 
+# Unpack the downloaded Spark source tar ball, find out the version of `py4j`.
 ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-0.10.3-src.zip
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
 

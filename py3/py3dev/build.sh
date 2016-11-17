@@ -49,9 +49,9 @@ RUN pip install --no-cache-dir --upgrade \
         'coverage==4.2' \
         'pudb==2016.2' \
         'pylint==1.6.4' \
-        'pytest==3.0.3' \
-        'pytest-cov==2.3.1' \
-        'yapf==0.12.1'
+        'pytest==3.0.4' \
+        'pytest-cov==2.4.0' \
+        'yapf==0.13.2'
 
 # Documentation
 # 'graphviz' and 'make' are to be used with Sphinx.
