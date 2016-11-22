@@ -26,7 +26,7 @@ function push_one() {
 
 echo pushing images to the cloud:
 echo
-for f in "${thisdir}/*"; do
+for f in ${thisdir}/*; do
     if [[ -d "$f" && ! -L "$f" ]]; then
         ( cd "$f"; push_one )
     fi

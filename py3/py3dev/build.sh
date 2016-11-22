@@ -36,23 +36,6 @@ cat >> "${thisdir}/Dockerfile" <<'EOF'
 USER root
 WORKDIR /
 
-# Generally useful packages
-
-RUN pip install --no-cache-dir --upgrade \
-        'click==6.6' \
-        'sh==1.11' \
-        'toolz==0.8.0'
-
-# Testing, Debugging, code analysis, code formatting
-
-RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.2' \
-        'pudb==2016.2' \
-        'pylint==1.6.4' \
-        'pytest==3.0.4' \
-        'pytest-cov==2.4.0' \
-        'yapf==0.13.2'
-
 # Documentation
 # 'graphviz' and 'make' are to be used with Sphinx.
 RUN apt-get update \
@@ -85,6 +68,14 @@ RUN pip install --no-cache-dir --upgrade \
 # By default, Jupyter Notebook uses port 8888.
 # Launch a container with Jupyter Notebook server like this:
 # $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user
+
+# Testing, Debugging, code analysis, code formatting
+
+RUN pip install --no-cache-dir --upgrade \
+        'pudb==2016.2' \
+        'pylint==1.6.4' \
+        'pytest==3.0.4' \
+        'yapf==0.14.0'
 
 CMD ["python"]
 EOF

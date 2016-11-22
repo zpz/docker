@@ -25,7 +25,11 @@ function install_one {
 function main {
     local thisfile="${BASH_SOURCE[0]}"
     local thisdir=$( cd "$( dirname "${thisfile}" )" && pwd )
-    ( cd "${thisdir}"; install_one )
+    for f in *; do
+        if [[ -d "$f" && ! -L "$f" ]]; then
+            ( cd "$f"; install_one )
+        fi
+    done
 }
 
 

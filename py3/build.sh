@@ -37,6 +37,9 @@ cat >> "${thisdir}/Dockerfile" <<EOF
 #-----------
 # startup
 
+run pip install --no-cache-dir --upgrade \
+        'pip==9.0.1'
+
 CMD ["/bin/bash"]
 EOF
 
