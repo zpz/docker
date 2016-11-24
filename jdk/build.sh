@@ -39,7 +39,7 @@ CMD ["/bin/bash"]
 EOF
 
 echo
-echo Creating image "'${NAME}'"
+echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
 

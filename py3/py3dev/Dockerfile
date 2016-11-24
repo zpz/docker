@@ -28,7 +28,6 @@ RUN apt-get update \
 
 RUN pip install --no-cache-dir --upgrade \
         'ipython==5.1.0' \
-        'ipdb==0.10.1' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
@@ -47,6 +46,7 @@ RUN pip install --no-cache-dir --upgrade \
 # Testing, Debugging, code analysis, code formatting
 
 RUN pip install --no-cache-dir --upgrade \
+        'ipdb==0.10.1' \
         'pudb==2016.2' \
         'pylint==1.6.4' \
         'pytest==3.0.4' \

@@ -78,6 +78,6 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 #-----------
 # startup
 
-run pip install --no-cache-dir --upgrade         'pip==9.0.1'
+RUN pip install --no-cache-dir --upgrade         'pip==9.0.1'
 
 CMD ["/bin/bash"]

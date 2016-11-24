@@ -69,14 +69,15 @@ RUN curl -skL --retry 3 \
     && mv /tmp/${SPARK_PACKAGE} ${SPARK_HOME}
 
 # Unpack the downloaded Spark source tar ball, find out the version of `py4j`.
-ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-0.10.3-src.zip
+ENV PY4J_VERSION 0.10.3
+ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-${PY4J_VERSION}-src.zip
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
 
 CMD ["/bin/bash"]
 EOF
 
 echo
-echo building image "'${NAME}'"...
+echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
 
