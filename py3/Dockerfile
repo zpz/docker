@@ -24,22 +24,13 @@ RUN groupadd --gid 1000 docker-users \
 # System and basic
 
 # 'curl': about 15 MB.
-# 'locales': about 16MB.
 # 'vim': about 20MB.
-# 'ca-certificates' also installs 'libssl-1.0.0' and 'opssl'.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
         curl \
         less \
-        locales \
-        tree \
         vim \
-    \
-    && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    && locale-gen en_US.UTF-8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8 \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \
@@ -53,13 +44,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
-
-# Locale
-#   default is C.UTF-8
-
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
 
 ENV SHELL=/bin/bash
 ENV EDITOR vim
@@ -75,9 +59,45 @@ RUN chmod +x /usr/bin/tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
 # TODO: problematic when I terminate some programs within container.
 
-#-----------
-# startup
+# Documentation
+# 'graphviz' and 'make' are to be used with Sphinx.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        graphviz \
+        make \
+    && pip install --no-cache-dir --upgrade \
+        'Sphinx==1.4.8' \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
 
-RUN pip install --no-cache-dir --upgrade         'pip==9.0.1'
+# IPython, Jupyter Notebook
+# notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
-CMD ["/bin/bash"]
+RUN pip install --no-cache-dir --upgrade \
+        'ipython==5.1.0' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+    && pip install --no-cache-dir --upgrade \
+        'notebook==4.2.3' \
+    && apt-get purge -y --auto-remove \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+
+# By default, Jupyter Notebook uses port 8888.
+# Launch a container with Jupyter Notebook server like this:
+# $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user
+
+# Testing, Debugging, code analysis, code formatting
+
+RUN pip install --no-cache-dir --upgrade \
+        'ipdb==0.10.1' \
+        'pudb==2016.2' \
+        'pylint==1.6.4' \
+        'pytest==3.0.4' \
+        'yapf==0.14.0'
+
+CMD ["python"]

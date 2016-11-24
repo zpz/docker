@@ -11,22 +11,13 @@ RUN groupadd --gid 1000 docker-users \
 # System and basic
 
 # 'curl': about 15 MB.
-# 'locales': about 16MB.
 # 'vim': about 20MB.
-# 'ca-certificates' also installs 'libssl-1.0.0' and 'opssl'.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
         curl \
         less \
-        locales \
-        tree \
         vim \
-    \
-    && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
-    && locale-gen en_US.UTF-8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8 \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \
@@ -40,13 +31,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
-
-# Locale
-#   default is C.UTF-8
-
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
 
 ENV SHELL=/bin/bash
 ENV EDITOR vim
