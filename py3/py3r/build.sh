@@ -52,7 +52,7 @@ RUN apt-get update \
         r-base-dev=${R_BASE_VERSION} \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2==2.8.3' \
+        'rpy2==2.8.4' \
     \
     && apt-get purge -y --auto-remove \
         r-base-dev \
