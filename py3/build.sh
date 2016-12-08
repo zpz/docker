@@ -68,24 +68,22 @@ RUN pip install --no-cache-dir --upgrade \
 # Testing, Debugging, code analysis, code formatting
 
 RUN pip install --no-cache-dir --upgrade \
+        'coverage==4.2' \
+        'flake8==3.2.1' \
         'ipdb==0.10.1' \
         'pudb==2016.2' \
+        'pyflakes==1.3.0' \
         'pylint==1.6.4' \
         'pytest==3.0.4' \
         'yapf==0.14.0'
 
-# Python header files (python3-dev on linux)
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        xz-utils \
-    && mkdir /tmp/python \
-    && target="https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-${PYTHON_VERSION}.tar.xz" \
-    && curl -skL ${target} | tar -xJC /tmp/python --strip-components=1 \
-    && mv /tmp/python/Include /usr/include/python3.5m \
-    && ln -s /usr/include/python3.5m /usr/include/python3.5 \
+        build-essential \
+    && pip install --no-cache-dir --upgrade \
+        'line_profiler==2.0' \
     && apt-get purge -y --auto-remove \
-        xz-utils \
+        build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean
