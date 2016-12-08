@@ -15,8 +15,14 @@ RUN groupadd --gid 1000 docker-users \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
         curl \
+        g++ \
+        gcc \
         less \
+        libc6-dev \
+        make \
         vim \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \

@@ -42,15 +42,12 @@ RUN pip install --no-cache-dir --upgrade \
         'bokeh==0.12.3' \
         'fastavro==0.11.1' \
         'numpy==1.11.2' \
+        'pandas==0.19.1' \
         'toolz==0.8.0'
 
 # freetype and xft are required by matplotlib
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-    && pip install --no-cache-dir --upgrade \
-        'pandas==0.19.1' \
     && apt-get install -y --no-install-recommends \
         libfreetype6 \
         libfreetype6-dev \
@@ -76,8 +73,6 @@ RUN apt-get update \
         'statsmodels==0.8.0rc1' \
     && pip install --no-cache-dir --upgrade \
         'scikit-learn==0.18' \
-    && apt-get purge -y --auto-remove \
-        build-essential \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
