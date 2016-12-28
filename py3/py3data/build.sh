@@ -38,12 +38,12 @@ USER root
 WORKDIR /
 
 RUN pip install --no-cache-dir --upgrade \
-        'arrow==0.8.0' \
+        'arrow==0.10.0' \
         'bokeh==0.12.3' \
-        'fastavro==0.11.1' \
+        'fastavro==0.12.1' \
         'numpy==1.11.2' \
-        'pandas==0.19.1' \
-        'toolz==0.8.0'
+        'pandas==0.19.2' \
+        'toolz==0.8.2'
 
 # freetype and xft are required by matplotlib
 
@@ -53,7 +53,7 @@ RUN apt-get update \
         libfreetype6-dev \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
-        'matplotlib==2.0.0b4' \
+        'matplotlib==2.0.0rc2' \
     && apt-get purge -y --auto-remove \
         libfreetype6-dev \
         libxft-dev \
@@ -72,7 +72,7 @@ RUN apt-get update \
         'patsy==0.4.1' \
         'statsmodels==0.8.0rc1' \
     && pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.18' \
+        'scikit-learn==0.18.1' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y

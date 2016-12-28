@@ -38,7 +38,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.4.8' \
+        'Sphinx==1.5.1' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
@@ -49,7 +49,7 @@ RUN apt-get update \
 
 RUN pip install --no-cache-dir --upgrade \
         'ipython==5.1.0' \
-        'notebook==4.2.3'
+        'notebook==4.3.1'
 
 # By default, Jupyter Notebook uses port 8888.
 # Launch a container with Jupyter Notebook server like this:
@@ -58,14 +58,15 @@ RUN pip install --no-cache-dir --upgrade \
 # Testing, Debugging, code analysis, code formatting
 
 RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.2' \
+        'coverage==4.3' \
         'flake8==3.2.1' \
         'ipdb==0.10.1' \
         'line_profiler==2.0' \
+        'memory_profiler==0.41' \
         'pudb==2016.2' \
         'pyflakes==1.3.0' \
         'pylint==1.6.4' \
-        'pytest==3.0.4' \
+        'pytest==3.0.5' \
         'yapf==0.14.0'
 
 CMD ["python"]
