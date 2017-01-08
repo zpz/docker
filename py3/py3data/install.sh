@@ -1,7 +1,7 @@
 set -o nounset
 set -o pipefail
 
-cmdname=py3
+cmdname=py3data
 hostworkdir="${HOME}/work"
 dockeruser=docker-user
 defaultcmd=python
