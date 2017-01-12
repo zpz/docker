@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.5.2-slim"
+PARENT="python:3.6.0-slim"
 
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
@@ -68,6 +68,17 @@ RUN pip install --no-cache-dir --upgrade \
         'pylint==1.6.4' \
         'pytest==3.0.5' \
         'yapf==0.14.0'
+
+# Generally useful packages.
+# Do minimize the number and dependencies here!
+# Many packages are installed as dependencies anyway.
+# Being listed here makes the availability explicit.
+
+RUN pip install --no-cache-dir --upgrade \
+        'arrow==0.10.0' \
+        'numpy==1.12.0rc2' \
+        'requests==2.12.4' \
+        'toolz==0.8.2'
 
 CMD ["python"]
 EOF
