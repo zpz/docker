@@ -24,6 +24,8 @@ RUN apt-get update \
         libc6-dev \
         make \
         vim \
+        xz-utils \
+        zlib1g-dev \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \
