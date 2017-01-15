@@ -36,7 +36,10 @@ USER root
 WORKDIR /
 
 RUN pip install --no-cache-dir --upgrade \
-        'cython==0.25.2'
+        'cython==0.25.2' \
+        'pybind11==2.0.1'
+
+# `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
 
 ENV LLVM_VERSION=3.8
 
