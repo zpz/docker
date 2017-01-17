@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.6.0-slim"
+PARENT="python:3.5.2-slim"
 
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
