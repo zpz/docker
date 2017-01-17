@@ -35,8 +35,11 @@ RUN apt-get update \
         gcc \
         less \
         libc6-dev \
+        libtool \
         make \
         vim \
+        xz-utils \
+        zlib1g-dev \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \
@@ -58,7 +61,7 @@ ENV EDITOR vim
 #------------------
 # entrypoint
 
-ENV TINI_VERSION v0.13.0
+ENV TINI_VERSION v0.13.2
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
 RUN chmod +x /usr/bin/tini
 

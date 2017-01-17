@@ -22,6 +22,7 @@ RUN apt-get update \
         gcc \
         less \
         libc6-dev \
+        libtool \
         make \
         vim \
         xz-utils \

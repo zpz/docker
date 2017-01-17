@@ -75,10 +75,8 @@ RUN pip install --no-cache-dir --upgrade \
 # Being listed here makes the availability explicit.
 
 RUN pip install --no-cache-dir --upgrade \
-        'arrow==0.10.0' \
         'numpy==1.12.0rc2' \
-        'requests==2.12.4' \
-        'toolz==0.8.2'
+        'requests==2.12.4'
 
 CMD ["python"]
 EOF

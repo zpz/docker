@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3data:20161228'
+# Dockerfile for image 'zppz/py3data:20170114'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,7 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20161228
+FROM zppz/py3:20170114
 
 USER root
 WORKDIR /
