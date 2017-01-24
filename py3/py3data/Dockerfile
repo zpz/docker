@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3data:20170114'
+# Dockerfile for image 'zppz/py3data:20170122'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,7 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20170114
+FROM zppz/py3:20170122
 
 USER root
 WORKDIR /
@@ -29,7 +29,7 @@ RUN apt-get update \
         libfreetype6-dev \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
-        'matplotlib==2.0.0rc2' \
+        'matplotlib==2.0.0' \
     && apt-get purge -y --auto-remove \
         libfreetype6-dev \
         libxft-dev \

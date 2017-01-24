@@ -1,10 +1,10 @@
 set -o nounset
 set -o pipefail
 
-cmdname=py3
+cmdname=py3skl-dev
 hostworkdir="${HOME}/work"
 dockeruser=docker-user
-defaultcmd=python
+defaultcmd=/bin/bash
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
@@ -25,12 +25,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-launchdir=\$(pwd)
-if [[ "\${launchdir}" == "${hostworkdir}"* ]]; then
-    workdir="${dockerworkdir}""\${launchdir#${hostworkdir}}"
-else
-    workdir="${dockerworkdir}"
-fi
+workdir="${dockerworkdir}/src/github-zpz/scikit-learn"
 
 ARGS="\\
     -v "${hostworkdir}":"${dockerworkdir}" \\
@@ -38,10 +33,8 @@ ARGS="\\
     -e LOGDIR="${dockerworkdir}/log" \\
     -e DATADIR="${dockerworkdir}/data" \\
     -e TMPDIR="${dockerworkdir}/tmp" \\
-    -e PYTHONPATH="${dockerworkdir}/src/github-zpz:$PYTHONPATH" \\
+    -e PYTHONPATH="${dockerworkdir}/src/github-zpz/scikit-learn" \
     -u ${dockeruser} \\
-    -e ENVIRONMENT_NAME=${imgname} \\
-    -e ENVIRONMENT_VERSION=${imgversion} \\
     --rm -it \\
     -e TZ=America/Los_Angeles"
 

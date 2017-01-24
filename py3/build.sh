@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.5.2-slim"
+PARENT="python:3.6.0-slim"
 
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
@@ -75,7 +75,7 @@ RUN pip install --no-cache-dir --upgrade \
 # Being listed here makes the availability explicit.
 
 RUN pip install --no-cache-dir --upgrade \
-        'numpy==1.12.0rc2' \
+        'numpy==1.12.0' \
         'requests==2.12.4'
 
 CMD ["python"]

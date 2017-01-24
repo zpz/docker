@@ -70,6 +70,10 @@ RUN groupadd --gid 1000 docker-users \
     && useradd --uid 1000 --gid docker-users --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
     && chown -R docker-user:docker-users /home/docker-user
 
+# If root privilage is needed, install `sudo`, and add
+# RUN bash -c "echo -e '1234\1234' | passwd docker-user" \
+#   && adduser docker-user admin
+
 
 #------------------
 # System and basic

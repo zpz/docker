@@ -1,7 +1,7 @@
 set -o nounset
 set -o pipefail
 
-cmdname=py3
+cmdname=py34
 hostworkdir="${HOME}/work"
 dockeruser=docker-user
 defaultcmd=python
@@ -38,7 +38,6 @@ ARGS="\\
     -e LOGDIR="${dockerworkdir}/log" \\
     -e DATADIR="${dockerworkdir}/data" \\
     -e TMPDIR="${dockerworkdir}/tmp" \\
-    -e PYTHONPATH="${dockerworkdir}/src/github-zpz:$PYTHONPATH" \\
     -u ${dockeruser} \\
     -e ENVIRONMENT_NAME=${imgname} \\
     -e ENVIRONMENT_VERSION=${imgversion} \\
@@ -46,17 +45,7 @@ ARGS="\\
     -e TZ=America/Los_Angeles"
 
 if (( \$# > 0 )); then
-    if [[ "\$1" == "ipynb" ]]; then
-        ARGS="\${ARGS} \\
-    --expose=8888 \\
-    -p 8888:8888"
-        workdir="${dockerworkdir}"
-        shift
-        command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 \\
-            --NotebookApp.notebook_dir='\${workdir}' --NotebookApp.token='' \$@"
-    else
-        command="\$@"
-    fi
+    command="\$@"
 else
     command="${defaultcmd}"
 fi
