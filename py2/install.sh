@@ -1,7 +1,7 @@
 set -o nounset
 set -o pipefail
 
-cmdname=py27
+cmdname=py2
 hostworkdir="${HOME}/work"
 dockeruser=docker-user
 defaultcmd=python
@@ -39,8 +39,6 @@ ARGS="\\
     -e DATADIR="${dockerworkdir}/data" \\
     -e TMPDIR="${dockerworkdir}/tmp" \\
     -u ${dockeruser} \\
-    -e ENVIRONMENT_NAME=${imgname} \\
-    -e ENVIRONMENT_VERSION=${imgversion} \\
     --rm -it \\
     -e TZ=America/Los_Angeles"
 

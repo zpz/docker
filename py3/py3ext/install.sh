@@ -39,8 +39,6 @@ ARGS="\\
     -e DATADIR="${dockerworkdir}/data" \\
     -e TMPDIR="${dockerworkdir}/tmp" \\
     -u ${dockeruser} \\
-    -e ENVIRONMENT_NAME=${imgname} \\
-    -e ENVIRONMENT_VERSION=${imgversion} \\
     --rm -it \\
     -e TZ=America/Los_Angeles"
 

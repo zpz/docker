@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3data:20170122'
+# Dockerfile for image 'py3data:20170122'
 
 # This is a catch-all image for learning purposes.
 

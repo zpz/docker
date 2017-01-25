@@ -38,10 +38,7 @@ ARGS="\\
     -e LOGDIR="${dockerworkdir}/log" \\
     -e DATADIR="${dockerworkdir}/data" \\
     -e TMPDIR="${dockerworkdir}/tmp" \\
-    -e PYTHONPATH="${dockerworkdir}/src/github-zpz:$PYTHONPATH" \\
     -u ${dockeruser} \\
-    -e ENVIRONMENT_NAME=${imgname} \\
-    -e ENVIRONMENT_VERSION=${imgversion} \\
     --rm -it \\
     -e TZ=America/Los_Angeles"
 
