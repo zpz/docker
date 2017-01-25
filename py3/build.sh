@@ -43,18 +43,6 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean -y
 
-
-# IPython, Jupyter Notebook
-# notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
-
-RUN pip install --no-cache-dir --upgrade \
-        'ipython==5.1.0' \
-        'notebook==4.3.1'
-
-# By default, Jupyter Notebook uses port 8888.
-# Launch a container with Jupyter Notebook server like this:
-# $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user
-
 # Testing, Debugging, code analysis, code formatting
 
 RUN pip install --no-cache-dir --upgrade \
@@ -69,14 +57,20 @@ RUN pip install --no-cache-dir --upgrade \
         'pytest==3.0.5' \
         'yapf==0.14.0'
 
-# Generally useful packages.
-# Do minimize the number and dependencies here!
-# Many packages are installed as dependencies anyway.
-# Being listed here makes the availability explicit.
+
+# IPython, Jupyter Notebook, other commomly useful packages (do minimize the number of them)
+# notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
 RUN pip install --no-cache-dir --upgrade \
+        'ipython==5.1.0' \
+        'notebook==4.3.1' \
         'numpy==1.12.0' \
         'requests==2.12.4'
+
+# By default, Jupyter Notebook uses port 8888.
+# Launch a container with Jupyter Notebook server like this:
+# $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user
+
 
 CMD ["python"]
 EOF

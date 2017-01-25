@@ -14,16 +14,15 @@ USER root
 WORKDIR /
 
 RUN pip install --no-cache-dir --upgrade \
-        'arrow==0.10.0' \
-        'bokeh==0.12.3' \
         'fastavro==0.12.1' \
-        'numpy==1.11.2' \
         'pandas==0.19.2' \
         'toolz==0.8.2'
 
 # freetype and xft are required by matplotlib
 
-RUN apt-get update \
+RUN pip install --no-cache-dir --upgrade \
+        'bokeh==0.12.4' \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6 \
         libfreetype6-dev \
@@ -35,22 +34,14 @@ RUN apt-get update \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
         'seaborn==0.7.1' \
-    && apt-get install -y --no-install-recommends \
-        liblapack3 \
-        liblapack-dev \
-        gfortran \
-    && pip install --no-cache-dir --upgrade \
-        'scipy==0.18.1' \
-    && apt-get purge -y --auto-remove \
-        liblapack-dev \
-        gfortran \
-    && pip install --no-cache-dir --upgrade \
-        'patsy==0.4.1' \
-        'statsmodels==0.8.0rc1' \
-    && pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.18.1' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
+
+RUN pip install --no-cache-dir --upgrade \
+        'scipy==0.18.1' \
+        'patsy==0.4.1' \
+        'statsmodels==0.8.0rc1' \
+        'scikit-learn==0.18.1'
 
 CMD ["/bin/bash"]
