@@ -6,7 +6,7 @@
 # DO NOT EDIT.
 #===========================
 
-FROM python:3.5.2-slim
+FROM python:3.5.3-slim
 
 USER root
 WORKDIR /
