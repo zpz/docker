@@ -41,7 +41,6 @@ RUN apt-get update \
         libc6-dev \
         libtool \
         make \
-        cmake \
         vim \
         xz-utils \
         zlib1g-dev \
@@ -66,17 +65,15 @@ ENV EDITOR vim
 #------------------
 # entrypoint
 
-ENV TINI_VERSION v0.13.2
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-RUN chmod +x /usr/bin/tini
+#  ENV TINI_VERSION v0.13.2
+#  ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+#  RUN chmod +x /usr/bin/tini
+#
+#  ENTRYPOINT ["/usr/bin/tini", "--"]
+#  # TODO: problematic when I terminate some programs within container.
 
-ENTRYPOINT ["/usr/bin/tini", "--"]
-# TODO: problematic when I terminate some programs within container.
 
 RUN pip install --no-cache-dir --upgrade \
-        'ipython==5.1.0' \
-        'pytest==3.0.5' \
-        'numpy==1.12.0' \
-        'requests==2.12.4'
+        'pytest==3.0.5'
 
 CMD ["python"]
