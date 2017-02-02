@@ -36,7 +36,9 @@ USER root
 WORKDIR /
 
 RUN pip install --no-cache-dir --upgrade \
+        'cffi==1.9.1' \
         'cython==0.25.2' \
+        'cppimport==16.6.24' \
         'easycython==1.0.4' \
         'pybind11==2.0.1'
 

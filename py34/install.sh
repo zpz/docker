@@ -40,7 +40,7 @@ ARGS="\\
     -e TMPDIR="${dockerworkdir}/tmp" \\
     -u ${dockeruser} \\
     -e ENVIRONMENT_NAME=${imgname} \\
-    -e ENVIRONMENT_VERSION=${imgversion} \\
+    -w "\${workdir}" \\
     --rm -it \\
     -e TZ=America/Los_Angeles"
 
@@ -49,9 +49,6 @@ if (( \$# > 0 )); then
 else
     command="${defaultcmd}"
 fi
-
-ARGS="\${ARGS} \\
-    -w "\${workdir}""
 
 docker run \${ARGS} ${imgname}:${imgversion} \$command
 EOF

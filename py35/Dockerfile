@@ -41,6 +41,7 @@ RUN apt-get update \
         libc6-dev \
         libtool \
         make \
+        cmake \
         vim \
         xz-utils \
         zlib1g-dev \

@@ -38,28 +38,19 @@ ARGS="\\
     -e LOGDIR="${dockerworkdir}/log" \\
     -e DATADIR="${dockerworkdir}/data" \\
     -e TMPDIR="${dockerworkdir}/tmp" \\
+    -e ENVIRONMENT_NAME=${imgname} \\
     -u ${dockeruser} \\
     --rm -it \\
+    --expose=8888 \\
+    -p 8888:8888 \\
+    -w "\${workdir}" \\
     -e TZ=America/Los_Angeles"
 
 if (( \$# > 0 )); then
-    if [[ "\$1" == "ipynb" ]]; then
-        ARGS="\${ARGS} \\
-    --expose=8888 \\
-    -p 8888:8888"
-        workdir="${dockerworkdir}"
-        shift
-        command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 \\
-            --NotebookApp.notebook_dir='\${workdir}' --NotebookApp.token='' \$@"
-    else
-        command="\$@"
-    fi
+    command="\$@"
 else
     command="${defaultcmd}"
 fi
-
-ARGS="\${ARGS} \\
-    -w "\${workdir}""
 
 docker run \${ARGS} ${imgname}:${imgversion} \$command
 EOF

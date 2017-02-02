@@ -52,9 +52,10 @@ ENV EDITOR vim
 #------------------
 # entrypoint
 
-ENV TINI_VERSION v0.13.2
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-RUN chmod +x /usr/bin/tini
+#  ENV TINI_VERSION v0.13.2
+#  ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+#  RUN chmod +x /usr/bin/tini
+#
+#  ENTRYPOINT ["/usr/bin/tini", "--"]
+#  # TODO: problematic when I terminate some programs within container.
 
-ENTRYPOINT ["/usr/bin/tini", "--"]
-# TODO: problematic when I terminate some programs within container.

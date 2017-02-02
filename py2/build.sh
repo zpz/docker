@@ -29,15 +29,12 @@ WORKDIR /
 
 EOF
 
-cat "$(dirname "${thisdir}")/img_dev_base" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/dev_base.inc" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'ipython==5.1.0' \
-        'pytest==3.0.5' \
-        'numpy==1.12.0' \
-        'requests==2.12.4'
+        'pytest==3.0.5'
 
 CMD ["python"]
 EOF

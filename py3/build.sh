@@ -29,7 +29,7 @@ WORKDIR /
 
 EOF
 
-cat "$(dirname "${thisdir}")/img_dev_base" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/dev_base.inc" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
@@ -38,38 +38,43 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.5.1' \
+        'Sphinx==1.5.2' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
 
-# Testing, Debugging, code analysis, code formatting
+# Testing, Debugging, code analysis, code formatting.
+# IPython, Jupyter Notebook, other commomly useful packages.
+# Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
 RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.3' \
+        'coverage==4.3.4' \
         'flake8==3.2.1' \
-        'ipdb==0.10.1' \
+        'ipdb==0.10.2' \
+        'ipython==5.2.1' \
         'line_profiler==2.0' \
-        'memory_profiler==0.41' \
-        'pudb==2016.2' \
-        'pyflakes==1.3.0' \
-        'pylint==1.6.4' \
-        'pytest==3.0.5' \
-        'yapf==0.14.0'
-
-
-# IPython, Jupyter Notebook, other commomly useful packages (do minimize the number of them)
-# notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
-
-RUN pip install --no-cache-dir --upgrade \
-        'ipython==5.1.0' \
-        'notebook==4.3.1' \
+        'memory_profiler==0.43' \
+        'notebook==4.3.2' \
         'numpy==1.12.0' \
-        'requests==2.12.4'
+        'pudb==2016.2' \
+        'pyflakes==1.5.0' \
+        'pylint==1.6.5' \
+        'pytest==3.0.6' \
+        'requests==2.13.0' \
+        'snakeviz==0.4.1' \
+        'yapf==0.15.2'
+
 
 # By default, Jupyter Notebook uses port 8888.
 # Launch a container with Jupyter Notebook server like this:
-# $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user
+# $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user --NotebookApp.token=''
+
+EXPOSE 8888
+
+RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ipynb \
+    && echo >> /usr/local/bin/ipynb \
+    && echo "jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=\~ --NotebookApp.token=''" >> /usr/local/bin/ipynb \\
+    && chmod +x /usr/local/bin/ipynb
 
 
 CMD ["python"]
