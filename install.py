@@ -28,7 +28,7 @@ ARGS="\\
     -e LOGDIR="{dockerworkdir}/log" \\
     -e DATADIR="{dockerworkdir}/data" \\
     -e TMPDIR="{dockerworkdir}/tmp" \\
-    -e ENVIRONMENT_NAME={imgname} \\
+    -e ENVIRONMENT_NAME={envname} \\
     -e PYTHONPATH={pypath} \\
     -u {dockeruser} \\
     --rm -it \\
@@ -58,6 +58,7 @@ docker run ${{ARGS}} {imgname}:{imgversion} ${{command}}
            imgversion=imgversion,
            defaultcmd=defaultcmd,
            pypath=pypath,
+           envname=envname,
            )
 
     return text
@@ -79,10 +80,6 @@ if __name__ == '__main__':
         help='default command to launch in the Docker container',
     )
     p.add_argument(
-        '--imgdir',
-        help='diretory where the Dockerfile is located',
-    )
-    p.add_argument(
         '--dockeruser',
         help='username in the Docker container',
     )
@@ -92,17 +89,38 @@ if __name__ == '__main__':
         default=[],
         help='add the specified directory to PYTHONPATH; the directory starts below `hostworkdir`',
     )
+    p.add_argument(
+        '--imgname',
+        help='name of Docker image',
+    )
+    p.add_argument(
+        '--imgversion',
+        help='version of Docker image',
+    )
     args = p.parse_args()
 
-    imgdir = args.imgdir or os.getcwd()
-    imgname = path.join(imgdir, 'name')
-    if not path.isfile(imgname):
-        exit()
-    imgname = open(imgname).read().strip('\n')
-    imgversion = path.join(imgdir, 'version')
-    if not path.isfile(imgversion):
-        exit()
-    imgversion = open(imgversion).read().strip('\n')
+    imgname = args.imgname
+    imgversion = args.imgversion
+    if imgname is None or imgversion is None:
+        imgdir = os.getcwd()
+        if imgname is None:
+            imgname = path.join(imgdir, 'name')
+            if not path.isfile(imgname):
+                imgname = path.join(path.dirname(imgdir), 'name')
+                if not path.isfile(imgname):
+                    exit()
+            imgname = open(imgname).read().strip('\n')
+            envname = path.basename(imgdir)
+        else:
+            envname = imgname
+        if imgversion is None:
+            imgversion = path.join(imgdir, 'version')
+            if not path.isfile(imgversion):
+                imgversion = path.join(path.dirname(imgdir), 'version')
+                if not path.isfile(imgversion):
+                    exit()
+            imgversion = open(imgversion).read().strip('\n')
+
 
     hosthomedir = os.environ['HOME']
     hostworkdir = path.join(hosthomedir, 'work')

@@ -96,7 +96,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.5.2' \
+        'Sphinx>=1.5.2' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
@@ -106,23 +106,24 @@ RUN apt-get update \
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
 RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.3.4' \
-        'flake8==3.2.1' \
-        'ipdb==0.10.2' \
-        'ipython==5.2.1' \
-        'line_profiler==2.0' \
-        'memory_profiler==0.43' \
-        'notebook==4.3.2' \
-        'numpy==1.12.0' \
+        'coverage>=4.3.4' \
+        'Faker>=0.7.7' \
+        'flake8>=3.2.1' \
+        'ipdb>=0.10.2' \
+        'ipython>=5.2.1' \
+        'line_profiler>=2.0' \
+        'memory_profiler>=0.43' \
+        'notebook>=4.3.2' \
+        'numpy>=1.12.0' \
         'pip>=9.0.1' \
-        'pudb==2016.2' \
-        'pyflakes==1.5.0' \
-        'pylint==1.6.5' \
-        'pytest==3.0.6' \
-        'requests==2.13.0' \
-        'snakeviz==0.4.1' \
+        'pudb>=2016.2' \
+        'pyflakes>=1.5.0' \
+        'pylint>=1.6.5' \
+        'pytest>=3.0.6' \
+        'requests>=2.13.0' \
+        'snakeviz>=0.4.1' \
         'setuptools>=34.1.1' \
-        'yapf==0.15.2'
+        'yapf>=0.15.2'
 
 
 # By default, Jupyter Notebook uses port 8888.

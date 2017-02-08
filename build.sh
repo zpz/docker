@@ -14,7 +14,7 @@ thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 function build_one() {
     echo
     echo in "'$(pwd)'"
-    if [[ -f ./build.sh && -f ./version ]]; then
+    if [[ -f ./build.sh && -f ./version && -f ./name ]]; then
         bash ./build.sh
         (( $? == 0 )) || exit 1
         echo

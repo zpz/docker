@@ -5,12 +5,6 @@ set -o nounset
 function install_one {
     if [[ -f ./install.sh ]]; then
         echo in "'$(pwd)'"
-        if [[ -f ./build.sh ]]; then
-            if [[ "$(cat ./name)" != *'/'* ]]; then
-                bash ./build.sh
-                echo
-            fi
-        fi
         bash ./install.sh
         echo
     fi

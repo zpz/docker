@@ -53,10 +53,6 @@ RUN pip install --no-cache-dir --upgrade \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
         'matplotlib==2.0.0' \
-    && apt-get purge -y --auto-remove \
-        libfreetype6-dev \
-        libxft-dev \
-    && pip install --no-cache-dir --upgrade \
         'seaborn==0.7.1' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
