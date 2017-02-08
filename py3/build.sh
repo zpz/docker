@@ -29,7 +29,8 @@ WORKDIR /
 
 EOF
 
-cat "$(dirname "${thisdir}")/dev_base.inc" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/base.inc" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/dev.inc" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
@@ -56,12 +57,14 @@ RUN pip install --no-cache-dir --upgrade \
         'memory_profiler==0.43' \
         'notebook==4.3.2' \
         'numpy==1.12.0' \
+        'pip>=9.0.1' \
         'pudb==2016.2' \
         'pyflakes==1.5.0' \
         'pylint==1.6.5' \
         'pytest==3.0.6' \
         'requests==2.13.0' \
         'snakeviz==0.4.1' \
+        'setuptools>=34.1.1' \
         'yapf==0.15.2'
 
 
@@ -69,12 +72,12 @@ RUN pip install --no-cache-dir --upgrade \
 # Launch a container with Jupyter Notebook server like this:
 # $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user --NotebookApp.token=''
 
-EXPOSE 8888
-
-RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ipynb \
-    && echo >> /usr/local/bin/ipynb \
-    && echo "jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=\~ --NotebookApp.token=''" >> /usr/local/bin/ipynb \\
-    && chmod +x /usr/local/bin/ipynb
+# EXPOSE 8888
+#
+# RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ipynb \
+#     && echo >> /usr/local/bin/ipynb \
+#     && echo "jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=\~ --NotebookApp.token=''" >> /usr/local/bin/ipynb \\
+#     && chmod +x /usr/local/bin/ipynb
 
 
 CMD ["python"]

@@ -11,6 +11,7 @@ FROM maven:3.3.9-jdk-8
 USER root
 WORKDIR /
 
+
 #------------------
 # group and user
 
@@ -24,26 +25,17 @@ RUN groupadd --gid 1000 docker-users \
 #   && adduser docker-user admin
 
 
-#------------------
-# System and basic
+#-----------
+# Very basic
 
 # 'curl': about 15 MB.
 # 'vim': about 20MB.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        autoconf \
-        automake \
         curl \
-        g++ \
-        gcc \
         less \
-        libc6-dev \
-        libtool \
-        make \
         vim \
-        xz-utils \
-        zlib1g-dev \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \
@@ -72,6 +64,32 @@ ENV EDITOR vim
 #  ENTRYPOINT ["/usr/bin/tini", "--"]
 #  # TODO: problematic when I terminate some programs within container.
 
+
+
+#----------------------------------
+# Software building and development
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        binutils \
+        g++ \
+        gcc \
+        libc6-dev \
+        libtool \
+        make \
+        xz-utils \
+        zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && apt-get -y autoremove \
+    && apt-get clean
+
+# `binutils` contains `gprof`.
+# To use `gprof`, use option `-pg` during both compiling and linking.
+
+# I did not include `git` in this image b/c `push` and `pull`
+# would ask for password everytime if used in Docker.
 
 #-----------
 # startup

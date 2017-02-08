@@ -46,7 +46,7 @@ RUN pip install --no-cache-dir --upgrade \
 
 ENV LLVM_VERSION=3.8
 
-# `cmake` is requested to build `pybind11` tests.
+# `cmake` is required to build `pybind11` tests.
 
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
     && echo "deb http://llvm.org/apt/jessie/ llvm-toolchain-jessie-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \

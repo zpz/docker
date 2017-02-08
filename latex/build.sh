@@ -80,7 +80,7 @@ RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C
 
 EOF
 
-cat "$(dirname "${thisdir}")/dev_base.inc" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/base.inc" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 

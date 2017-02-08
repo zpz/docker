@@ -11,6 +11,7 @@ FROM python:3.4.6-slim
 USER root
 WORKDIR /
 
+
 #------------------
 # group and user
 
@@ -24,26 +25,17 @@ RUN groupadd --gid 1000 docker-users \
 #   && adduser docker-user admin
 
 
-#------------------
-# System and basic
+#-----------
+# Very basic
 
 # 'curl': about 15 MB.
 # 'vim': about 20MB.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        autoconf \
-        automake \
         curl \
-        g++ \
-        gcc \
         less \
-        libc6-dev \
-        libtool \
-        make \
         vim \
-        xz-utils \
-        zlib1g-dev \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \
@@ -71,6 +63,7 @@ ENV EDITOR vim
 #
 #  ENTRYPOINT ["/usr/bin/tini", "--"]
 #  # TODO: problematic when I terminate some programs within container.
+
 
 
 RUN pip install --no-cache-dir --upgrade \
