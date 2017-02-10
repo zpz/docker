@@ -64,10 +64,10 @@ RUN pip install --no-cache-dir --upgrade \
         'pylint>=1.6.5' \
         'pytest>=3.0.6' \
         'requests>=2.13.0' \
-        'snakeviz>=0.4.1' \
         'setuptools>=34.1.1' \
         'yapf>=0.15.2'
 
+# Use `snakeviz` to view profiling stats.
 
 # By default, Jupyter Notebook uses port 8888.
 # Launch a container with Jupyter Notebook server like this:
