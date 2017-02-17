@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.6.0-slim"
+PARENT="python:3.5.3-slim"
 
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
@@ -49,25 +49,31 @@ RUN apt-get update \
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
 RUN pip install --no-cache-dir --upgrade \
+        'pip' \
+        'setuptools' \
+    && pip install --no-cache-dir --upgrade \
         'coverage>=4.3.4' \
         'Faker>=0.7.7' \
         'flake8>=3.2.1' \
-        'ipdb>=0.10.2' \
-        'ipython>=5.2.1' \
         'line_profiler>=2.0' \
         'memory_profiler>=0.43' \
-        'notebook>=4.3.2' \
-        'numpy>=1.12.0' \
-        'pip>=9.0.1' \
         'pudb>=2016.2' \
         'pyflakes>=1.5.0' \
         'pylint>=1.6.5' \
         'pytest>=3.0.6' \
-        'requests>=2.13.0' \
-        'setuptools>=34.1.1' \
-        'yapf>=0.15.2'
+        'yapf>=0.15.2' \
+    && pip install --no-cache-dir --upgrade \
+        'ipdb>=0.10.2' \
+        'ipython>=5.2.1' \
+        'notebook>=4.3.2' \
+    && pip install --no-cache-dir --upgrade \
+        'numpy>=1.12.0' \
+        'requests>=2.13.0'
+
 
 # Use `snakeviz` to view profiling stats.
+# `snakeviz` is not installed in this Docker image as it's better
+# installed on the hosting machine 'natively'.
 
 # By default, Jupyter Notebook uses port 8888.
 # Launch a container with Jupyter Notebook server like this:

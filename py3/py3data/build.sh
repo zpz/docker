@@ -38,31 +38,31 @@ USER root
 WORKDIR /
 
 RUN pip install --no-cache-dir --upgrade \
-        'fastavro==0.12.1' \
-        'pandas==0.19.2' \
-        'toolz==0.8.2'
+        'fastavro>=0.12.1' \
+        'pandas>=0.19.2' \
+        'toolz>=0.8.2'
 
 # freetype and xft are required by matplotlib
 
 RUN pip install --no-cache-dir --upgrade \
-        'bokeh==0.12.4' \
+        'bokeh>=0.12.4' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6 \
         libfreetype6-dev \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
-        'matplotlib==2.0.0' \
-        'seaborn==0.7.1' \
+        'matplotlib>=2.0.0' \
+        'seaborn>=0.7.1' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
 
 RUN pip install --no-cache-dir --upgrade \
-        'scipy==0.18.1' \
-        'patsy==0.4.1' \
-        'statsmodels==0.8.0rc1' \
-        'scikit-learn==0.18.1'
+        'scipy>=0.18.1' \
+        'patsy>=0.4.1' \
+        'statsmodels>=0.8.0' \
+        'scikit-learn>=0.18.1'
 
 CMD ["/bin/bash"]
 EOF

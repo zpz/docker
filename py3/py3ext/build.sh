@@ -36,11 +36,11 @@ USER root
 WORKDIR /
 
 RUN pip install --no-cache-dir --upgrade \
-        'cffi==1.9.1' \
-        'cython==0.25.2' \
-        'cppimport==16.6.24' \
-        'easycython==1.0.4' \
-        'pybind11==2.0.1'
+        'cffi>=1.9.1' \
+        'cython>=0.25.2' \
+        'cppimport>=16.6.24' \
+        'easycython>=1.0.4' \
+        'pybind11>=2.0.1'
 
 # `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
 
@@ -60,7 +60,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
     && pip install --no-cache-dir --upgrade \
         'llvmlite==0.15.0' \
-        'numba==0.30.1'
+        'numba==0.31.0'
 
 CMD ["/bin/bash"]
 EOF
