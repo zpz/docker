@@ -59,7 +59,7 @@ RUN apt-get update \
         testthat \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2>=2.8.4' \
+        'rpy2>=2.8.5' \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \

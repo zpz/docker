@@ -27,8 +27,8 @@ WORKDIR /
 
 EOF
 
-cat "$(dirname "${thisdir}")/base.inc" >> "${thisdir}/Dockerfile"
-cat "$(dirname "${thisdir}")/dev.inc" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/dev.in" >> "${thisdir}/Dockerfile"
 
 
 cat >> "${thisdir}/Dockerfile" <<EOF

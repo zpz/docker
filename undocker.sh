@@ -8,12 +8,15 @@
 # In addition, inactive containers based on an image being deleted will be deleted.
 # All un-used intermediate images created in this process will be deleted as well.
 #
-# If `image` is absent, the images defined in this rpo in the present working directory
+# If `image` is absent, the images defined in this repo in the present working directory
 # and its child directories will be deleted, with chain reactions as described above.
 # However, this often can not achieve a clean and complete deletion, due to
 # changed directory structure and image names, etc.
+#
+# If cleaning is stuck with no progress, check printouts and look for messages
+# about active or inactive containers that are using the images being deleted.
+# Stop or remove those containers before trying this command again.
 
-set -o errexit
 set -o pipefail
 set -o nounset
 

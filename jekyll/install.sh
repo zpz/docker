@@ -1,5 +1,5 @@
 cmdname=jekyll
-bindir="${HOME}/bin"
+bindir="${HOME}/work/bin"
 target="${bindir}/${cmdname}"
 
 echo "installing '${cmdname}' into '${bindir}'"

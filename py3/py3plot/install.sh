@@ -1,4 +1,4 @@
-cmdname=py3r
-defaultcmd=/bin/bash
+cmdname=py3plot
+defaultcmd=python
 
 python ../../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}

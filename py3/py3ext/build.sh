@@ -44,12 +44,12 @@ RUN pip install --no-cache-dir --upgrade \
 
 # `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
 
-ENV LLVM_VERSION=3.8
+ENV LLVM_VERSION=3.9
 
 # `cmake` is required to build `pybind11` tests.
 
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
-    && echo "deb http://llvm.org/apt/jessie/ llvm-toolchain-jessie-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \
+    && echo "deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libllvm-${LLVM_VERSION} llvm-${LLVM_VERSION}-dev \
@@ -59,7 +59,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
     && apt-get clean -y \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
     && pip install --no-cache-dir --upgrade \
-        'llvmlite==0.15.0' \
+        'llvmlite==0.16.0' \
         'numba==0.31.0'
 
 CMD ["/bin/bash"]

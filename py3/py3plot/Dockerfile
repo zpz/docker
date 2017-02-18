@@ -1,4 +1,4 @@
-# Dockerfile for image 'py3data:20170217'
+# Dockerfile for image 'zppz/py3plot:20170217'
 
 # This is a catch-all image for learning purposes.
 
@@ -12,11 +12,6 @@ FROM zppz/py3:20170217
 
 USER root
 WORKDIR /
-
-RUN pip install --no-cache-dir --upgrade \
-        'fastavro>=0.12.1' \
-        'pandas>=0.19.2' \
-        'toolz>=0.8.2'
 
 # freetype and xft are required by matplotlib
 
@@ -33,11 +28,5 @@ RUN pip install --no-cache-dir --upgrade \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
-
-RUN pip install --no-cache-dir --upgrade \
-        'scipy>=0.18.1' \
-        'patsy>=0.4.1' \
-        'statsmodels>=0.8.0' \
-        'scikit-learn>=0.18.1'
 
 CMD ["/bin/bash"]

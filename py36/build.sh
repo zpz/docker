@@ -29,12 +29,9 @@ WORKDIR /
 
 EOF
 
-cat "$(dirname "${thisdir}")/base.inc" >> "${thisdir}/Dockerfile"
+cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
-
-RUN pip install --no-cache-dir --upgrade \
-        'pytest>=3.0.5'
 
 CMD ["python"]
 EOF

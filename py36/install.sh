@@ -1,4 +1,4 @@
-cmdname=py35
+cmdname=py36
 defaultcmd=python
 
-python ../install.py --bin=${cmdname} --defaultcmd=${defaultcmd}
+python ../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}

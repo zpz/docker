@@ -21,7 +21,6 @@ function build_one() {
         for f in *; do
             if [[ -d "$f" && ! -L "$f" ]]; then
                 ( cd "$f"; build_one )
-                (( $? ==0 )) || exit 1
             fi
         done
     fi
