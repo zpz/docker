@@ -67,7 +67,7 @@ RUN pip install --no-cache-dir --upgrade \
         'ipython>=5.2.1' \
         'notebook>=4.3.2' \
     && pip install --no-cache-dir --upgrade \
-        'numpy>=1.12.0' \
+        'numpy==1.12.0' \
         'requests>=2.13.0'
 
 

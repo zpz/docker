@@ -4,7 +4,7 @@ set -o pipefail
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
-bindir="${HOME}/bin"
+bindir="${HOME}/work/bin"
 
 
 function check_file {
