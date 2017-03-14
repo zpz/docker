@@ -22,11 +22,12 @@ set -o nounset
 
 
 function undocker_intermediate {
-    if [[ -n "$(docker images | grep '<none>' | awk '{print $3}')" ]]; then
-        echo
-        echo deleting unused intermediate images ...
-        docker rmi $(docker images | grep '<none>' | awk '{print $3}')
-    fi
+    # if [[ -n "$(docker images | grep '<none>' | awk '{print $3}')" ]]; then
+    #     echo
+    #     echo deleting unused intermediate images ...
+    #     docker rmi $(docker images | grep '<none>' | awk '{print $3}')
+    # fi
+        docker rmi $(docker images -f dangling=true -q)
 }
 
 

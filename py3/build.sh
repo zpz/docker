@@ -61,6 +61,7 @@ RUN pip install --no-cache-dir --upgrade \
         'pyflakes>=1.5.0' \
         'pylint>=1.6.5' \
         'pytest>=3.0.6' \
+        'radon>=1.4.2' \
         'yapf>=0.15.2' \
     && pip install --no-cache-dir --upgrade \
         'ipdb>=0.10.2' \

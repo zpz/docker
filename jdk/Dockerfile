@@ -43,7 +43,7 @@ RUN apt-get update \
     && chmod +r /etc/bash.bashrc \
     && mkdir -p /etc/vim \
     && cp /tmp/dotfiles/vim/vimrc /etc/vim/vimrc.local \
-    && cp -r /tmp/dotfiles/vim/vim/* /etc/vim/ \
+    && cp -r /tmp/dotfiles/vim/vim/colors /etc/vim/ \
     && chmod -R +rX /etc/vim \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
