@@ -39,7 +39,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx>=1.5.2' \
+        'Sphinx>=1.5.5' \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \
     && apt-get clean -y
@@ -53,23 +53,23 @@ RUN pip install --no-cache-dir --upgrade \
         'setuptools' \
     && pip install --no-cache-dir --upgrade \
         'coverage>=4.3.4' \
-        'Faker>=0.7.7' \
+        'Faker>=0.7.11' \
         'flake8>=3.2.1' \
         'line_profiler>=2.0' \
-        'memory_profiler>=0.43' \
+        'memory_profiler>=0.45' \
         'pudb>=2016.2' \
         'pyflakes>=1.5.0' \
         'pylint>=1.6.5' \
-        'pytest>=3.0.6' \
+        'pytest>=3.0.7' \
         'radon>=1.4.2' \
         'yapf>=0.15.2' \
     && pip install --no-cache-dir --upgrade \
         'ipdb>=0.10.2' \
-        'ipython>=5.2.1' \
-        'notebook>=4.3.2' \
+        'ipython==5.3.0' \
+        'notebook==5.0.0' \
     && pip install --no-cache-dir --upgrade \
-        'numpy==1.12.0' \
-        'requests>=2.13.0'
+        'numpy==1.12.1' \
+        'requests==2.13.0'
 
 
 # Use `snakeviz` to view profiling stats.

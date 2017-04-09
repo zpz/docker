@@ -15,10 +15,13 @@ WORKDIR /
 #------------------
 # group and user
 
-RUN groupadd --gid 1000 docker-users \
+RUN groupadd --gid 1000 docker \
     && mkdir -p /home/docker-user \
-    && useradd --uid 1000 --gid docker-users --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
-    && chown -R docker-user:docker-users /home/docker-user
+    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
+    && chown -R docker-user:docker /home/docker-user \
+    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
+
+# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
 
 # If root privilage is needed, install `sudo`, and add
 # RUN bash -c "echo -e '1234\1234' | passwd docker-user" \
@@ -89,7 +92,7 @@ RUN apt-get update \
 # To use `gprof`, use option `-pg` during both compiling and linking.
 
 # I did not include `git` in this image b/c `push` and `pull`
-# would ask for password everytime if used in Docker.
+# would ask for password every time if used in Docker, hence not very useful.
 
 #-----------
 # startup

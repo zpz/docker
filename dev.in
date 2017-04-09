@@ -22,4 +22,4 @@ RUN apt-get update \
 # To use `gprof`, use option `-pg` during both compiling and linking.
 
 # I did not include `git` in this image b/c `push` and `pull`
-# would ask for password everytime if used in Docker.
+# would ask for password every time if used in Docker, hence not very useful.
