@@ -57,6 +57,7 @@ RUN pip install --no-cache-dir --upgrade \
         'flake8>=3.2.1' \
         'line_profiler>=2.0' \
         'memory_profiler>=0.45' \
+        'mypy>=0.501' \
         'pudb>=2016.2' \
         'pyflakes>=1.5.0' \
         'pylint>=1.6.5' \
