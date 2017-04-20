@@ -1,4 +1,4 @@
-cmdname=py3r
-defaultcmd=/bin/bash
+python ../../pyinstall.py \
+    --cmd=py3r \
+    --dockercmd=/bin/bash
 
-python ../../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}

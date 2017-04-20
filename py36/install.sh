@@ -1,4 +1,1 @@
-cmdname=py36
-defaultcmd=python
-
-python ../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}
+python ../pyinstall.py --cmd=py36 --dockercmd=python

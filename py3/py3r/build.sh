@@ -35,6 +35,15 @@ cat > "${thisdir}/Dockerfile" <<EOF
 # One-way Python/R inter-op, namely calling R from Python,
 # is provisioned by the Python package 'rpy2'.
 
+# For instructions on installing R, go to
+#   https://cloud.r-project.org
+#   click 'Download R for Linux'
+#   then click 'debian'
+#
+# The direct URL seems to be
+#   https://cran.r-project.org/bin/linux/debian/
+
+
 FROM ${PARENT}
 EOF
 
@@ -44,12 +53,14 @@ USER root
 WORKDIR /
 
 
-ENV R_BASE_VERSION 3.1.1-1
+ENV R_BASE_VERSION 3.3.3-1~jessiecran.0
 
 COPY ./install.r /usr/local/bin
 RUN chmod +x /usr/local/bin/install.r
 
-RUN apt-get update \
+RUN apt-key adv --keyserver keys.gnupg.net --recv-key 6212B7B7931C4BB16280BA1306F90DE5381BA480 \
+    && echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran3/' >> /etc/apt/sources.list \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         r-base=${R_BASE_VERSION} \
         r-base-dev=${R_BASE_VERSION} \

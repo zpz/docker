@@ -1,4 +1,1 @@
-cmdname=py3pg
-defaultcmd=/bin/bash
-
-python ../../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}
+python ../../pyinstall.py --cmd=py3pg --dockercmd=/bin/bash

@@ -1,4 +1,3 @@
-cmdname=numeric
-defaultcmd=python
-
-python ../../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}
+python ../../pyinstall.py \
+    --cmd=numeric \
+    --dockercmd=python

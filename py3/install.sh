@@ -1,4 +1,1 @@
-cmdname=py3
-defaultcmd=python
-
-python ../pyinstall.py --bin=${cmdname} --defaultcmd=${defaultcmd}
+python ../pyinstall.py --cmd=py3 --dockercmd=python

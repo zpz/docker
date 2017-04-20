@@ -35,15 +35,7 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 USER root
 WORKDIR /
 
-RUN pip install --no-cache-dir --upgrade \
-        'cffi==1.10.0' \
-        'cython==0.25.2' \
-        'easycython==1.0.7' \
-        'pybind11==2.1.0'
-
-# `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
-
-ENV LLVM_VERSION=3.9
+ENV LLVM_VERSION=4.0
 
 # `cmake` is required to build `pybind11` tests.
 
@@ -58,8 +50,11 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
     && apt-get clean -y \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
     && pip install --no-cache-dir --upgrade \
-        'llvmlite==0.16.0' \
-        'numba==0.31.0'
+        'llvmlite==0.17.1' \
+        'numba==0.32.0' \
+        'pybind11==2.1.0'
+
+# `pybind11` header files are stored in /usr/local/include/python3.5m/pybind11/
 
 CMD ["/bin/bash"]
 EOF
