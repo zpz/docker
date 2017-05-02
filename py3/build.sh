@@ -30,7 +30,7 @@ WORKDIR /
 EOF
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
-cat "$(dirname "${thisdir}")/dev.in" >> "${thisdir}/Dockerfile"
+cat "${thisdir}/pydev.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
@@ -66,7 +66,7 @@ RUN pip install --no-cache-dir --upgrade \
         'yapf>=0.15.2' \
     && pip install --no-cache-dir --upgrade \
         'ipdb>=0.10.2' \
-        'ipython==5.3.0' \
+        'ipython==6.0.0' \
         'notebook==5.0.0' \
     && pip install --no-cache-dir --upgrade \
         'numpy==1.12.1' \

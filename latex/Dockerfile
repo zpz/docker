@@ -90,6 +90,7 @@ RUN apt-get update \
         curl \
         less \
         vim \
+        xz-utils \
     \
     && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
     && mv /tmp/linux-master /tmp/dotfiles \

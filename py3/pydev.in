@@ -4,16 +4,14 @@
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        autoconf \
-        automake \
-        binutils \
-        g++ \
-        gcc \
-        libc6-dev \
-        libtool \
-        make \
-        xz-utils \
-        zlib1g-dev \
+        autoconf=2.69-8 \
+        automake=1:1.14.1-4+deb8u1 \
+        binutils=2.25-5 \
+        gcc=4:4.9.2-2 \
+        libc6-dev=2.19-18+deb8u7 \
+        libtool=2.4.2-1.11 \
+        make=4.0-8.1 \
+        zlib1g-dev=1:1.2.8.dfsg-2+b1 \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean

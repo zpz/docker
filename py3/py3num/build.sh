@@ -61,10 +61,12 @@ RUN pip install --no-cache-dir --upgrade \
     && pip install --no-cache-dir --upgrade \
         'scipy==0.19.0' \
     && apt-get install -y --no-install-recommends \
+        g++ \
         gfortran \
     && pip install --no-cache-dir --upgrade \
         'cvxpy==0.4.9' \
     && apt-get purge -y --auto-remove \
+        g++ \
         gfortran \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get autoremove -y \

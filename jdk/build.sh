@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="maven:3.3.9-jdk-8"
+PARENT="maven:3.5.0-jdk-8"
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
 
@@ -28,7 +28,6 @@ WORKDIR /
 EOF
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
-cat "$(dirname "${thisdir}")/dev.in" >> "${thisdir}/Dockerfile"
 
 
 cat >> "${thisdir}/Dockerfile" <<EOF
