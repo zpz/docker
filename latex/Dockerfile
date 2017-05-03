@@ -63,6 +63,8 @@ RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C
 #     && rm -rf /tmp/*
 
 
+USER root
+
 #------------------
 # group and user
 
@@ -87,6 +89,7 @@ RUN groupadd --gid 1000 docker \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        apt-utils \
         curl \
         less \
         vim \
@@ -119,6 +122,8 @@ RUN chmod +x /usr/bin/tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
 # TODO: problematic when I terminate some programs within container.
 
+CMD ["/bin/bash"]
+WORKDIR /
 
 
 #-----------

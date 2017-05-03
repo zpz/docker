@@ -21,22 +21,9 @@ cat > "${thisdir}/Dockerfile" <<EOF
 #===========================
 
 FROM ${PARENT}
-
-USER root
-WORKDIR /
-
 EOF
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
-
-
-cat >> "${thisdir}/Dockerfile" <<EOF
-
-#-----------
-# startup
-
-CMD ["/bin/bash"]
-EOF
 
 echo
 echo Building image "'${NAME}'"

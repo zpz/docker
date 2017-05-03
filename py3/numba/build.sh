@@ -32,9 +32,6 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
-USER root
-WORKDIR /
-
 ENV LLVM_VERSION=4.0
 
 # `cmake` is required to build `pybind11` tests.
@@ -55,8 +52,6 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
         'pybind11==2.1.0'
 
 # `pybind11` header files are stored in /usr/local/include/python3.5m/pybind11/
-
-CMD ["/bin/bash"]
 EOF
 
 echo

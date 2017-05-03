@@ -27,7 +27,9 @@ function undocker_intermediate {
     #     echo deleting unused intermediate images ...
     #     docker rmi $(docker images | grep '<none>' | awk '{print $3}')
     # fi
+    if [[ -n "$(docker images -f dangling=true -q)" ]]; then
         docker rmi $(docker images -f dangling=true -q)
+    fi
 }
 
 

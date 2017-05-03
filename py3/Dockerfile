@@ -8,9 +8,8 @@
 
 FROM python:3.5.3-slim
 
-USER root
-WORKDIR /
 
+USER root
 
 #------------------
 # group and user
@@ -36,6 +35,7 @@ RUN groupadd --gid 1000 docker \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        apt-utils \
         curl \
         less \
         vim \
@@ -68,54 +68,29 @@ RUN chmod +x /usr/bin/tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
 # TODO: problematic when I terminate some programs within container.
 
+CMD ["/bin/bash"]
+WORKDIR /
 
-
-#----------------------------------
-# Software building and development
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        autoconf=2.69-8 \
-        automake=1:1.14.1-4+deb8u1 \
-        binutils=2.25-5 \
-        gcc=4:4.9.2-2 \
-        libc6-dev=2.19-18+deb8u7 \
-        libtool=2.4.2-1.11 \
-        make=4.0-8.1 \
-        zlib1g-dev=1:1.2.8.dfsg-2+b1 \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
-
-# `binutils` contains `gprof`.
-# To use `gprof`, use option `-pg` during both compiling and linking.
-
-# I did not include `git` in this image b/c `push` and `pull`
-# would ask for password every time if used in Docker, hence not very useful.
 
 # Documentation
+#
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
         'Sphinx>=1.5.5' \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
-    && apt-get clean -y
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # Testing, Debugging, code analysis, code formatting.
-# IPython, Jupyter Notebook, other commomly useful packages.
+# IPython, Jupyter Notebook.
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
-
+#
 RUN pip install --no-cache-dir --upgrade \
         'pip' \
         'setuptools' \
     && pip install --no-cache-dir --upgrade \
         'coverage>=4.3.4' \
-        'Faker>=0.7.11' \
         'flake8>=3.2.1' \
-        'line_profiler>=2.0' \
-        'memory_profiler>=0.45' \
         'mypy>=0.501' \
         'pudb>=2016.2' \
         'pyflakes>=1.5.0' \
@@ -126,18 +101,7 @@ RUN pip install --no-cache-dir --upgrade \
     && pip install --no-cache-dir --upgrade \
         'ipdb>=0.10.2' \
         'ipython==6.0.0' \
-        'notebook==5.0.0' \
-    && pip install --no-cache-dir --upgrade \
-        'numpy==1.12.1' \
-        'requests==2.13.0' \
-    && pip install --no-cache-dir --upgrade \
-        'cffi==1.10.0' \
-        'cython==0.25.2' \
-        'easycython==1.0.7'
-
-# Use `snakeviz` to view profiling stats.
-# `snakeviz` is not installed in this Docker image as it's better
-# installed on the hosting machine 'natively'.
+        'notebook==5.0.0'
 
 # By default, Jupyter Notebook uses port 8888.
 # Launch a container with Jupyter Notebook server like this:
@@ -150,5 +114,33 @@ RUN pip install --no-cache-dir --upgrade \
 #     && echo "jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=\~ --NotebookApp.token=''" >> /usr/local/bin/ipynb \\
 #     && chmod +x /usr/local/bin/ipynb
 
+# Performance tools: interfacing with C, profiling.
+# Installing `line_profiler` needs gcc.
+# Use `snakeviz` to view profiling stats.
+# `snakeviz` is not installed in this Docker image as it's better
+# installed on the hosting machine 'natively'.
+#
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc=4:4.9.2-2 \
+        libc6-dev=2.19-18+deb8u7 \
+        make=4.0-8.1 \
+    && pip install --no-cache-dir --upgrade \
+        'cffi==1.10.0' \
+        'cython==0.25.2' \
+        'easycython==1.0.7' \
+        'line_profiler>=2.0' \
+        'memory_profiler>=0.45' \
+    && pip install --no-cache-dir --upgrade \
+        'numpy==1.12.1' \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
-CMD ["python"]
+# Other packages often useful for software development:
+#      autoconf=2.69-8 \
+#      automake=1:1.14.1-4+deb8u1 \
+#      binutils=2.25-5
+#      libtool=2.4.2-1.11 \
+#      zlib1g-dev=1:1.2.8.dfsg-2+b1 \
+#
+# `binutils` contains `gprof`.
+# To use `gprof`, use option `-pg` during both compiling and linking.
