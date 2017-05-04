@@ -9,10 +9,6 @@
 FROM python:3.6.1-slim
 
 USER root
-WORKDIR /
-
-
-USER root
 
 #------------------
 # group and user
@@ -38,9 +34,9 @@ RUN groupadd --gid 1000 docker \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        apt-utils \
         curl \
         less \
+        unzip \
         vim \
         xz-utils \
     \
@@ -74,5 +70,3 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
 WORKDIR /
 
-
-CMD ["python"]

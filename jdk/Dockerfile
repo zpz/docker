@@ -6,8 +6,7 @@
 # DO NOT EDIT.
 #===========================
 
-FROM maven:3.5.0-jdk-8
-
+FROM openjdk:8-jdk
 
 USER root
 
@@ -35,9 +34,9 @@ RUN groupadd --gid 1000 docker \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        apt-utils \
         curl \
         less \
+        unzip \
         vim \
         xz-utils \
     \
@@ -71,3 +70,30 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
 WORKDIR /
 
+# 11 Mb
+ENV MAVEN_VERSION 3.5.0
+ENV MAVEN_HOME /usr/share/maven
+ARG MAVEN_BASE_URL=http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
+RUN mkdir -p ${MAVEN_HOME} \
+    && curl -skL --retry 3 ${MAVEN_BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+        | tar xz -C ${MAVEN_HOME}
+ENV PATH ${PATH}:${MAVEN_HOME}/apache-maven-${MAVEN_VERSION}/bin
+
+# 80 Mb
+ENV GRADLE_VERSION 3.5
+ENV GRADLE_HOME /usr/share/gradle
+ARG GRADLE_BASE_URL=https://services.gradle.org/distributions
+RUN mkdir -p ${GRADLE_HOME} \
+    && curl -skL --retry 3 ${GRADLE_BASE_URL}/gradle-${GRADLE_VERSION}-bin.zip \
+        -o ${GRADLE_HOME}/gradle.zip \
+    && (cd ${GRADLE_HOME}; unzip gradle.zip; rm -f gradle.zip)
+ENV PATH ${PATH}:${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin
+
+# 21 Mb
+ENV SCALA_VERSION 2.12.2
+ENV SCALA_HOME /usr/share/scala
+ARG SCALA_BASE_URL=https://downloads.lightbend.com/scala/${SCALA_VERSION}
+RUN mkdir -p ${SCALA_HOME} \
+    && curl -skL --retry 3 ${SCALA_BASE_URL}/scala-${SCALA_VERSION}.tgz \
+        | tar xz -C ${SCALA_HOME}
+ENV PATH ${PATH}:${SCALA_HOME}/scala-${SCALA_VERSION}/bin

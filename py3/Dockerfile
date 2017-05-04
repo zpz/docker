@@ -35,9 +35,9 @@ RUN groupadd --gid 1000 docker \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        apt-utils \
         curl \
         less \
+        unzip \
         vim \
         xz-utils \
     \
