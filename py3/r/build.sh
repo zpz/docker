@@ -49,10 +49,6 @@ EOF
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
-USER root
-WORKDIR /
-
-
 ENV R_BASE_VERSION 3.3.3-1~jessiecran.0
 
 COPY ./install.r /usr/local/bin
@@ -70,16 +66,9 @@ RUN apt-key adv --keyserver keys.gnupg.net --recv-key 6212B7B7931C4BB16280BA1306
         testthat \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2>=2.8.5' \
+        'rpy2==2.8.5' \
     \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
-
-#-------------
-# startup
-
-CMD ["/bin/bash"]
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF
 
 

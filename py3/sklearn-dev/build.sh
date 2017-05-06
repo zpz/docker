@@ -32,15 +32,15 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
-USER root
-WORKDIR /
-
 RUN pip install --no-cache-dir --upgrade \
         'nose==1.3.7' \
-        'scipy==0.18.1'
-
-
-CMD ["/bin/bash"]
+        'scipy==0.19.0' \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc libc6-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && pip install --no-cache-dir --upgrade \
+        'cython==0.25.2'
 EOF
 
 echo

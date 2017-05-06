@@ -1,2 +1,3 @@
 python ../../pyinstall.py \
-    --cmd=py3numba
+    --cmd=py3r
+

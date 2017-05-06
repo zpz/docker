@@ -97,3 +97,13 @@ RUN mkdir -p ${SCALA_HOME} \
     && curl -skL --retry 3 ${SCALA_BASE_URL}/scala-${SCALA_VERSION}.tgz \
         | tar xz -C ${SCALA_HOME}
 ENV PATH ${PATH}:${SCALA_HOME}/scala-${SCALA_VERSION}/bin
+
+
+ENV KOTLIN_VERSION 1.1
+ENV KOTLIN_HOME /usr/share/kotlin
+ARG KOTLIN_BASE_URL=https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}
+RUN mkdir -p ${KOTLIN_HOME} \
+    && curl -skL --retry 3 ${KOTLIN_BASE_URL}/kotlin-compiler-${KOTLIN_VERSION}.zip \
+        -o ${KOTLIN_HOME}/kotlin.zip \
+    && (cd ${KOTLIN_HOME}; unzip kotlin.zip; rm -f kotlin.zip)
+ENV PATH ${PATH}:${KOTLIN_HOME}/kotlinc/bin

@@ -34,50 +34,22 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
-USER root
-WORKDIR /
-
 # freetype and xft are required by matplotlib
 
 RUN pip install --no-cache-dir --upgrade \
-        'bokeh>=0.12.4' \
+        'bokeh==0.12.5' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6 \
         libfreetype6-dev \
         libxft-dev \
     && pip install --no-cache-dir --upgrade \
-        'matplotlib>=2.0.0' \
-        'seaborn>=0.7.1' \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
-    && apt-get clean -y
-
-RUN pip install --no-cache-dir --upgrade \
-        'pandas==0.19.2' \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        liblapack3 liblapack-dev \
-    && pip install --no-cache-dir --upgrade \
-        'scipy==0.19.0' \
-    && apt-get install -y --no-install-recommends \
-        g++ \
-        gfortran \
-    && pip install --no-cache-dir --upgrade \
-        'cvxpy==0.4.9' \
+        'matplotlib==2.0.1' \
+        'seaborn==0.7.1' \
     && apt-get purge -y --auto-remove \
-        g++ \
-        gfortran \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
-    && apt-get clean -y
-
-RUN pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.18.1' \
-        'patsy==0.4.1' \
-        'statsmodels==0.8.0'
-
-CMD ["/bin/bash"]
+        libfreetype6-dev \
+        libxft-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF
 
 echo

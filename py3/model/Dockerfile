@@ -1,4 +1,4 @@
-# Dockerfile for image 'py3num:20170501'
+# Dockerfile for image 'py3model:20170505'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,29 +8,10 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20170501
-
-USER root
-WORKDIR /
-
-# freetype and xft are required by matplotlib
+FROM zppz/py3:20170505
 
 RUN pip install --no-cache-dir --upgrade \
-        'bokeh>=0.12.4' \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libfreetype6 \
-        libfreetype6-dev \
-        libxft-dev \
-    && pip install --no-cache-dir --upgrade \
-        'matplotlib>=2.0.0' \
-        'seaborn>=0.7.1' \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
-    && apt-get clean -y
-
-RUN pip install --no-cache-dir --upgrade \
-        'pandas==0.19.2' \
+        'pandas==0.20.1' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         liblapack3 liblapack-dev \
@@ -45,12 +26,7 @@ RUN pip install --no-cache-dir --upgrade \
         g++ \
         gfortran \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get autoremove -y \
-    && apt-get clean -y
-
-RUN pip install --no-cache-dir --upgrade \
+    && pip install --no-cache-dir --upgrade \
         'scikit-learn==0.18.1' \
         'patsy==0.4.1' \
         'statsmodels==0.8.0'
-
-CMD ["/bin/bash"]
