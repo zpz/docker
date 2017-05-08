@@ -1,4 +1,4 @@
-# Dockerfile for image 'py3plot:20170505'
+# Dockerfile for image 'zppz/py3plot:20170505'
 
 # This is a catch-all image for learning purposes.
 

@@ -37,9 +37,20 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'textblob==0.12.0' \
     && python -m nltk.downloader -d /usr/share/nltk_data \
-        punkt \
-        averaged_perceptron_tagger \
-        brown
+        brown punkt wordnet averaged_perceptron_tagger \
+        conll2000 movie_reviews
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        libgomp1 \
+    && pip install --no-cache-dir --upgrade \
+        'spacy==1.8.2' \
+    && apt-get purge -y --auto-remove \
+        gcc \
+        g++ \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF
 
 echo
