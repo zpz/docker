@@ -51,6 +51,8 @@ RUN apt-get update \
         gcc \
         g++ \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN python -m spacy download en
 EOF
 
 echo
