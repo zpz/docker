@@ -30,6 +30,7 @@ cat > "${thisdir}"/Dockerfile <<EOF
 #=============================
 
 FROM ${PARENT}
+USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
@@ -43,6 +44,8 @@ RUN pip install --no-cache-dir --upgrade \
         libfreetype6 \
         libfreetype6-dev \
         libxft-dev \
+        tcl \
+        tk \
     && pip install --no-cache-dir --upgrade \
         'matplotlib==2.0.1' \
         'seaborn==0.7.1' \

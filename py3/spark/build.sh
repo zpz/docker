@@ -30,6 +30,7 @@ cat > "${thisdir}"/Dockerfile <<EOF
 # Based on github.com/gettyimages/docker-spark
 
 FROM ${PARENT}
+USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'

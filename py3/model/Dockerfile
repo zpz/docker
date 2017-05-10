@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3model:20170505'
+# Dockerfile for image 'zppz/py3model:20170510'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,7 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20170505
+FROM zppz/py3:20170510
 
 RUN pip install --no-cache-dir --upgrade \
         'pandas==0.20.1' \

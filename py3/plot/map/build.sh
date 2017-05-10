@@ -30,22 +30,14 @@ cat > "${thisdir}"/Dockerfile <<EOF
 #=============================
 
 FROM ${PARENT}
+USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
-
-RUN pip install --no-cache-dir --upgrade \
-        'plotly==2.0.8' \
-        'simpleplotly==0.0.5'
-
-#ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-#ENV PATH=/usr/local/bin:$PATH
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         autoconf \
         automake \
-        bzip2 \
         file \
         gcc \
         g++ \
@@ -67,7 +59,6 @@ RUN apt-get update \
     && apt-get purge -y --auto-remove \
         autoconf \
         automake \
-        bzip2 \
         file \
         make \
     && pip install --no-cache-dir --upgrade \
@@ -79,10 +70,9 @@ RUN apt-get update \
         g++ \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        tcl tk \
-    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir --upgrade \
+        'plotly==2.0.8' \
+        'simpleplotly==0.0.5'
 EOF
 
 echo

@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3map:20170509'
+# Dockerfile for image 'zppz/py3map:20170510'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,20 +8,12 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3plot:20170505
-
-RUN pip install --no-cache-dir --upgrade \
-        'plotly==2.0.8' \
-        'simpleplotly==0.0.5'
-
-#ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-#ENV PATH=/usr/local/bin:$PATH
-
+FROM zppz/py3plot:20170510
+USER root
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         autoconf \
         automake \
-        bzip2 \
         file \
         gcc \
         g++ \
@@ -43,7 +35,6 @@ RUN apt-get update \
     && apt-get purge -y --auto-remove \
         autoconf \
         automake \
-        bzip2 \
         file \
         make \
     && pip install --no-cache-dir --upgrade \
@@ -55,7 +46,6 @@ RUN apt-get update \
         g++ \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        tcl tk \
-    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir --upgrade \
+        'plotly==2.0.8' \
+        'simpleplotly==0.0.5'

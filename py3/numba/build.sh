@@ -28,6 +28,7 @@ cat > "${thisdir}"/Dockerfile <<EOF
 #=============================
 
 FROM ${PARENT}
+USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'

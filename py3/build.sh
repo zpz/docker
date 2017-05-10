@@ -24,6 +24,7 @@ cat > "${thisdir}"/Dockerfile <<EOF
 
 FROM ${PARENT}
 
+USER root
 EOF
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"

@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3plot:20170505'
+# Dockerfile for image 'zppz/py3plot:20170510'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,7 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20170505
+FROM zppz/py3:20170510
 
 # freetype and xft are required by matplotlib
 
@@ -19,6 +19,8 @@ RUN pip install --no-cache-dir --upgrade \
         libfreetype6 \
         libfreetype6-dev \
         libxft-dev \
+        tcl \
+        tk \
     && pip install --no-cache-dir --upgrade \
         'matplotlib==2.0.1' \
         'seaborn==0.7.1' \

@@ -1,2 +1,2 @@
 python ../../../pyinstall.py \
-    --cmd=py3map --asroot
+    --cmd=py3map
