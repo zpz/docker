@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3dl:20170510'
+# Dockerfile for image 'py3dl:20170510'
 
 # This is a catch-all image for learning purposes.
 
@@ -9,6 +9,7 @@
 #=============================
 
 FROM zppz/py3:20170510
+USER root
 
 RUN pip install --no-cache-dir --upgrade \
         'tensorflow==1.1.0'

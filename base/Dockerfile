@@ -7,6 +7,7 @@
 #===========================
 
 FROM debian:jessie-slim
+USER root
 
 USER root
 

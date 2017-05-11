@@ -1,3 +1,2 @@
 python ../../pyinstall.py \
-    --cmd=py3model \
-    --dockercmd=python
+    --cmd=py3model

@@ -9,6 +9,7 @@
 #=============================
 
 FROM zppz/py3:20170510
+USER root
 
 RUN pip install --no-cache-dir --upgrade \
         'pandas==0.20.1' \

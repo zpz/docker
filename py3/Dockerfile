@@ -8,6 +8,7 @@
 
 FROM python:3.5.3-slim
 
+USER root
 
 USER root
 

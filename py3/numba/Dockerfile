@@ -7,6 +7,7 @@
 #=============================
 
 FROM zppz/py3:20170510
+USER root
 
 ENV LLVM_VERSION=4.0
 

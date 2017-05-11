@@ -7,6 +7,7 @@
 #===========================
 
 FROM openjdk:8-jdk
+USER root
 
 USER root
 

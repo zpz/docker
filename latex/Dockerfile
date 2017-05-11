@@ -7,11 +7,7 @@
 #===========================
 
 FROM debian:jessie
-
-
 USER root
-WORKDIR /
-
 
 #--------------
 # latex

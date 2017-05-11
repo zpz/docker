@@ -4,6 +4,7 @@
 # DO NOT EDIT.
 
 FROM zppz/py3:20170510
+USER root
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

@@ -19,8 +19,6 @@ RUN apt-get update \
         g++ \
         libc6-dev \
         make \
-    && pip install --no-cache-dir --upgrade \
-        'cython==0.25.2' \
     \
     && mkdir -p /tmp/geos \
     && curl -skL --retry 3 http://download.osgeo.org/geos/geos-3.6.1.tar.bz2 \
@@ -37,15 +35,16 @@ RUN apt-get update \
         automake \
         file \
         make \
+    \
     && pip install --no-cache-dir --upgrade \
         'shapely==1.5.17' --no-binary shapely==1.5.17 \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'cython==0.25.2' \
+    \
     && pip install --no-cache-dir --upgrade \
         'Cartopy==0.14.2' \
     && apt-get purge -y --auto-remove \
         gcc \
         g++ \
     && rm -rf /var/lib/apt/lists/* /tmp/*
-
-RUN pip install --no-cache-dir --upgrade \
-        'plotly==2.0.8' \
-        'simpleplotly==0.0.5'

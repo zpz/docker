@@ -39,6 +39,7 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
         'bokeh==0.12.5' \
+        'pandas==0.20.1' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6 \
@@ -53,6 +54,9 @@ RUN pip install --no-cache-dir --upgrade \
         libfreetype6-dev \
         libxft-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN pip install --no-cache-dir --upgrade \
+        'plotly==2.0.8'
 EOF
 
 echo
