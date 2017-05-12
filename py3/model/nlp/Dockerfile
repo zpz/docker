@@ -1,4 +1,4 @@
-# Dockerfile for image 'py3nlp:20170510'
+# Dockerfile for image 'zppz/py3nlp:20170512'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,7 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20170510
+FROM zppz/py3model:20170510
 USER root
 
 RUN pip install --no-cache-dir --upgrade \
