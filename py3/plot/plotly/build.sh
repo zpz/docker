@@ -31,25 +31,7 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'pandas==0.20.1' \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        liblapack3 liblapack-dev \
-    && pip install --no-cache-dir --upgrade \
-        'scipy==0.19.0' \
-    && apt-get install -y --no-install-recommends \
-        g++ \
-        gfortran \
-    && pip install --no-cache-dir --upgrade \
-        'cvxpy==0.4.10' \
-    && apt-get purge -y --auto-remove \
-        g++ \
-        gfortran \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.18.1' \
-        'patsy==0.4.1' \
-        'statsmodels==0.8.0'
+        'plotly==2.0.8'
 EOF
 
 echo
