@@ -34,7 +34,6 @@ USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
-
 RUN pip install --no-cache-dir --upgrade \
         'tensorflow==1.1.0'
 EOF

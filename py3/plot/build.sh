@@ -48,15 +48,12 @@ RUN pip install --no-cache-dir --upgrade \
         tcl \
         tk \
     && pip install --no-cache-dir --upgrade \
-        'matplotlib==2.0.1' \
+        'matplotlib==2.0.2' \
         'seaborn==0.7.1' \
     && apt-get purge -y --auto-remove \
         libfreetype6-dev \
         libxft-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/*
-
-RUN pip install --no-cache-dir --upgrade \
-        'plotly==2.0.8'
 EOF
 
 echo

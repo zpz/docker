@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir --upgrade \
         g++ \
         gfortran \
     && pip install --no-cache-dir --upgrade \
-        'cvxpy==0.4.9' \
+        'cvxpy==0.4.10' \
     && apt-get purge -y --auto-remove \
         g++ \
         gfortran \

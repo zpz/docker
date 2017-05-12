@@ -1,4 +1,4 @@
-# Dockerfile for image 'zppz/py3map:20170510'
+# Dockerfile for image 'zppz/py3map:20170512'
 
 # This is a catch-all image for learning purposes.
 
@@ -8,7 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3plot:20170510
+FROM zppz/py3plot:20170512
 USER root
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

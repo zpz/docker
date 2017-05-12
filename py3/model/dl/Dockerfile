@@ -8,8 +8,7 @@
 # DO NOT EDIT.
 #=============================
 
-FROM zppz/py3:20170510
+FROM zppz/py3model:20170510
 USER root
-
 RUN pip install --no-cache-dir --upgrade \
         'tensorflow==1.1.0'
