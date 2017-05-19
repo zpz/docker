@@ -41,6 +41,7 @@ RUN pip install --no-cache-dir --upgrade \
         'mypy==0.510' \
         'pylint==1.7.1' \
         'pytest==3.0.7' \
+        'yapf==0.16.1' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
         'ipython==6.0.0' \
@@ -60,6 +61,7 @@ RUN pip install --no-cache-dir --upgrade \
         libc6-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && pip install --no-cache-dir --upgrade \
+        'boltons==17.1.0' \
         'numpy==1.12.1'
 
 # Installing `line_profiler` needs gcc.
@@ -84,7 +86,6 @@ RUN pip install --no-cache-dir --upgrade \
 #    pudb
 #    pyflakes
 #    radon
-#    yapf
 #    cython
 #    easycython
 

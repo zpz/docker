@@ -41,7 +41,8 @@ RUN mkdir -p ${GRADLE_HOME} \
     && curl -skL --retry 3 ${GRADLE_BASE_URL}/gradle-${GRADLE_VERSION}-bin.zip \
         -o ${GRADLE_HOME}/gradle.zip \
     && (cd ${GRADLE_HOME}; unzip gradle.zip; rm -f gradle.zip)
-ENV PATH ${PATH}:${GRADLE_HOME}/gradle-${GRADLE_VERSION}/bin
+ENV GRADLE_HOME ${GRADLE_HOME}/gradle-${GRADLE_VERSION}
+ENV PATH ${PATH}:${GRADLE_HOME}/bin
 
 # 21 Mb
 ENV SCALA_VERSION 2.12.2
@@ -50,7 +51,8 @@ ARG SCALA_BASE_URL=https://downloads.lightbend.com/scala/${SCALA_VERSION}
 RUN mkdir -p ${SCALA_HOME} \
     && curl -skL --retry 3 ${SCALA_BASE_URL}/scala-${SCALA_VERSION}.tgz \
         | tar xz -C ${SCALA_HOME}
-ENV PATH ${PATH}:${SCALA_HOME}/scala-${SCALA_VERSION}/bin
+ENV SCALA_HOME ${SCALA_HOME}/scala-${SCALA_VERSION}
+ENV PATH ${PATH}:${SCALA_HOME}/bin
 
 
 ENV KOTLIN_VERSION 1.1
@@ -60,7 +62,19 @@ RUN mkdir -p ${KOTLIN_HOME} \
     && curl -skL --retry 3 ${KOTLIN_BASE_URL}/kotlin-compiler-${KOTLIN_VERSION}.zip \
         -o ${KOTLIN_HOME}/kotlin.zip \
     && (cd ${KOTLIN_HOME}; unzip kotlin.zip; rm -f kotlin.zip)
-ENV PATH ${PATH}:${KOTLIN_HOME}/kotlinc/bin
+ENV KOTLIN_HOME ${KOTLIN_HOME}/kotlinc
+ENV PATH ${PATH}:${KOTLIN_HOME}/bin
+
+
+ENV GROOVY_VERSION 2.4.10
+ENV GROOVY_HOME /usr/share/groovy
+ARG GROOVY_BASE_URL=https://bintray.com/artifact/download/groovy/maven
+RUN mkdir -p ${GROOVY_HOME} \
+    && curl -skL --retry 3 ${GROOVY_BASE_URL}/apache-groovy-binary-${GROOVY_VERSION}.zip \
+        -o ${GROOVY_HOME}/groovy.zip \
+    && (cd ${GROOVY_HOME}; unzip groovy.zip; rm -f groovy.zip)
+ENV GROOVY_HOME ${GROOVY_HOME}/groovy-${GROOVY_VERSION}
+ENV PATH ${PATH}:${GROOVY_HOME}/bin
 EOF
 
 echo
