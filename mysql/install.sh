@@ -21,9 +21,9 @@ fi
 imgname=$(cat "${thisdir}/name")
 imgversion=$(cat "${thisdir}/version")
 
-containername="local-docker-postgres"
+containername="local-docker-mysql"
 
-cmdname=start-pg
+cmdname=start-mysql
 target="${bindir}/${cmdname}"
 echo installing "'${cmdname}'" into "'${bindir}'"
 if [[ -f "${target}" ]]; then
@@ -41,11 +41,10 @@ if [[ -z "\$container_id" ]]; then
     echo starting container ${containername}...
     docker run \\
         --name ${containername} \\
-        -e POSTGRES_PASSWORD=1234 \\
-        -e PGDATA=/var/lib/postgresql/data \\
-        -v ${datadir}/${containername}:/var/lib/postgresql/data \\
+        -e MYSQL_ROOT_PASSWORD=1234 \\
+        -v ${datadir}/${containername}:/var/lib/mysql \\
         -d \\
-        -p 5432:5432 \\
+        -p 3306:3306 \\
         ${imgname}:${imgversion}
 else
     status=\$(expr "\$(docker ps --filter "id=\${container_id}" -a --format '{{.Status}}')" : '\([a-zA-Z]*\) .*')
@@ -62,7 +61,7 @@ EOF
 chmod +x "${target}"
 
 
-cmdname=stop-pg
+cmdname=stop-mysql
 target="${bindir}/${cmdname}"
 echo installing "'${cmdname}'" into "'${bindir}'"
 if [[ -f "${target}" ]]; then
@@ -87,7 +86,7 @@ EOF
 chmod +x "${target}"
 
 
-cmdname=ip-pg
+cmdname=ip-mysql
 target="${bindir}/${cmdname}"
 echo installing "'${cmdname}'" into "'${bindir}'"
 if [[ -f "${target}" ]]; then
@@ -105,7 +104,7 @@ if [[ -n "\$container_id" ]]; then
     status=\$(expr "\$(docker ps --filter "id=\${container_id}" -a --format '{{.Status}}')" : '\([a-zA-Z]*\) .*')
     if [[ "\$status" == "Up" ]]; then
         container_ip=\$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "${containername}")
-        echo "local PostgreSQL server running in container '${containername}' at '\${container_ip}:5432'"
+        echo "local MySQL server running in container '${containername}' at '\${container_ip}:3306'"
     else
         echo container '${containername}' is not running
     fi

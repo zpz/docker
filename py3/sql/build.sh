@@ -31,20 +31,10 @@ EOF
 
 cat >> "$thisdir"/Dockerfile <<'EOF'
 
-# Postgres
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libpq5 \
-        libpq-dev \
-    && pip install --no-cache-dir --upgrade \
-        'psycopg2==2.7.1' \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
-
-# RUN pip install --no-cache-dir --upgrade \
-#         'aiohttp==1.3.5' \
-#         'asyncpg==0.9.0' \
-#         'uvloop==0.8.0'
+RUN pip install --no-cache-dir --upgrade \
+        pandas==0.20.1 \
+        SQLAlchemy==1.1.10 \
+        sqlparse==0.2.3
 EOF
 
 echo
