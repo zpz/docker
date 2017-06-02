@@ -37,6 +37,7 @@ RUN pip install --no-cache-dir --upgrade \
         'setuptools==35.0.2' \
     && pip install --no-cache-dir --upgrade \
         'coverage==4.3.4' \
+        'Faker==0.7.12' \
         'memory_profiler==0.47' \
         'mypy==0.510' \
         'pylint==1.7.1' \
@@ -49,6 +50,7 @@ RUN pip install --no-cache-dir --upgrade \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
+        make \
     && pip install --no-cache-dir --upgrade \
         'Sphinx>=1.5.5' \
     && apt-get install -y --no-install-recommends \
