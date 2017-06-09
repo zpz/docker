@@ -21,33 +21,22 @@ RUN groupadd --gid 1000 docker \
 # Very basic
 
 # 'curl': about 15 MB.
-# 'vim': about 20MB.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         bzip2 \
         curl \
         less \
+        make \
         tree \
         unzip \
-        vim \
         xz-utils \
-    \
-    && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
-    && mv /tmp/linux-master /tmp/dotfiles \
-    && cp /tmp/dotfiles/bash/bashrc /etc/bash.bashrc \
-    && chmod +r /etc/bash.bashrc \
-    && mkdir -p /etc/vim \
-    && cp /tmp/dotfiles/vim/vimrc /etc/vim/vimrc.local \
-    && cp -r /tmp/dotfiles/vim/vim/* /etc/vim/ \
-    && chmod -R +rX /etc/vim \
-    \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
-    && apt-get clean
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
-ENV SHELL=/bin/bash
-ENV EDITOR vim
+COPY dotfiles/bash/bashrc /etc/bash.bashrc
+RUN chmod +r /etc/bash.bashrc
 
 
 #------------------
@@ -59,6 +48,9 @@ RUN chmod +x /usr/bin/tini
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 # TODO: problematic when I terminate some programs within container.
+
+
+ENV SHELL=/bin/bash
 
 CMD ["/bin/bash"]
 WORKDIR /

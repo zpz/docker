@@ -21,7 +21,16 @@ FROM ${PARENT}
 USER root
 EOF
 
+cp -r ../dotfiles .
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
+
+cat >> "${thisdir}/Dockerfile" <<'EOF'
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3 \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+EOF
+
+cat "$(dirname "${thisdir}")/neovim.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 # 11 Mb
@@ -81,4 +90,5 @@ echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
+rm -rf dotfiles
 

@@ -28,33 +28,22 @@ RUN groupadd --gid 1000 docker \
 # Very basic
 
 # 'curl': about 15 MB.
-# 'vim': about 20MB.
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         bzip2 \
         curl \
         less \
+        make \
         tree \
         unzip \
-        vim \
         xz-utils \
-    \
-    && curl -skL https://github.com/zpz/linux/archive/master.tar.gz |tar xz -C /tmp/ \
-    && mv /tmp/linux-master /tmp/dotfiles \
-    && cp /tmp/dotfiles/bash/bashrc /etc/bash.bashrc \
-    && chmod +r /etc/bash.bashrc \
-    && mkdir -p /etc/vim \
-    && cp /tmp/dotfiles/vim/vimrc /etc/vim/vimrc.local \
-    && cp -r /tmp/dotfiles/vim/vim/* /etc/vim/ \
-    && chmod -R +rX /etc/vim \
-    \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
-    && apt-get clean
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
-ENV SHELL=/bin/bash
-ENV EDITOR vim
+COPY dotfiles/bash/bashrc /etc/bash.bashrc
+RUN chmod +r /etc/bash.bashrc
 
 
 #------------------
@@ -66,6 +55,48 @@ RUN chmod +x /usr/bin/tini
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 # TODO: problematic when I terminate some programs within container.
+
+#------------------
+# editor
+
+ENV NEOVIM_HOME=/etc/xdg/nvim
+COPY dotfiles/nvim ${NEOVIM_HOME}/
+
+RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
+    && echo 'deb-src http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
+    && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 9DBB0BE9366964F134855E2255F96FCF8231B6DD \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        git \
+        neovim \
+        xclip \
+    \
+    && pip install --no-cache-dir --upgrade \
+        neovim \
+        jedi \
+    \
+    && chmod -R +rX ${NEOVIM_HOME} \
+    && mkdir -p ${NEOVIM_HOME}/bundle \
+    && git clone https://github.com/VundleVim/Vundle.vim.git ${NEOVIM_HOME}/bundle/Vundle.vim \
+    && nvim +PluginInstall +qall \
+    && nvim +UpdateRemotePlugins +qall \
+    \
+    && ln -s $(which nvim) /usr/local/bin/vim \
+    && rm -rf ${NEOVIM_HOME}/bundle/Vundle.vim/{.git*,doc,test,tests} \
+    && rm -rf ${NEOVIM_HOME}/bundle/deoplete-jedi/{.git*,doc,test,tests} \
+    && rm -rf ${NEOVIM_HOME}/bundle/deoplete.nvim/{.git*,doc,test,tests} \
+    && rm -rf ${NEOVIM_HOME}/bundle/supertab/{.git*,doc,test,tests} \
+    \
+    && apt-get purge -y --auto-remove \
+        git \
+    && apt-get -y autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
+
+ENV EDITOR vim
+ENV SHELL=/bin/bash
+
 
 CMD ["/bin/bash"]
 WORKDIR /

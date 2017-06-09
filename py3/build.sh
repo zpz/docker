@@ -24,7 +24,9 @@ FROM ${PARENT}
 USER root
 EOF
 
-cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
+cp -r ../dotfiles .
+
+cat "$(dirname "${thisdir}")/base_nvim.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
@@ -32,27 +34,30 @@ cat >> "${thisdir}/Dockerfile" <<'EOF'
 # IPython, Jupyter Notebook.
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
+COPY ipython_config.py /etc/xdg/ipython/profile_default/
+
 RUN pip install --no-cache-dir --upgrade \
-        'pip==9.0.1' \
-        'setuptools==35.0.2' \
+        'pip>=9.0.1' \
+        'setuptools>=36.0.1' \
     && pip install --no-cache-dir --upgrade \
-        'coverage==4.3.4' \
-        'Faker==0.7.12' \
-        'memory_profiler==0.47' \
-        'mypy==0.510' \
-        'pylint==1.7.1' \
-        'pytest==3.0.7' \
-        'yapf==0.16.1' \
+        'coverage>=4.4.1' \
+        'Faker>=0.7.15' \
+        'memory_profiler>=0.47' \
+        'mypy>=0.511' \
+        'pylint>=1.7.1' \
+        'pytest>=3.1.1' \
+        'yapf>=0.16.2' \
     && pip install --no-cache-dir --upgrade \
-        'ipdb==0.10.3' \
-        'ipython==6.0.0' \
-        'notebook==5.0.0' \
+        'ipdb>=0.10.3' \
+        'ipython>=6.1.0' \
+        'notebook>=5.0.0' \
+    && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
+    \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
-        make \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx>=1.5.5' \
+        'Sphinx>=1.6.2' \
     && apt-get install -y --no-install-recommends \
         gcc \
         libc6-dev \
@@ -64,7 +69,7 @@ RUN pip install --no-cache-dir --upgrade \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && pip install --no-cache-dir --upgrade \
         'boltons==17.1.0' \
-        'numpy==1.12.1'
+        'numpy==1.13.0'
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
@@ -103,10 +108,13 @@ RUN pip install --no-cache-dir --upgrade \
 #
 # `binutils` contains `gprof`.
 # To use `gprof`, use option `-pg` during both compiling and linking.
+
 EOF
 
 echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
+
+rm -rf dotfiles
 
