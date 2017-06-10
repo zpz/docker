@@ -64,47 +64,6 @@ CMD ["/bin/bash"]
 WORKDIR /
 
 
-#------------------
-# editor
-
-ENV NEOVIM_HOME=/etc/xdg/nvim
-COPY dotfiles/nvim ${NEOVIM_HOME}/
-
-RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
-    && echo 'deb-src http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
-    && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 9DBB0BE9366964F134855E2255F96FCF8231B6DD \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        git \
-        neovim \
-        xclip \
-    \
-    && pip install --no-cache-dir --upgrade \
-        neovim \
-        jedi \
-    \
-    && chmod -R +rX ${NEOVIM_HOME} \
-    && mkdir -p ${NEOVIM_HOME}/bundle \
-    && git clone https://github.com/VundleVim/Vundle.vim.git ${NEOVIM_HOME}/bundle/Vundle.vim \
-    && nvim +PluginInstall +qall \
-    && nvim +UpdateRemotePlugins +qall \
-    \
-    && ln -s $(which nvim) /usr/local/bin/vim \
-    && rm -rf ${NEOVIM_HOME}/bundle/Vundle.vim/{.git*,doc,test,tests} \
-    && rm -rf ${NEOVIM_HOME}/bundle/deoplete-jedi/{.git*,doc,test,tests} \
-    && rm -rf ${NEOVIM_HOME}/bundle/deoplete.nvim/{.git*,doc,test,tests} \
-    && rm -rf ${NEOVIM_HOME}/bundle/supertab/{.git*,doc,test,tests} \
-    \
-    && apt-get purge -y --auto-remove \
-        git \
-    && apt-get -y autoremove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
-
-
-ENV EDITOR vim
-
-
 # This section installs important tools for Python development.
 # In general, do not install packages that are required for the software to run
 # in this section. Restrict to development tools here.
@@ -187,4 +146,49 @@ RUN pip install --no-cache-dir --upgrade \
 #
 # `binutils` contains `gprof`.
 # To use `gprof`, use option `-pg` during both compiling and linking.
+
+
+#------------------
+# editor
+
+ENV NVIM_HOME=/etc/xdg/nvim
+#ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin
+COPY dotfiles/nvim ${NVIM_HOME}/
+
+RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
+    && echo 'deb-src http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
+    && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 9DBB0BE9366964F134855E2255F96FCF8231B6DD \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        git \
+        neovim \
+        xclip \
+    \
+    && pip install --no-cache-dir --upgrade \
+        neovim \
+        jedi \
+    \
+    && chmod -R +rX ${NVIM_HOME} \
+    && mkdir -p ${NVIM_HOME}/bundle \
+    && git clone https://github.com/VundleVim/Vundle.vim.git ${NVIM_HOME}/bundle/Vundle.vim \
+    && nvim +PluginInstall +qall \
+    && nvim +UpdateRemotePlugins +qall \
+    \
+    && ln -s $(which nvim) /usr/local/bin/vim \
+    && rm -rf ${NVIM_HOME}/bundle/Vundle.vim/{.git*,doc,test,tests} \
+    && rm -rf ${NVIM_HOME}/bundle/deoplete-jedi/{.git*,doc,test,tests} \
+    && rm -rf ${NVIM_HOME}/bundle/deoplete.nvim/{.git*,doc,test,tests} \
+    && rm -rf ${NVIM_HOME}/bundle/supertab/{.git*,doc,test,tests} \
+    \
+    && apt-get purge -y --auto-remove \
+        git \
+    && apt-get -y autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
+USER docker-user
+RUN nvim +UpdateRemotePlugins +qall
+USER root
+
+ENV EDITOR vim
 
