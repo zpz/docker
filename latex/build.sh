@@ -20,6 +20,10 @@ cat > "${thisdir}/Dockerfile" <<EOF
 FROM ${PARENT}
 USER root
 EOF
+
+cp ../dotfiles/bash/bashrc .
+cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
+
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 #--------------
@@ -73,21 +77,10 @@ RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C
 
 EOF
 
-cp -r ../dotfiles .
-cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
-
-cat >> "${thisdir}/Dockerfile" <<'EOF'
-
-#-----------
-# startup
-
-CMD ["/bin/bash"]
-EOF
-
 
 echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
-rm -rf dotfiles
+rm -f bashrc
 

@@ -32,7 +32,7 @@ EOF
 cat >> "$thisdir"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        pandas==0.20.1 \
+        pandas==0.20.2 \
         SQLAlchemy==1.1.10 \
         sqlparse==0.2.3
 

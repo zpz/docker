@@ -30,25 +30,9 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
-# SPARK
-# How to find the latest version of spark:
-# Go to official Apache Spark site, go to 'download'.
-#
-ENV SPARK_VERSION 2.1.1
-ENV SPARK_HOME /usr/lib/spark
-ARG SPARK_PACKAGE=spark-${SPARK_VERSION}-bin-hadoop2.7
-RUN mkdir -p ${SPARK_HOME} \
-    && curl -skL --retry 3 \
-        "https://dist.apache.org/repos/dist/release/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}.tgz" \
-        | tar xz -C ${SPARK_HOME}
-ENV SPARK_HOME ${SPARK_HOME}/${SPARK_PACKAGE}
-ENV PATH $PATH:${SPARK_HOME}/bin
-
-ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
-
-# Note：the env varialbes set by these ENV commands are for `root` only.
-# To set global env variables, some other approach is needed.
-# Hints: /etc/bash.bashrc, /etc/profile.d/, /etc/pam.d/
+RUN pip install --no-cache-dir --upgrade \
+        grpcio==1.3.0 \
+        grpcio-tools==1.3.0
 EOF
 
 echo

@@ -7,7 +7,8 @@ FROM zppz/py3:20170608
 USER root
 
 RUN pip install --no-cache-dir --upgrade \
-        'pandas==0.20.1' \
+        'numpy==1.13.0' \
+        'pandas==0.20.2' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         liblapack3 liblapack-dev \

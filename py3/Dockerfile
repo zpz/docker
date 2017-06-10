@@ -43,7 +43,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-COPY dotfiles/bash/bashrc /etc/bash.bashrc
+COPY bashrc /etc/bash.bashrc
 RUN chmod +r /etc/bash.bashrc
 
 
@@ -56,6 +56,13 @@ RUN chmod +x /usr/bin/tini
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 # TODO: problematic when I terminate some programs within container.
+
+
+ENV SHELL=/bin/bash
+
+CMD ["/bin/bash"]
+WORKDIR /
+
 
 #------------------
 # editor
@@ -96,12 +103,11 @@ RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> 
 
 
 ENV EDITOR vim
-ENV SHELL=/bin/bash
 
 
-CMD ["/bin/bash"]
-WORKDIR /
-
+# This section installs important tools for Python development.
+# In general, do not install packages that are required for the software to run
+# in this section. Restrict to development tools here.
 
 # Documentation, testing, debugging, code analysis, code formatting.
 # IPython, Jupyter Notebook.
@@ -139,10 +145,7 @@ RUN pip install --no-cache-dir --upgrade \
     && apt-get purge -y --auto-remove \
         gcc \
         libc6-dev \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && pip install --no-cache-dir --upgrade \
-        'boltons==17.1.0' \
-        'numpy==1.13.0'
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
@@ -168,6 +171,9 @@ RUN pip install --no-cache-dir --upgrade \
 #    radon
 #    cython
 #    easycython
+
+# boltons
+# numpy
 
 # Other packages often useful for software development:
 #    autoconf=2.69-8 \
