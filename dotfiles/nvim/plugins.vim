@@ -30,9 +30,8 @@ let g:deoplete#enable_smart_case = 1
 " start showing suggestions after typing first letter.
 let g:deoplete#auto_complete_start_length = 1
 
-" TODO: help says needs to enable 'timers'
 let g:deoplete#auto_complete_delay = 20
-let g:deoplete#auto_refresh_delay = 100
+let g:deoplete#auto_refresh_delay = 20
 
 let g:SuperTabDefaultCompletionType = "<c-n>"
 let g:SuperTabCrMapping = 1

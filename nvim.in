@@ -3,7 +3,7 @@
 # editor
 
 ENV NVIM_HOME=/etc/xdg/nvim
-#ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin
+ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
 COPY dotfiles/nvim ${NVIM_HOME}/
 
 RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
@@ -37,9 +37,8 @@ RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-USER docker-user
-RUN nvim +UpdateRemotePlugins +qall
-USER root
+# TODO: I don't know why but the above fails to delete the useless files
+# under ${NVIM_HOME}/bundle.
 
 ENV EDITOR vim
 
