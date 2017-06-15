@@ -23,17 +23,17 @@ RUN apt-get update \
 # `pybind11` header files are stored in /usr/local/include/python3.5m/pybind11/
 
 # TODO: currently unable to install LLVM.
-# ENV LLVM_VERSION=4.0
-#
-# #RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
-# RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
-#         | apt-key add - \
-#     && echo "deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \
-#     && apt-get update \
-#     && apt-get install -y --no-install-recommends \
-#         libllvm-${LLVM_VERSION} llvm-${LLVM_VERSION}-dev \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
-#     && pip install --no-cache-dir --upgrade \
-#         'llvmlite==0.18.0' \
-#         'numba==0.32.0' \
+ENV LLVM_VERSION=4.0
+
+#RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
+RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
+        | apt-key add - \
+    && echo "deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libllvm-${LLVM_VERSION} llvm-${LLVM_VERSION}-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
+    && pip install --no-cache-dir --upgrade \
+        'llvmlite==0.18.0' \
+        'numba==0.33.0' \
