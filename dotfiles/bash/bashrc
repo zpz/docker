@@ -14,9 +14,9 @@ alias dir='ls -alg --color'
 alias cp='cp -i'
 alias rm='rm -i'
 alias mv='mv -i'
-alias vim=nvim
+alias grep='grep --color'
 
-export EDITOR=nvim
+export EDITOR=vim
 
 # Customize command prompt. This is a big section---
 

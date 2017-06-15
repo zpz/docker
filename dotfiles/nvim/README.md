@@ -1,3 +1,9 @@
+# Prerequisites
+
+- `Python 3`
+
+-  Python package `neovim`
+
 # Where to put `neovim` config files?
 
 There is some confusion or mess.

@@ -1,1 +1,1 @@
-python ../../pyinstall.py --cmd=spark
+python ../../../pyinstall.py --cmd=spark
