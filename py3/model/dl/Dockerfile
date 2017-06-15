@@ -6,4 +6,6 @@
 FROM zppz/py3model:20170608
 USER root
 RUN pip install --no-cache-dir --upgrade \
-        'tensorflow==1.1.0'
+        'tensorflow==1.2.0rc2' \
+        'Theano==0.9.0' \
+        'Keras==2.0.5'
