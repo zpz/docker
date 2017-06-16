@@ -26,10 +26,8 @@ RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> 
     && nvim +UpdateRemotePlugins +qall \
     \
     && ln -s $(which nvim) /usr/local/bin/vim \
-    && rm -rf ${NVIM_HOME}/bundle/Vundle.vim/{.git*,doc,test,tests} \
-    && rm -rf ${NVIM_HOME}/bundle/deoplete-jedi/{.git*,doc,test,tests} \
-    && rm -rf ${NVIM_HOME}/bundle/deoplete.nvim/{.git*,doc,test,tests} \
-    && rm -rf ${NVIM_HOME}/bundle/supertab/{.git*,doc,test,tests} \
+    && cd ${NVIM_HOME}/bundle \
+    && rm -rf */{.git*,doc,test,tests} \
     \
     && apt-get purge -y --auto-remove \
         git \
