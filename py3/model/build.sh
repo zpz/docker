@@ -33,6 +33,7 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'numpy==1.13.0' \
         'pandas==0.20.2' \
+        'pyarrow==0.4.1' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         liblapack3 liblapack-dev \
