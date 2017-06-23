@@ -58,6 +58,9 @@ def maketext():
 
         dockerhomedir = '/home/docker-user'
 
+    if options:
+        args += ' ' + options
+
     dockerworkdir = os.path.join(dockerhomedir, os.path.basename(hostworkdir))
     pypaths = ':'.join([os.path.join(dockerworkdir, p) for p in pypath])
     if pypath_abs:
@@ -163,6 +166,11 @@ if __name__ == '__main__':
         '--imgversion',
         help='version of Docker image',
     )
+    p.add_argument(
+        '--options',
+        help='additional arguments, as a string, passed on to "docker run" verbatim',
+        default='',
+        )
     args = p.parse_args()
 
     imgname = args.imgname
@@ -174,6 +182,7 @@ if __name__ == '__main__':
     pypath = args.pypath
     pypath_abs = args.pypath_abs
     asroot = args.asroot
+    options = args.options
 
     hostworkdir = get_host_work_dir()
     bindir = os.path.join(hostworkdir, 'bin')
