@@ -10,7 +10,8 @@ USER root
 
 RUN pip install --no-cache-dir --upgrade \
         'numpy==1.13.0' \
-        'bokeh==0.12.5' \
+        'bokeh==0.12.6' \
+        'holoviews==1.7.0' \
         'pandas==0.20.2' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
