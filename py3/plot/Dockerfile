@@ -29,3 +29,9 @@ RUN pip install --no-cache-dir --upgrade \
         'bokeh==0.12.6' \
         'holoviews==1.7.0' \
         'plotly==2.0.11'
+
+# 'gif' support in Holoviews requires ImageMagick
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        imagemagick \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
