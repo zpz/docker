@@ -7,6 +7,8 @@
 # IPython, Jupyter Notebook.
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
+# TODO:
+# it is possible that this config file is not loaded by Jupyter Notebook.
 COPY ipython_config.py /etc/xdg/ipython/profile_default/
 
 RUN pip install --no-cache-dir --upgrade \
