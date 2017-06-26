@@ -7,6 +7,10 @@ c.InteractiveShellApp.exec_lines.append('print("Warning: disable autoreload in i
 ## A list of dotted module names of IPython extensions to load.
 c.InteractiveShellApp.extensions = ['autoreload']
 
+# This work arounds a limitation in notebook 5.0.
+# The limit is expected to be removed in 5.1.
+# Refer to intro page of Holoviews documentation.
+c.NotebookApp.iopub_data_rate_limit=100000000
 
 ###################################
 # The following template was created by running
