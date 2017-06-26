@@ -31,11 +31,8 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 # freetype and xft are required by matplotlib
-
 RUN pip install --no-cache-dir --upgrade \
         'numpy==1.13.0' \
-        'bokeh==0.12.6' \
-        'holoviews==1.7.0' \
         'pandas==0.20.2' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -51,6 +48,11 @@ RUN pip install --no-cache-dir --upgrade \
         libfreetype6-dev \
         libxft-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN pip install --no-cache-dir --upgrade \
+        'bokeh==0.12.6' \
+        'holoviews==1.7.0' \
+        'plotly==2.0.11'
 EOF
 
 echo
