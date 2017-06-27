@@ -114,7 +114,11 @@ ENV EDITOR vim
 # IPython, Jupyter Notebook.
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
+# TODO:
+# it is possible that this config file is not loaded by Jupyter Notebook.
+ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
 COPY ipython_config.py /etc/xdg/ipython/profile_default/
+COPY jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
