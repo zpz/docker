@@ -138,5 +138,6 @@ set shortmess+=I
   " In addition to the default setting of 'shortmess':
   " dont' display the intro when vim is launched.
 
-set mouse=c
+"set mouse=c
+set mouse=a
 
