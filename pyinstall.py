@@ -105,7 +105,8 @@ if (( $# > 0 )); then
     -p 8888:8888"
         workdir="{dockerworkdir}"
         shift
-        command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${{workdir}}' --NotebookApp.token='' --NotebookApp.iopub_data_rate_limit=100000000 $@"
+        command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${{workdir}}' --NotebookApp.token='' $@"
+        #command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${{workdir}}' --NotebookApp.token='' --NotebookApp.iopub_data_rate_limit=100000000 $@"
         # The setting for iopub_data_rate_limit works around a limitation in notebook 5.0.
         # The limit is expected to be removed in 5.1.
         # Refer to intro page of Holoviews documentation.

@@ -27,6 +27,7 @@ EOF
 cp -r ../dotfiles .
 cp dotfiles/bash/bashrc .
 cp dotfiles/ipython/ipython_config.py .
+cp dotfiles/jupyter/jupyter_notebook_config.py .
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
@@ -37,5 +38,5 @@ echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
 rm -rf dotfiles
-rm -f bashrc ipython_config.py
+rm -f bashrc ipython_config.py jupyter_notebook_config.py
 
