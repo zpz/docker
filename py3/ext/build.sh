@@ -58,8 +58,8 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
     && rm -rf /var/lib/apt/lists/* \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
     && pip install --no-cache-dir --upgrade \
-        'llvmlite==0.18.0' \
-        'numba==0.33.0' \
+        'llvmlite==0.19.0' \
+        'numba==0.34.0' \
 EOF
 
 echo

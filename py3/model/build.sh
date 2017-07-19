@@ -31,14 +31,14 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'numpy==1.13.0' \
-        'pandas==0.20.2' \
+        'numpy==1.13.1' \
+        'pandas==0.20.3' \
         'pyarrow==0.4.1' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         liblapack3 liblapack-dev \
     && pip install --no-cache-dir --upgrade \
-        'scipy==0.19.0' \
+        'scipy==0.19.1' \
     && apt-get install -y --no-install-recommends \
         g++ \
         gfortran \

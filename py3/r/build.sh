@@ -64,7 +64,7 @@ RUN apt-key adv --keyserver keys.gnupg.net --recv-key 6212B7B7931C4BB16280BA1306
         testthat \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2==2.8.5' \
+        'rpy2==2.8.6' \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF

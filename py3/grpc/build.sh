@@ -31,8 +31,8 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        grpcio==1.3.0 \
-        grpcio-tools==1.3.0
+        grpcio==1.4.0 \
+        grpcio-tools==1.4.0
 EOF
 
 echo

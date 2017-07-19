@@ -8,8 +8,8 @@ USER root
 
 # freetype and xft are required by matplotlib
 RUN pip install --no-cache-dir --upgrade \
-        'numpy==1.13.0' \
-        'pandas==0.20.2' \
+        'numpy==1.13.1' \
+        'pandas==0.20.3' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6 \
@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir --upgrade \
         tk \
     && pip install --no-cache-dir --upgrade \
         'matplotlib==2.0.2' \
-        'seaborn==0.7.1' \
+        'seaborn==0.8' \
     && apt-get purge -y --auto-remove \
         libfreetype6-dev \
         libxft-dev \
@@ -27,8 +27,10 @@ RUN pip install --no-cache-dir --upgrade \
 
 RUN pip install --no-cache-dir --upgrade \
         'bokeh==0.12.6' \
-        'holoviews==1.7.0' \
-        'plotly==2.0.11'
+        'param==1.5.1' \
+        'plotly==2.0.12' \
+    && pip install --no-cache-dir --upgrade \
+        'holoviews==1.8.1'
 
 # 'gif' support in Holoviews requires ImageMagick
 RUN apt-get update \
