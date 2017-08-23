@@ -30,9 +30,9 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
-        'tensorflow==1.2.0rc2' \
+        'tensorflow==1.3.0rc2' \
         'Theano==0.9.0' \
-        'Keras==2.0.5'
+        'Keras==2.0.6'
 EOF
 
 echo

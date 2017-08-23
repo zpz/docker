@@ -49,7 +49,7 @@ RUN pip install --no-cache-dir --upgrade \
         gfortran \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.18.1' \
+        'scikit-learn==0.19.0' \
         'patsy==0.4.1' \
         'statsmodels==0.8.0'
 EOF

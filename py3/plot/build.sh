@@ -54,7 +54,7 @@ RUN pip install --no-cache-dir --upgrade \
         'param==1.5.1' \
         'plotly==2.0.12' \
     && pip install --no-cache-dir --upgrade \
-        'holoviews==1.8.1'
+        'holoviews==1.8.2'
 
 # 'gif' support in Holoviews requires ImageMagick
 RUN apt-get update \

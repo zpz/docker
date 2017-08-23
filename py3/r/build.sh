@@ -60,13 +60,30 @@ RUN apt-key adv --keyserver keys.gnupg.net --recv-key 6212B7B7931C4BB16280BA1306
         r-base-dev=${R_BASE_VERSION} \
     && install.r \
         futile.logger \
-        roxygen2 \
         testthat \
     \
     && pip install --no-cache-dir --upgrade \
         'rpy2==2.8.6' \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+    && curl -skL ftp://xmlsoft.org/libxml2/libxml2-2.9.2.tar.gz | tar xz -C /tmp \
+    && cd /tmp/libxml2-2.9.2 \
+    && ./configure --prefix=/usr/local --disable-static --with-history \
+    && make && make install
+
+RUN install.r BH \
+    && install.r xml2 \
+    && install.r roxygen2 \
+
+#    && apt-get purge -y --auto-remove \
+#        build-essential \
+#    && rm -rf /var/lib/apt/lists/* /tmp/* \
+#    && apt-get -y autoremove \
+#    && apt-get clean
 EOF
 
 
