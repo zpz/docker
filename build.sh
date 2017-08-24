@@ -1,13 +1,15 @@
-# Build all the images defined in the subdirectories (recursively) of
-# the current directory.
 # Usage:
 #
-#  bash thisscript
+#   bash build.sh
+#
+# Recursively build images defined in the subdirectories.
+# Build is attempted for a directory and its subdirectories only if
+# the files `name`, `version`, `build.sh` all exist in the directory.
 
 
 set -o nounset
 set -o pipefail
-set -e
+set -o errexit
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
@@ -17,7 +19,6 @@ function build_one() {
     echo in "'$(pwd)'"
     if [[ -f ./build.sh && -f ./version && -f ./name ]]; then
         bash ./build.sh
-        #(( $? == 0 )) || exit 1
         echo
         for f in *; do
             if [[ -d "$f" && ! -L "$f" ]]; then

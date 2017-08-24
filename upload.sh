@@ -1,3 +1,11 @@
+# Usage:
+#
+#    bash upload.sh
+#
+# Recursively walk in subdirectories and upload select images to dockerhub.
+# This requires the current machine has logged into docker hub.
+
+
 set -o nounset
 set -o errexit
 set -o pipefail

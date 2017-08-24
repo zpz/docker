@@ -1,3 +1,7 @@
+"""
+Install a container-launching script based on specified image and options.
+"""
+
 from __future__ import print_function
 
 import argparse
@@ -202,3 +206,4 @@ if __name__ == '__main__':
              stat.S_IRGRP | stat.S_IXGRP |
              stat.S_IROTH | stat.S_IXOTH
              )
+

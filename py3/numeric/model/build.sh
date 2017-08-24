@@ -33,12 +33,10 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         g++ \
-        gfortran \
     && pip install --no-cache-dir --upgrade \
         'cvxpy==0.4.11' \
     && apt-get purge -y --auto-remove \
         g++ \
-        gfortran \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && pip install --no-cache-dir --upgrade \
         'patsy==0.4.1' \

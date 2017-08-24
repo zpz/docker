@@ -31,6 +31,7 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
+        'cython==0.26' \
         'nose==1.3.7' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \

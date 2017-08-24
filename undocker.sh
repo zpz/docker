@@ -1,6 +1,6 @@
 # Usage:
 #
-#   bash thisscript [image]
+#   bash undocker.sh [image]
 #
 # where `image` is an image name w/ or w/o tag.
 # If `image` is an image name w/o tag, all images of that name w/ various tags will be deleted.

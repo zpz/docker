@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 # Find Docker containers whose image name contains specified substring.
+#
+# Usage:
+#
+#   bash docker-container.sh [-q] pattern
+
 
 quiet=
 pattern=
@@ -29,6 +34,3 @@ else
         docker ps -a
     fi
 fi
-
-
-

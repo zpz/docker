@@ -30,10 +30,6 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
-        'cython==0.26' \
-        'easycython==1.0.7'
-
-RUN pip install --no-cache-dir --upgrade \
         'numpy==1.13.1' \
         'pandas==0.20.3' \
         'scipy==0.19.1'

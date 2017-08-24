@@ -36,13 +36,20 @@ RUN apt-get update \
         gcc \
         g++ \
         libc6-dev \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
     && pip install --no-cache-dir --upgrade \
         'cffi==1.10.0' \
-        'pybind11==2.1.1'
+        'cython==0.26' \
+        'easycython==1.0.7' \
+        'pybind11==2.1.1' \
+    && apt-get purge -y --auto-remove \
+        cmake \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # `cmake` is required to build `pybind11` tests.
 # `pybind11` header files are stored in /usr/local/include/python3.5m/pybind11/
+
+# Both `numba` and `cython` are often used with `numpy`,
+# so we provide `numpy` for experimentation.
 
 ENV LLVM_VERSION=4.0
 
@@ -58,6 +65,7 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
     && pip install --no-cache-dir --upgrade \
         'llvmlite==0.19.0' \
         'numba==0.34.0' \
+        'numpy==1.13.1'
 EOF
 
 echo

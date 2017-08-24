@@ -7,6 +7,7 @@ FROM zppz/py3num:20170823
 USER root
 
 RUN pip install --no-cache-dir --upgrade \
+        'cython==0.26' \
         'nose==1.3.7' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
