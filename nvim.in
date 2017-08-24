@@ -6,13 +6,15 @@ ENV NVIM_HOME=/etc/xdg/nvim
 ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
 COPY dotfiles/nvim ${NVIM_HOME}/
 
-RUN echo 'deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
-    && echo 'deb-src http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu wily main' >> /etc/apt/sources.list \
-    && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 9DBB0BE9366964F134855E2255F96FCF8231B6DD \
+ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+
+RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
+    && mv /tmp/nvim-linux64 /usr/local/sbin/neovim \
+    && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
+    \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
-        neovim \
         xclip \
     \
     && pip install --no-cache-dir --upgrade \

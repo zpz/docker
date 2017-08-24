@@ -51,7 +51,7 @@ RUN mkdir -p ${MAVEN_HOME} \
 ENV PATH ${PATH}:${MAVEN_HOME}/apache-maven-${MAVEN_VERSION}/bin
 
 # 80 Mb
-ENV GRADLE_VERSION 3.5
+ENV GRADLE_VERSION 4.1
 ENV GRADLE_HOME /usr/lib/gradle
 ARG GRADLE_BASE_URL=https://services.gradle.org/distributions
 RUN mkdir -p ${GRADLE_HOME} \
@@ -62,7 +62,7 @@ ENV GRADLE_HOME ${GRADLE_HOME}/gradle-${GRADLE_VERSION}
 ENV PATH ${PATH}:${GRADLE_HOME}/bin
 
 # 21 Mb
-ENV SCALA_VERSION 2.12.2
+ENV SCALA_VERSION 2.12.3
 ENV SCALA_HOME /usr/lib/scala
 ARG SCALA_BASE_URL=https://downloads.lightbend.com/scala/${SCALA_VERSION}
 RUN mkdir -p ${SCALA_HOME} \
@@ -72,7 +72,7 @@ ENV SCALA_HOME ${SCALA_HOME}/scala-${SCALA_VERSION}
 ENV PATH ${PATH}:${SCALA_HOME}/bin
 
 
-ENV KOTLIN_VERSION 1.1.2-2
+ENV KOTLIN_VERSION 1.1.4-2
 ENV KOTLIN_HOME /usr/lib/kotlin
 ARG KOTLIN_BASE_URL=https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}
 RUN mkdir -p ${KOTLIN_HOME} \
@@ -83,7 +83,7 @@ ENV KOTLIN_HOME ${KOTLIN_HOME}/kotlinc
 ENV PATH ${PATH}:${KOTLIN_HOME}/bin
 
 
-ENV GROOVY_VERSION 2.4.10
+ENV GROOVY_VERSION 2.4.12
 ENV GROOVY_HOME /usr/lib/groovy
 ARG GROOVY_BASE_URL=https://bintray.com/artifact/download/groovy/maven
 RUN mkdir -p ${GROOVY_HOME} \

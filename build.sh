@@ -7,6 +7,7 @@
 
 set -o nounset
 set -o pipefail
+set -e
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
@@ -16,7 +17,7 @@ function build_one() {
     echo in "'$(pwd)'"
     if [[ -f ./build.sh && -f ./version && -f ./name ]]; then
         bash ./build.sh
-        (( $? == 0 )) || exit 1
+        #(( $? == 0 )) || exit 1
         echo
         for f in *; do
             if [[ -d "$f" && ! -L "$f" ]]; then

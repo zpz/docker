@@ -31,7 +31,7 @@ cp dotfiles/jupyter/jupyter_notebook_config.py .
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
-cat ./pydev.in >> "${thisdir}/Dockerfile"
+#cat ./pydev.in >> "${thisdir}/Dockerfile"
 
 echo
 echo Building image "'${NAME}'"

@@ -57,7 +57,7 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 # How to find the latest version of spark:
 # Go to official Apache Spark site, go to 'download'.
 #
-ENV SPARK_VERSION 2.1.1
+ENV SPARK_VERSION 2.2.0
 ENV SPARK_HOME /usr/lib/spark
 ARG SPARK_PACKAGE=spark-${SPARK_VERSION}-bin-hadoop2.7
 RUN mkdir -p ${SPARK_HOME} \

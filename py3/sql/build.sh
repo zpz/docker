@@ -32,42 +32,42 @@ EOF
 cat >> "$thisdir"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        pandas==0.20.2 \
-        SQLAlchemy==1.1.10 \
-        sqlparse==0.2.3
+        'pandas==0.20.3' \
+        'SQLAlchemy==1.1.13' \
+        'sqlparse==0.2.3'
 
 # MySQL
 #
-RUN pip install --no-cache-dir --upgrade \
-        PyMySQL==0.7.11
+# RUN pip install --no-cache-dir --upgrade \
+#         PyMySQL==0.7.11
 
 # Postgres, Redshift
 #
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libpq5 \
-        libpq-dev \
-    && pip install --no-cache-dir --upgrade \
-        'psycopg2==2.7.1' \
-        'asyncpg==0.11.0' \
-        'uvloop==0.8.0' \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+# RUN apt-get update \
+#     && apt-get install -y --no-install-recommends \
+#         libpq5 \
+#         libpq-dev \
+#     && pip install --no-cache-dir --upgrade \
+#         'psycopg2==2.7.3' \
+#         'asyncpg==0.12.0' \
+#         'uvloop==0.8.0' \
+#     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # Hive, Impala
 # sasl, thrift, thrift-sasl are required by impyla.
 #
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        libsasl2-dev \
-        libsasl2-modules \
-    && pip install --no-cache-dir --upgrade \
-        'impyla==0.14.0' \
-    && apt-get purge -y --auto-remove \
-        gcc \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && apt-get -y autoremove \
-    && apt-get clean
+# RUN apt-get update \
+#     && apt-get install -y --no-install-recommends \
+#         gcc \
+#         libsasl2-dev \
+#         libsasl2-modules \
+#     && pip install --no-cache-dir --upgrade \
+#         'impyla==0.14.0' \
+#     && apt-get purge -y --auto-remove \
+#         gcc \
+#     && rm -rf /var/lib/apt/lists/* /tmp/* \
+#     && apt-get -y autoremove \
+#     && apt-get clean
 
 EOF
 
