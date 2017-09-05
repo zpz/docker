@@ -58,3 +58,5 @@ RUN install.r \
         libxml2 libxml2-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && install.r BH xml2 roxygen2
+
+# This image contains `gcc`, `g++`, `gfortran`.
