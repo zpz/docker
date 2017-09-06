@@ -48,6 +48,8 @@ ENV PY4J_VERSION 0.10.4
 ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-${PY4J_VERSION}-src.zip
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
 
-# Note：the env varialbes set by these ENV commands are for `root` only.
+# Note：(at least some of) the env varialbes set by these ENV commands are for `root` only.
 # To set global env variables, some other approach is needed.
 # Hints: /etc/bash.bashrc, /etc/profile.d/, /etc/pam.d/
+
+COPY ./spark-defaults.conf ${SPARK_HOME}/conf
