@@ -77,6 +77,12 @@ ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M -
 # Hints: /etc/bash.bashrc, /etc/profile.d/, /etc/pam.d/
 
 COPY ./spark-defaults.conf ${SPARK_HOME}/conf
+
+# Instructions on using IPython or Jupyter Notebook for Spark
+# are found in 'Spark Programming Guide / Using the Shell'.
+RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ipyspark \
+    && echo 'PYSPARK_DRIVER_PYTHON=ipython pyspark' >> /usr/local/bin/ipyspark \
+    && chmod +x /usr/local/bin/ipyspark
 EOF
 
 echo
