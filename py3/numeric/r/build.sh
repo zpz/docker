@@ -60,28 +60,33 @@ cat >> "${thisdir}/Dockerfile" <<'EOF'
 
 ENV R_BASE_VERSION 3.4.1-2~jessiecran.0
 
-COPY ./install.r /usr/local/bin
-RUN chmod +x /usr/local/bin/install.r
-
 RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/apt/sources.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         r-base=${R_BASE_VERSION} \
         r-base-dev=${R_BASE_VERSION} \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2==2.9.0'
+        'rpy2==2.9.0' \
+    \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
+COPY ./install.r /usr/local/bin
+COPY ./install.version.r /usr/local/bin
+RUN chmod +x /usr/local/bin/install.r
+RUN chmod +x /usr/local/bin/install.version.r
 
 RUN install.r \
         futile.logger \
         testthat \
+        versions \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libxml2 libxml2-dev \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && install.r BH xml2 roxygen2
+    && install.r BH xml2 roxygen2 \
+    && rm -rf /tmp/*
 
 # This image contains `gcc`, `g++`, `gfortran`.
 EOF

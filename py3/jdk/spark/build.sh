@@ -80,9 +80,9 @@ COPY ./spark-defaults.conf ${SPARK_HOME}/conf
 
 # Instructions on using IPython or Jupyter Notebook for Spark
 # are found in 'Spark Programming Guide / Using the Shell'.
-RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ipyspark \
-    && echo 'PYSPARK_DRIVER_PYTHON=ipython pyspark' >> /usr/local/bin/ipyspark \
-    && chmod +x /usr/local/bin/ipyspark
+RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ispark \
+    && echo 'PYSPARK_DRIVER_PYTHON=ipython pyspark' >> /usr/local/bin/ispark \
+    && chmod +x /usr/local/bin/ispark
 EOF
 
 echo
