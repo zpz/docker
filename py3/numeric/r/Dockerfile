@@ -54,6 +54,7 @@ RUN chmod +x /usr/local/bin/install.r
 RUN chmod +x /usr/local/bin/install.version.r
 
 RUN install.r \
+        devtools \
         futile.logger \
         testthat \
         versions \
