@@ -54,15 +54,20 @@ RUN chmod +x /usr/local/bin/install.r
 RUN chmod +x /usr/local/bin/install.version.r
 
 RUN install.r \
-        devtools \
         futile.logger \
         testthat \
         versions \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libxml2 libxml2-dev \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
     && install.r BH xml2 roxygen2 \
-    && rm -rf /tmp/*
+    \
+    && apt-get install -y --no-install-recommends \
+        libssl-dev \
+        libcurl4-openssl-dev \
+    && install.r \
+        httr \
+        devtools \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # This image contains `gcc`, `g++`, `gfortran`.
