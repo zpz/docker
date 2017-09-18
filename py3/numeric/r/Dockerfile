@@ -57,6 +57,7 @@ RUN install.r \
         futile.logger \
         testthat \
         versions \
+    \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libxml2 libxml2-dev \
@@ -69,5 +70,8 @@ RUN install.r \
         httr \
         devtools \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+# `devtools` requires `httr`.
+# `roxygen2` requires `BH`, `xml2`.
 
 # This image contains `gcc`, `g++`, `gfortran`.
