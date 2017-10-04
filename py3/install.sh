@@ -1,1 +1,1 @@
-python ../pyinstall.py --cmd=py3 --dockercmd=/bin/bash
+python ../pyinstall.py --asroot --cmd=py3 --dockercmd=/bin/bash

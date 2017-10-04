@@ -6,6 +6,6 @@
 FROM zppz/py3:20170823
 USER root
 RUN pip install --no-cache-dir --upgrade \
-        'numpy==1.13.1' \
+        'numpy==1.13.3' \
         'pandas==0.20.3' \
         'scipy==0.19.1'
