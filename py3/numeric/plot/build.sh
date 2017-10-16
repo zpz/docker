@@ -34,25 +34,25 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 # we can just use Bokeh and forget about Matplotlib.
 
 # freetype and xft are required by matplotlib
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libfreetype6 \
-        libfreetype6-dev \
-        libxft-dev \
-        tcl \
-        tk \
-    && pip install --no-cache-dir --upgrade \
-        'matplotlib==2.0.2' \
-        'seaborn==0.8.1' \
-    && apt-get purge -y --auto-remove \
-        libfreetype6-dev \
-        libxft-dev \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+#RUN apt-get update \
+#    && apt-get install -y --no-install-recommends \
+#        libfreetype6 \
+#        libfreetype6-dev \
+#        libxft-dev \
+#        tcl \
+#        tk \
+#    && pip install --no-cache-dir --upgrade \
+#        'matplotlib==2.1.0' \
+#        'seaborn==0.8.1' \
+#    && apt-get purge -y --auto-remove \
+#        libfreetype6-dev \
+#        libxft-dev \
+#    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 RUN pip install --no-cache-dir --upgrade \
-        'bokeh==0.12.9' \
+        'bokeh==0.12.10' \
         'param==1.5.1' \
-        'plotly==2.0.15' \
+        'plotly==2.1.0' \
     && pip install --no-cache-dir --upgrade \
         'holoviews==1.8.4'
 

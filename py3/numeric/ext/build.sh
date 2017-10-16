@@ -37,10 +37,10 @@ RUN apt-get update \
         g++ \
         libc6-dev \
     && pip install --no-cache-dir --upgrade \
-        'cffi==1.10.0' \
-        'cython==0.26' \
+        'cffi==1.11.2' \
+        'cython==0.27.1' \
         'easycython==1.0.7' \
-        'pybind11==2.1.1' \
+        'pybind11==2.2.1' \
     && apt-get purge -y --auto-remove \
         cmake \
     && rm -rf /var/lib/apt/lists/* /tmp/*
@@ -63,9 +63,8 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
     && rm -rf /var/lib/apt/lists/* \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
     && pip install --no-cache-dir --upgrade \
-        'llvmlite==0.19.0' \
-        'numba==0.34.0' \
-        'numpy==1.13.1'
+        'llvmlite==0.20.0' \
+        'numba==0.35.0'
 EOF
 
 echo

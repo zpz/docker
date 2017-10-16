@@ -58,7 +58,7 @@ EOF
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
-ENV R_BASE_VERSION 3.4.1-2~jessiecran.0
+ENV R_BASE_VERSION 3.4.2-1~jessiecran.0
 
 RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/apt/sources.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
