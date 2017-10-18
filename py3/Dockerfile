@@ -107,6 +107,17 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
 
 ENV EDITOR vim
 
+RUN pip install --no-cache-dir --upgrade \
+        'pip==9.0.1' \
+        'setuptools==36.6.0' \
+        'pytest==3.2.3' \
+    \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        graphviz \
+    && pip install --no-cache-dir --upgrade \
+        'Sphinx==1.6.4' \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # This section installs important tools for Python development.
 # In general, do not install packages that are required for the software to run
@@ -123,15 +134,11 @@ COPY ipython_config.py /etc/xdg/ipython/profile_default/
 COPY jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip install --no-cache-dir --upgrade \
-        'pip==9.0.1' \
-        'setuptools==36.6.0' \
-    && pip install --no-cache-dir --upgrade \
         'coverage==4.4.1' \
         'Faker==0.8.5' \
         'memory_profiler==0.47' \
         'mypy==0.530' \
         'pylint==1.7.4' \
-        'pytest==3.2.3' \
         'yapf==0.19.0' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
@@ -140,10 +147,6 @@ RUN pip install --no-cache-dir --upgrade \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     \
     && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        graphviz \
-    && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.6.4' \
     && apt-get install -y --no-install-recommends \
         gcc \
         libc6-dev \

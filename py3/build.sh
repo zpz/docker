@@ -31,6 +31,21 @@ cp dotfiles/jupyter/jupyter_notebook_config.py .
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
+
+cat >> "${thisdir}/Dockerfile" <<'EOF'
+RUN pip install --no-cache-dir --upgrade \
+        'pip==9.0.1' \
+        'setuptools==36.6.0' \
+        'pytest==3.2.3' \
+    \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        graphviz \
+    && pip install --no-cache-dir --upgrade \
+        'Sphinx==1.6.4' \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+EOF
+
 cat ./pydev.in >> "${thisdir}/Dockerfile"
 
 echo
