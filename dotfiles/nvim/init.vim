@@ -1,12 +1,16 @@
 let g:python3_host_prog = '/usr/local/bin/python3'
 
 if system('uname -s') == "Darwin\n"
-    set rpt^=~/.local/share/nvim
+    set rtp^=~/.local/share/nvim
+    source ~/.local/share/nvim/general.vim
+    source ~/.local/share/nvim/autocmd.vim
+    source ~/.local/share/nvim/keys.vim
+    source ~/.local/share/nvim/plugins.vim
 else
-    set rpt^='/etc/xdg/nvim'
+    set rtp^='/etc/xdg/nvim'
+    source /etc/xdg/nvim/general.vim
+    source /etc/xdg/nvim/autocmd.vim
+    source /etc/xdg/nvim/keys.vim
+    source /etc/xdg/nvim/plugins.vim
 endif
-source &rpt/general.vim
-source &rpt/autocmd.vim
-source &rpt/keys.vim
-source &rpt/plugins.vim
 

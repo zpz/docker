@@ -2,7 +2,7 @@
 
 - `Python 3`
 
--  Python package `neovim` has been `pip` installed
+-  Python packages `neovim` and `jedi` have been `pip` installed
 
 # Where to put `neovim` config files?
 
@@ -22,7 +22,17 @@ rm -f /usr/bin/vim
 ln -s /Applications/nvim-osx64/bin/nvim /usr/bin/vim
 ```
 
-2.
+If you do not have permission to change `/usr/bin`,
+then create the links in `/usr/local/bin`, and put
+
+```
+PATH=/usr/local/bin:$PATH
+```
+in `~/.bashrc`.
+
+
+2. Do the following things in a terminal:
+
 ```
 cd /tmp
 git clone https://github.com/zpz/docker.git
@@ -40,17 +50,20 @@ mkdir -p bundle
 cd bundle
 git clone https://github.com/VundleVim/Vundle.vim.git
 
+nvim +PluginInstall +qall
+nvim +UpdateRemotePlugins +qall
+
 ```
 
 3. Launch `nvim` (or your custom or linked name). There should be no welcome intro screen (which is turned off in our config) or any warning.
+   In 'insert` mode, type `:CheckHealth`; verify things are all right.
 
-4. Launch `nvim`, run command `:PluginInstall`, followed by `:UpdateRemotePlugins`. Then type `:CheckHealth`; verify things are right.
-
-5. Edit a short Python or other text file to confirm auto-completion is working. As you type, there should be suggestion windows popping up
+4. Edit a short Python or other text file to confirm auto-completion is working. As you type, there should be suggestion windows popping up
    from time to time; each suggestion row should contain `[...]` in the middle or at the end.
 
 
 # Set up `neovim` on Linux
 
-Follow a similar procedure, but use system location `/etc/xdg/nvim/` (or user location `~/.local/share/nvim/`, but no `~/.config/nvim/`).
+Follow a similar procedure, but use system location `/etc/xdg/nvim/`
+(or user location `~/.local/share/nvim/`). Do not create or use `~/.config/nvim/`.
 
