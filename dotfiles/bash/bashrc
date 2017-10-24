@@ -8,15 +8,31 @@ shopt -s checkwinsize
 # Basic aliases
 alias ..='cd ..'
 alias back='cd -'
-alias ls='ls -FGh --color'
-alias ll='ls -lA --color'
-alias dir='ls -alg --color'
+if [ "$(uname)" == "Darwin" ]; then
+    alias ls='ls -FGh'
+    alias ll='ls -lAG'
+    alias dir='ls -algG'
+elif [ "$(uname)" == "Linux" ]; then
+    alias ls='ls -FGh --color'
+    alias ll='ls -lA --color'
+    alias dir='ls -alg --color'
+fi
 alias cp='cp -i'
 alias rm='rm -i'
 alias mv='mv -i'
 alias grep='grep --color'
 
+# Uncomment this if on a dev machine (as opposed to server)
+#alias debian='docker run --rm -it debian:jessie /bin/bash'
+
+# Uncomment this if on a dev Linux box (as opposed to server).
+#docker() {
+#    command sudo /usr/bin/docker "$@"
+#}
+#export -f docker
+
 export EDITOR=vim
+
 
 # Customize command prompt. This is a big section---
 

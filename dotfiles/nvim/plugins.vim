@@ -1,6 +1,11 @@
 filetype off                  " required
-set rtp+=/etc/xdg/nvim/bundle/Vundle.vim
-call vundle#begin('/etc/xdg/nvim/bundle')
+if system('uname -s') == "Darwin\n"
+    set rtp+=~/.local/share/nvim/bundle/Vundle.vim
+    call vundle#begin('~/.local/share/nvim/bundle')
+else
+    set rtp+=/etc/xdg/nvim/bundle/Vundle.vim
+    call vundle#begin('/etc/xdg/nvim/bundle')
+endif
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
