@@ -1,4 +1,9 @@
-# run this with
+# Install Docker on Linux.
+# The Docker available from the default repos is not up to date.
+# The main point of this script is to install an up-to-date version.
+#
+# Usage:
+#
 # > sudo bash install_docker.sh
 
 apt-get remove -y docker docker-engine docker.io
