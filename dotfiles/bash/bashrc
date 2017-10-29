@@ -21,6 +21,7 @@ alias cp='cp -i'
 alias rm='rm -i'
 alias mv='mv -i'
 alias grep='grep --color'
+alias tt='tmux attach -d'
 
 # Uncomment this if on a dev machine (as opposed to server)
 #alias debian='docker run --rm -it debian:jessie /bin/bash'
