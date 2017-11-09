@@ -52,9 +52,9 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'bokeh==0.12.10' \
         'param==1.5.1' \
-        'plotly==2.1.0' \
+        'plotly==2.1.1' \
     && pip install --no-cache-dir --upgrade \
-        'holoviews==1.8.4'
+        'holoviews==1.9.0'
 
 # 'gif' support in Holoviews requires ImageMagick
 RUN apt-get update \

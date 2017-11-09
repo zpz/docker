@@ -68,7 +68,7 @@ RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/a
         r-base-dev=${R_BASE_VERSION} \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2==2.9.0' \
+        'rpy2==2.9.1' \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 

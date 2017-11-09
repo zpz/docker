@@ -38,7 +38,7 @@ RUN apt-get update \
         libc6-dev \
     && pip install --no-cache-dir --upgrade \
         'cffi==1.11.2' \
-        'cython==0.27.1' \
+        'cython==0.27.3' \
         'easycython==1.0.7' \
         'pybind11==2.2.1' \
     && apt-get purge -y --auto-remove \

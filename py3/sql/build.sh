@@ -32,9 +32,9 @@ EOF
 cat >> "$thisdir"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'pandas==0.20.3' \
-        'SQLAlchemy==1.1.13' \
-        'sqlparse==0.2.3'
+        'pandas==0.21.0' \
+        'SQLAlchemy==1.1.15' \
+        'sqlparse==0.2.4'
 
 # MySQL
 #

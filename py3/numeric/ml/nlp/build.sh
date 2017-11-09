@@ -42,7 +42,7 @@ RUN apt-get update \
         g++ \
         libgomp1 \
     && pip install --no-cache-dir --upgrade \
-        'spacy==1.9.0' \
+        'spacy==2.0.1' \
     && apt-get purge -y --auto-remove \
         gcc \
         g++ \

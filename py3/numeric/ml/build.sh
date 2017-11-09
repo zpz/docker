@@ -31,7 +31,7 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.19.0'
+        'scikit-learn==0.19.1'
 EOF
 
 echo

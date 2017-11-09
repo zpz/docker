@@ -31,7 +31,7 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'numpy==1.13.3' \
-        'scipy==0.19.1'
+        'scipy==1.0.0'
 EOF
 
 echo
