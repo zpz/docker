@@ -34,15 +34,20 @@ cat >> "${thisdir}/Dockerfile" <<'EOF'
 # Regarding installing packages in backports, see
 #  https://backports.debian.org/Instructions
 #
-RUN echo 'deb http://ftp.debian.org/debian jessie-backports main' >> /etc/apt/sources.list \
+# For Java 8, use jessie-backports.
+# For Java 9, use stretch-backports.
+
+ENV JAVA_MAJOR_VERSION 8
+ARG DEBIAN_CODENAME=jessie
+RUN echo "deb http://ftp.debian.org/debian ${DEBIAN_CODENAME}-backports main" >> /etc/apt/sources.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends -t jessie-backports \
-        openjdk-8-jdk \
+    && apt-get install -y --no-install-recommends -t ${DEBIAN_CODENAME}-backports \
+        openjdk-${JAVA_MAJOR_VERSION}-jdk \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 
 # 11 Mb
-ENV MAVEN_VERSION 3.5.0
+ENV MAVEN_VERSION 3.5.2
 ENV MAVEN_HOME /usr/lib/maven
 ARG MAVEN_BASE_URL=http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
 RUN mkdir -p ${MAVEN_HOME} \
@@ -51,7 +56,7 @@ RUN mkdir -p ${MAVEN_HOME} \
 ENV PATH ${PATH}:${MAVEN_HOME}/apache-maven-${MAVEN_VERSION}/bin
 
 # 80 Mb
-ENV GRADLE_VERSION 4.1
+ENV GRADLE_VERSION 4.3.1
 ENV GRADLE_HOME /usr/lib/gradle
 ARG GRADLE_BASE_URL=https://services.gradle.org/distributions
 RUN mkdir -p ${GRADLE_HOME} \
@@ -62,7 +67,7 @@ ENV GRADLE_HOME ${GRADLE_HOME}/gradle-${GRADLE_VERSION}
 ENV PATH ${PATH}:${GRADLE_HOME}/bin
 
 # 21 Mb
-ENV SCALA_VERSION 2.12.3
+ENV SCALA_VERSION 2.12.4
 ENV SCALA_HOME /usr/lib/scala
 ARG SCALA_BASE_URL=https://downloads.lightbend.com/scala/${SCALA_VERSION}
 RUN mkdir -p ${SCALA_HOME} \
@@ -72,7 +77,7 @@ ENV SCALA_HOME ${SCALA_HOME}/scala-${SCALA_VERSION}
 ENV PATH ${PATH}:${SCALA_HOME}/bin
 
 
-ENV KOTLIN_VERSION 1.1.4-2
+ENV KOTLIN_VERSION 1.1.60
 ENV KOTLIN_HOME /usr/lib/kotlin
 ARG KOTLIN_BASE_URL=https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}
 RUN mkdir -p ${KOTLIN_HOME} \
