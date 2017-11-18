@@ -32,6 +32,18 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
         'scikit-learn==0.19.1'
+
+#RUN apt-get update \
+#    && apt-get install -y --no-install-recommends \
+#        g++ \
+#    && pip install --no-cache-dir --upgrade \
+#        'cvxpy==0.4.11' \
+#    && apt-get purge -y --auto-remove \
+#        g++ \
+#    && rm -rf /var/lib/apt/lists/* /tmp/* \
+#    && pip install --no-cache-dir --upgrade \
+#        'patsy==0.4.1' \
+#        'statsmodels==0.8.0'
 EOF
 
 echo
