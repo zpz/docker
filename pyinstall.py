@@ -98,7 +98,6 @@ ARGS="\\
     -e ENVIRONMENT_NAME={envname} \\
     -e ENVIRONMENT_VERSION={imgversion} \\
     -e PYTHONPATH={pypaths} \\
-    --rm -it \\
     -w "${{workdir}}" \\
     -e TZ=America/Los_Angeles"
 

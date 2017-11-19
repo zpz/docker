@@ -1,1 +1,1 @@
-python ../../pyinstall.py --cmd=jdk --dockercmd=/bin/bash
+python ../../pyinstall.py --cmd=jdk --dockercmd=/bin/bash --options="--rm -it"
