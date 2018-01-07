@@ -34,14 +34,12 @@ RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
         'pipenv==9.0.1' \
         'setuptools==38.4.0' \
-        'pytest==3.3.2' \
-    \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        graphviz \
-    && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.6.5' \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+        \
+        'numpy==1.14.0' \
+        'requests==2.18.4' \
+        \
+        'coverage==4.4.2' \
+        'pytest==3.3.2'
 EOF
 
 cat ./pydev.in >> "${thisdir}/Dockerfile"

@@ -16,6 +16,12 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
         cmake \
     && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
     && ln -s /usr/bin/g++-7 /usr/bin/g++ \
+    \
+    && apt-get install -y --no-install-recommends \
+        graphviz \
+    && pip install --no-cache-dir --upgrade \
+        'Sphinx==1.6.5' \
+    \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # TODO:
@@ -27,9 +33,6 @@ COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.4.2' \
-        'cython==0.27.3' \
-        'easycython==1.0.7' \
         'Faker==0.8.8' \
         'line_profiler==2.1.2' \
         'memory_profiler==0.50.0' \

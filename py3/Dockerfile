@@ -117,14 +117,12 @@ RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
         'pipenv==9.0.1' \
         'setuptools==38.4.0' \
-        'pytest==3.3.2' \
-    \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        graphviz \
-    && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.6.5' \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+        \
+        'numpy==1.14.0' \
+        'requests==2.18.4' \
+        \
+        'coverage==4.4.2' \
+        'pytest==3.3.2'
 
 # This section installs important tools for Python development.
 # In general, do not install packages that are required for the software to run
@@ -143,6 +141,12 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
         cmake \
     && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
     && ln -s /usr/bin/g++-7 /usr/bin/g++ \
+    \
+    && apt-get install -y --no-install-recommends \
+        graphviz \
+    && pip install --no-cache-dir --upgrade \
+        'Sphinx==1.6.5' \
+    \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # TODO:
@@ -154,9 +158,6 @@ COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.4.2' \
-        'cython==0.27.3' \
-        'easycython==1.0.7' \
         'Faker==0.8.8' \
         'line_profiler==2.1.2' \
         'memory_profiler==0.50.0' \
