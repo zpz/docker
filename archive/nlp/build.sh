@@ -29,40 +29,22 @@ USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
+
+RUN pip install --no-cache-dir --upgrade \
+        'textblob==0.13.0' \
+    && python -m nltk.downloader -d /usr/share/nltk_data \
+        brown punkt wordnet averaged_perceptron_tagger \
+        conll2000 movie_reviews
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        autoconf \
-        automake \
-        file \
-        gcc \
-        g++ \
-        libc6-dev \
-        make \
-    \
-    && mkdir -p /tmp/geos \
-    && curl -skL --retry 3 http://download.osgeo.org/geos/geos-3.6.1.tar.bz2 \
-            | tar xj -C /tmp/geos \
-    && (cd /tmp/geos/geos-3.6.1 && ./configure --prefix=/usr/local && make && make install && ldconfig) \
-    \
-    && mkdir -p /tmp/proj4 \
-    && curl -skL --retry 3 http://download.osgeo.org/proj/proj-4.9.3.tar.gz \
-            | tar xz -C /tmp/proj4 \
-    && (cd /tmp/proj4/proj-4.9.3 && ./configure --prefix=/usr/local && make && make install && ldconfig) \
-    \
-    && apt-get purge -y --auto-remove \
-        autoconf \
-        automake \
-        file \
-        make \
-    \
+        libgomp1 \
     && pip install --no-cache-dir --upgrade \
-        'shapely==1.6.0' --no-binary shapely==1.6.0 \
-    && pip install --no-cache-dir --upgrade \
-        'Cartopy==0.15.1' \
+        'spacy==2.0.1' \
     && apt-get purge -y --auto-remove \
-        gcc \
-        g++ \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN python -m spacy download en
 EOF
 
 echo

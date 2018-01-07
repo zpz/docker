@@ -30,20 +30,37 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
-RUN pip install --no-cache-dir --upgrade \
-        'scikit-learn==0.19.1'
+# It is my opinion that starting now, in September 2017,
+# we can just use Bokeh and forget about Matplotlib.
 
+# freetype and xft are required by matplotlib
 #RUN apt-get update \
 #    && apt-get install -y --no-install-recommends \
-#        g++ \
+#        libfreetype6 \
+#        libfreetype6-dev \
+#        libxft-dev \
+#        tcl \
+#        tk \
 #    && pip install --no-cache-dir --upgrade \
-#        'cvxpy==0.4.11' \
+#        'matplotlib==2.1.0' \
+#        'seaborn==0.8.1' \
 #    && apt-get purge -y --auto-remove \
-#        g++ \
-#    && rm -rf /var/lib/apt/lists/* /tmp/* \
-#    && pip install --no-cache-dir --upgrade \
-#        'patsy==0.4.1' \
-#        'statsmodels==0.8.0'
+#        libfreetype6-dev \
+#        libxft-dev \
+#    && rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN pip install --no-cache-dir --upgrade \
+        'bokeh==0.12.13' \
+        'param==1.5.1' \
+        'plotly==2.2.3' \
+    && pip install --no-cache-dir --upgrade \
+        'holoviews==1.9.2'
+
+# 'gif' support in Holoviews requires ImageMagick
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        imagemagick \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF
 
 echo

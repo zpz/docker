@@ -20,9 +20,15 @@ RUN groupadd --gid 1000 docker \
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
 
 # If root privilage is needed, install `sudo`, and add
-# RUN bash -c "echo -e '1234\1234' | passwd docker-user" \
-#   && adduser docker-user admin
+# RUN usermod -a -G sudo docker-user \
+#   && echo 'docker-user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/docker-user \
+#   && chmod 0440 /etc/sudoers.d/docker-user
 
+# Subsequently, when you use `sudo command ...`, the environment is different.
+# To preserve environment, use the `-E -H` options.
+# However, strangely, `PYTHONPATH` is not preserved.
+# You can simply do this:
+#   sudo PYTHONPAH=$PYTHONPATH command ...
 
 #-----------
 # Very basic
@@ -42,7 +48,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-COPY bashrc /etc/bash.bashrc
+COPY dotfiles/bash/bashrc /etc/bash.bashrc
 RUN chmod +r /etc/bash.bashrc
 
 

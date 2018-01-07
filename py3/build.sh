@@ -25,9 +25,6 @@ USER root
 EOF
 
 cp -r ../dotfiles .
-cp dotfiles/bash/bashrc .
-cp dotfiles/ipython/ipython_config.py .
-cp dotfiles/jupyter/jupyter_notebook_config.py .
 
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
@@ -35,14 +32,15 @@ cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
-        'setuptools==36.6.0' \
-        'pytest==3.2.3' \
+        'pipenv==9.0.1' \
+        'setuptools==38.4.0' \
+        'pytest==3.3.2' \
     \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.6.4' \
+        'Sphinx==1.6.5' \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF
 
@@ -53,5 +51,4 @@ echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
 rm -rf dotfiles
-rm -f bashrc ipython_config.py jupyter_notebook_config.py
 

@@ -1,3 +1,3 @@
 python ../../../pyinstall.py \
-    --cmd=py3ml \
+    --cmd=py3map \
     --options="-it --rm"

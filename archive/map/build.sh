@@ -29,13 +29,31 @@ USER root
 EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
-
-RUN pip install --no-cache-dir --upgrade \
-        'cython==0.26' \
-        'nose==1.3.7' \
-    && apt-get update \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        gcc libc6-dev \
+        autoconf \
+        automake \
+        file \
+    \
+    && mkdir -p /tmp/geos \
+    && curl -skL --retry 3 http://download.osgeo.org/geos/geos-3.6.1.tar.bz2 \
+            | tar xj -C /tmp/geos \
+    && (cd /tmp/geos/geos-3.6.1 && ./configure --prefix=/usr/local && make && make install && ldconfig) \
+    \
+    && mkdir -p /tmp/proj4 \
+    && curl -skL --retry 3 http://download.osgeo.org/proj/proj-4.9.3.tar.gz \
+            | tar xz -C /tmp/proj4 \
+    && (cd /tmp/proj4/proj-4.9.3 && ./configure --prefix=/usr/local && make && make install && ldconfig) \
+    \
+    && apt-get purge -y --auto-remove \
+        autoconf \
+        automake \
+        file \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'shapely==1.6.3' --no-binary shapely==1.6.3 \
+    && pip install --no-cache-dir --upgrade \
+        'Cartopy==0.15.1' \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 EOF
 

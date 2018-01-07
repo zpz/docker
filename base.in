@@ -41,7 +41,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-COPY bashrc /etc/bash.bashrc
+COPY dotfiles/bash/bashrc /etc/bash.bashrc
 RUN chmod +r /etc/bash.bashrc
 
 

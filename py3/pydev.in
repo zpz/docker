@@ -7,35 +7,43 @@
 # IPython, Jupyter Notebook.
 # Notebook requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
+RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc-7 g++-7 \
+        libc6-dev \
+        make \
+        cmake \
+    && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
+    && ln -s /usr/bin/g++-7 /usr/bin/g++ \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
 # TODO:
 # it is possible that this config file is not loaded by Jupyter Notebook.
 ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
-COPY ipython_config.py /etc/xdg/ipython/profile_default/
-COPY jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
+COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
+COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
+COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
+
 
 RUN pip install --no-cache-dir --upgrade \
-        'coverage==4.4.1' \
-        'Faker==0.8.5' \
-        'memory_profiler==0.47' \
-        'mypy==0.530' \
-        'pylint==1.7.4' \
-        'yapf==0.19.0' \
+        'coverage==4.4.2' \
+        'cython==0.27.3' \
+        'easycython==1.0.7' \
+        'Faker==0.8.8' \
+        'line_profiler==2.1.2' \
+        'memory_profiler==0.50.0' \
+        'mypy==0.560' \
+        'ptpython==0.41' \
+        'pylint==1.8.1' \
+        'yapf==0.20.0' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
         'ipython==6.2.1' \
-        'notebook==5.2.0' \
+        'notebook==5.2.2' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
-    \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        libc6-dev \
-    && pip install --no-cache-dir --upgrade \
-        'line_profiler==2.0' \
-    && apt-get purge -y --auto-remove \
-        gcc \
-        libc6-dev \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+    && chown -R docker-user /home/docker-user/.ptpython
+
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
