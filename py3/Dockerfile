@@ -41,7 +41,6 @@ RUN apt-get update \
         bzip2 \
         curl \
         less \
-        make \
         tree \
         unzip \
         xz-utils \
@@ -56,7 +55,7 @@ RUN chmod +r /etc/bash.bashrc
 #------------------
 # entrypoint
 
-ENV TINI_VERSION v0.14.0
+ENV TINI_VERSION v0.16.1
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
 RUN chmod +x /usr/bin/tini
 
@@ -115,7 +114,7 @@ ENV EDITOR vim
 
 RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
-        'pipenv==9.0.1' \
+        'pipenv==9.0.3' \
         'setuptools==38.4.0' \
         \
         'numpy==1.14.0' \
@@ -135,7 +134,8 @@ RUN pip install --no-cache-dir --upgrade \
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        gcc-7 g++-7 \
+        gcc-7 \
+        g++-7 \
         libc6-dev \
         make \
         cmake \
@@ -145,7 +145,7 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.6.5' \
+        'Sphinx==1.6.6' \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
@@ -158,17 +158,17 @@ COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'Faker==0.8.8' \
+        'Faker==0.8.10' \
         'line_profiler==2.1.2' \
-        'memory_profiler==0.50.0' \
+        'memory_profiler==0.51.0' \
         'mypy==0.560' \
         'ptpython==0.41' \
         'pylint==1.8.1' \
-        'yapf==0.20.0' \
+        'yapf==0.20.1' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
         'ipython==6.2.1' \
-        'notebook==5.2.2' \
+        'notebook==5.3.1' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     && chown -R docker-user /home/docker-user/.ptpython
 
@@ -177,18 +177,6 @@ RUN pip install --no-cache-dir --upgrade \
 # Use `snakeviz` to view profiling stats.
 # `snakeviz` is not installed in this Docker image as it's better
 # installed on the hosting machine 'natively'.
-#
-
-# By default, Jupyter Notebook uses port 8888.
-# Launch a container with Jupyter Notebook server like this:
-# $docker run --rm -it --expose=8888 -p 8888:8888 imagename jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=/home/docker-user --NotebookApp.token=''
-
-# EXPOSE 8888
-#
-# RUN echo '#!/usr/bin/env bash' > /usr/local/bin/ipynb \
-#     && echo >> /usr/local/bin/ipynb \
-#     && echo "jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir=\~ --NotebookApp.token=''" >> /usr/local/bin/ipynb \\
-#     && chmod +x /usr/local/bin/ipynb
 
 # Other useful packages:
 #    flake8
@@ -202,9 +190,6 @@ RUN pip install --no-cache-dir --upgrade \
 #    binutils=2.25-5
 #    libtool=2.4.2-1.11 \
 #    zlib1g-dev=1:1.2.8.dfsg-2+b1 \
-#    gcc=4:4.9.2-2 \
-#    libc6-dev=2.19-18+deb8u7 \
-#    make=4.0-8.1 \
 #
 # `binutils` contains `gprof`.
 # To use `gprof`, use option `-pg` during both compiling and linking.

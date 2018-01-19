@@ -102,7 +102,7 @@ ARGS="\\
     -e TZ=America/Los_Angeles"
 
 if (( $# > 0 )); then
-    if [[ "$1" == "ipynb" ]]; then
+    if [[ "$1" == "notebook" ]]; then
         ARGS="${{ARGS}} \\
     --expose=8888 \\
     -p 8888:8888"
