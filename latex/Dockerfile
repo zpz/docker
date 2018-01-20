@@ -40,7 +40,6 @@ RUN apt-get update \
         bzip2 \
         curl \
         less \
-        make \
         tree \
         unzip \
         xz-utils \
@@ -55,7 +54,7 @@ RUN chmod +r /etc/bash.bashrc
 #------------------
 # entrypoint
 
-ENV TINI_VERSION v0.14.0
+ENV TINI_VERSION v0.16.1
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
 RUN chmod +x /usr/bin/tini
 
