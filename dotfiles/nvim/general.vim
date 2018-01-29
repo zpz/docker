@@ -138,6 +138,9 @@ set shortmess+=I
   " In addition to the default setting of 'shortmess':
   " dont' display the intro when vim is launched.
 
-"set mouse=c
-set mouse=a
+set mouse=c
+"set mouse=a
+"Contrary to some suggestions, 'set mouse=a' will NOT make copy/paste work.
+"'set mouse=c' seems to do the trick.
+"Someone also suggested using 'set mouse=r'.
 
