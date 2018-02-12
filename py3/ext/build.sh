@@ -33,8 +33,8 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'cython==0.27.3' \
         'easycython==1.0.7' \
-        'cffi==1.11.2' \
-        'pybind11==2.2.1'
+        'cffi==1.11.4' \
+        'pybind11==2.2.2'
 
 # `pybind11` header files are stored in /usr/local/include/python3.5m/pybind11/
 
@@ -66,6 +66,9 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
         libllvm${LLVM_VERSION} \
         llvm-${LLVM_VERSION} \
         llvm-${LLVM_VERSION}-dev \
+        clang-format-${LLVM_VERSION} \
+        valgrind \
+    && ln -s /usr/bin/clang-format-7 /usr/bin/clang-format \
     && rm -rf /var/lib/apt/lists/* \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
     && pip install --no-cache-dir --upgrade \
