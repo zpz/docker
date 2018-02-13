@@ -48,10 +48,6 @@ RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/a
     \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-# rpy2 2.9.1 has a bug related to 'rx2'.
-# Don't upgrade from 2.9.0 until this bug is fixed:
-#   https://bitbucket.org/rpy2/rpy2/issues/443/291-bug-related-to-rx2
-
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin
 RUN chmod +x /usr/local/bin/install.r

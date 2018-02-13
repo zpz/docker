@@ -171,6 +171,8 @@ RUN pip install --no-cache-dir --upgrade \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     && chown -R docker-user /home/docker-user/.ptpython
 
+# Use `yapf` to format Python code in-pace:
+#   yapf -ir -vv --no-local-style .
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.

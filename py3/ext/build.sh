@@ -68,9 +68,11 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
         llvm-${LLVM_VERSION}-dev \
         clang-format-${LLVM_VERSION} \
         valgrind \
-    && ln -s /usr/bin/clang-format-7 /usr/bin/clang-format \
     && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/clang-format-7 /usr/bin/clang-format \
+    && curl --retry 3 https://github.com/catchorg/Catch2/releases/download/v2.1.2/catch.hpp > /usr/local/include/catch.hpp \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
+    \
     && pip install --no-cache-dir --upgrade \
         'llvmlite==0.21.0' \
         'numba==0.36.2'
