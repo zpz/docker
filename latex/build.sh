@@ -21,7 +21,7 @@ FROM ${PARENT}
 USER root
 EOF
 
-cp ../dotfiles/bash/bashrc .
+cp -r ../dotfiles .
 cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
@@ -82,5 +82,5 @@ echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
-rm -f bashrc
+rm -rf dotfiles
 
