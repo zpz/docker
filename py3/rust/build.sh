@@ -44,9 +44,12 @@ RUN rustArch='x86_64-unknown-linux-gnu'; \
     ./rustup-init -y --no-modify-path --default-toolchain 1.24.0; \
     rm rustup-init; \
     chmod -R a+w ${RUSTUP_HOME} ${CARGO_HOME}; \
+    ln -s /usr/bin/gcc /usr/bin/cc; \
     rustup --version; \
     cargo --version; \
     rustc --version;
+
+# rust will look for linker called `cc`; created a link to use gcc.
 EOF
 
 echo
