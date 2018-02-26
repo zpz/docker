@@ -168,6 +168,7 @@ RUN pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
         'ipython==6.2.1' \
         'notebook==5.4.0' \
+        'jupyterlab==0.31.8' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     && chown -R docker-user /home/docker-user/.ptpython
 
