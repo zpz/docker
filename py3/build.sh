@@ -34,11 +34,11 @@ RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
         'setuptools==38.5.1' \
         \
-        'numpy==1.14.0' \
+        'numpy==1.14.1' \
         'requests==2.18.4' \
         \
         'coverage==4.5.1' \
-        'pytest==3.4.0'
+        'pytest==3.4.1'
 EOF
 
 cat ./pydev.in >> "${thisdir}/Dockerfile"

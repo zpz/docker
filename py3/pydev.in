@@ -40,7 +40,7 @@ RUN pip install --no-cache-dir --upgrade \
         'mypy==0.560' \
         'ptpython==0.41' \
         'pylint==1.8.2' \
-        'yapf==0.20.1' \
+        'yapf==0.20.2' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
         'ipython==6.2.1' \
