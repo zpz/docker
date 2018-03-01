@@ -58,7 +58,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 # How to find the latest version of spark:
 # Go to official Apache Spark site, go to 'download'.
 #
-ENV SPARK_VERSION 2.2.1
+ENV SPARK_VERSION 2.3.0
 ENV SPARK_HOME /usr/lib/spark
 ARG SPARK_PACKAGE=spark-${SPARK_VERSION}-bin-hadoop2.7
 RUN mkdir -p ${SPARK_HOME} \
@@ -69,7 +69,8 @@ ENV SPARK_HOME ${SPARK_HOME}/${SPARK_PACKAGE}
 ENV PATH $PATH:${SPARK_HOME}/bin
 
 # Unpack the downloaded Spark source tar ball, find out the version of `py4j`.
-ENV PY4J_VERSION 0.10.4
+# Can also find this info in the built image.
+ENV PY4J_VERSION 0.10.6
 ENV PYTHONPATH ${PYTHONPATH}:${SPARK_HOME}/python:${SPARK_HOME}/python/lib/py4j-${PY4J_VERSION}-src.zip
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
 

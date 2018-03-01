@@ -116,11 +116,11 @@ RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
         'setuptools==38.5.1' \
         \
-        'numpy==1.14.0' \
+        'numpy==1.14.1' \
         'requests==2.18.4' \
         \
         'coverage==4.5.1' \
-        'pytest==3.4.0'
+        'pytest==3.4.1'
 
 # This section installs important tools for Python development.
 # In general, do not install packages that are required for the software to run
@@ -163,7 +163,7 @@ RUN pip install --no-cache-dir --upgrade \
         'mypy==0.560' \
         'ptpython==0.41' \
         'pylint==1.8.2' \
-        'yapf==0.20.1' \
+        'yapf==0.20.2' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.10.3' \
         'ipython==6.2.1' \
