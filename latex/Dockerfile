@@ -33,8 +33,6 @@ RUN groupadd --gid 1000 docker \
 #-----------
 # Very basic
 
-# 'curl': about 15 MB.
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         bzip2 \
@@ -54,7 +52,7 @@ RUN chmod +r /etc/bash.bashrc
 #------------------
 # entrypoint
 
-ENV TINI_VERSION v0.16.1
+ENV TINI_VERSION v0.17.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
 RUN chmod +x /usr/bin/tini
 

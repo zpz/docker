@@ -29,9 +29,6 @@ def get_image(imgname, imgversion):
                 if not os.path.isfile(imgname):
                     exit()
             imgname = open(imgname).read().strip('\n')
-            envname = os.path.basename(imgdir)
-        else:
-            envname = imgname
         if imgversion is None:
             imgversion = os.path.join(imgdir, 'version')
             if not os.path.isfile(imgversion):
@@ -39,9 +36,7 @@ def get_image(imgname, imgversion):
                 if not os.path.isfile(imgversion):
                     exit()
             imgversion = open(imgversion).read().strip('\n')
-    else:
-        envname = imgname
-    return imgname, imgversion, envname
+    return imgname, imgversion
 
 
 def maketext():
@@ -95,8 +90,8 @@ ARGS="\\
     -e LOGDIR="{dockerworkdir}/log" \\
     -e DATADIR="{dockerworkdir}/data" \\
     -e TMPDIR="{dockerworkdir}/tmp" \\
-    -e ENVIRONMENT_NAME={envname} \\
-    -e ENVIRONMENT_VERSION={imgversion} \\
+    -e IMAGE_NAME={imgname} \\
+    -e IMAGE_VERSION={imgversion} \\
     -e PYTHONPATH={pypaths} \\
     -w "${{workdir}}" \\
     -e TZ=America/Los_Angeles"
@@ -109,10 +104,6 @@ if (( $# > 0 )); then
         workdir="{dockerworkdir}"
         shift
         command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${{workdir}}' --NotebookApp.token='' $@"
-        #command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${{workdir}}' --NotebookApp.token='' --NotebookApp.iopub_data_rate_limit=100000000 $@"
-        # The setting for iopub_data_rate_limit works around a limitation in notebook 5.0.
-        # The limit is expected to be removed in 5.1.
-        # Refer to intro page of Holoviews documentation.
     else
         command="$@"
     fi
@@ -127,10 +118,9 @@ docker run ${{ARGS}} {imgname}:{imgversion} ${{command}}
         args=args,
         dockeruser=dockeruser,
         dockerhomedir=dockerhomedir,
-        envname=envname,
+        imgname=imgname,
         imgversion=imgversion,
         pypaths=pypaths,
-        imgname=imgname,
         defaultcmd=defaultcmd,
         )
 
@@ -182,7 +172,7 @@ if __name__ == '__main__':
 
     imgname = args.imgname
     imgversion = args.imgversion
-    imgname, imgversion, envname = get_image(imgname, imgversion)
+    imgname, imgversion = get_image(imgname, imgversion)
 
     cmd = args.cmd
     defaultcmd = args.dockercmd

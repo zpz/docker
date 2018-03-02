@@ -21,6 +21,7 @@ alias cp='cp -i'
 alias rm='rm -i'
 alias mv='mv -i'
 alias grep='grep --color'
+alias vi=vim
 
 #alias tt='tmux attach -d'
 
@@ -81,8 +82,8 @@ function git_prompt {
 }
 
 function host_prompt {
-    if [[ -n "$ENVIRONMENT_NAME" ]]; then
-        echo "$ENVIRONMENT_NAME"
+    if [[ -n "$IMAGE_NAME" ]]; then
+        echo "$IMAGE_NAME"
     else
         echo '\h'
     fi
@@ -108,7 +109,7 @@ LIGHTYELLOW="${B}0;33${E}"
 #PS1='$debian_chroot\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w$(git_prompt)\[\033[00m\]\$ '
 #export PS1='[\u: \w] $ '
 
-WINDOWTITLE="\[\e]2;$(if [[ -n "$ENVIRONMENT_NAME" ]]; then echo "[ $ENVIRONMENT_NAME ]  "; else echo "[ docker ]  "; fi)\W\a\]"
+WINDOWTITLE="\[\e]2;$(if [[ -n "$IMAGE_NAME" ]]; then echo "[ $IMAGE_NAME ]  "; else echo "[ docker ]  "; fi)\W\a\]"
 PS1="${WINDOWTITLE}\n\u@$(host_prompt) in ${BLUE}\w${S}\$(git_prompt)\n\$ "
   # window-title new-line
   # user-name@host-name in current-directory [branch] new-line
