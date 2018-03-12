@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.5.5-slim"
+PARENT="python:3.6.4-slim-stretch"
 
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
@@ -32,13 +32,13 @@ cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
         'pip==9.0.1' \
-        'setuptools==38.5.1' \
+        'setuptools==38.5.2' \
         \
         'numpy==1.14.1' \
         'requests==2.18.4' \
         \
         'coverage==4.5.1' \
-        'pytest==3.4.1'
+        'pytest==3.4.2'
 EOF
 
 cat ./pydev.in >> "${thisdir}/Dockerfile"

@@ -32,7 +32,6 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
         'cython==0.27.3' \
-        'easycython==1.0.7' \
         'cffi==1.11.5' \
         'pybind11==2.2.2'
 
@@ -53,7 +52,7 @@ RUN pip install --no-cache-dir --upgrade \
 #  https://llvm.org/docs/Docker.html
 
 ENV LLVM_VERSION 5.0
-ENV LLVM_DESKTOP jessie
+ENV LLVM_DESKTOP stretch
 
 # This line used to be useful, but not any more.
 #RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \

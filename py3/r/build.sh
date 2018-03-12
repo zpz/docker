@@ -56,16 +56,23 @@ FROM ${PARENT}
 USER root
 EOF
 
+
+# For debian jessie:
+#
+#ENV R_BASE_VERSION 3.4.3-1
+#RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/apt/sources.list \
+#    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
+#    && apt-get update \
+#
+# debian stretch has a reasonably recent R.
+
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 
-ENV R_BASE_VERSION 3.4.3-1
 
-RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/apt/sources.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
-    && apt-get update \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        r-base=${R_BASE_VERSION} \
-        r-base-dev=${R_BASE_VERSION} \
+        r-base \
+        r-base-dev \
     \
     && pip install --no-cache-dir --upgrade \
         'rpy2==2.9.2' \

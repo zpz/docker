@@ -15,15 +15,19 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
         libc6-dev \
         make \
         cmake \
+        gnupg2 \
     && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
     && ln -s /usr/bin/g++-7 /usr/bin/g++ \
     \
     && apt-get install -y --no-install-recommends \
         graphviz \
     && pip install --no-cache-dir --upgrade \
-        'Sphinx==1.6.7' \
+        'Sphinx==1.7.1' \
     \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+# `gnupg2` is needed to use `apt-key add -`.
+# `gnupg2` was removed in debian stretch.
 
 # TODO:
 # it is possible that this config file is not loaded by Jupyter Notebook.
@@ -34,18 +38,18 @@ COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'Faker==0.8.10' \
+        'Faker==0.8.11' \
         'line_profiler==2.1.2' \
-        'memory_profiler==0.51.0' \
-        'mypy==0.560' \
+        'memory_profiler==0.52.0' \
+        'mypy==0.570' \
         'ptpython==0.41' \
         'pylint==1.8.2' \
         'yapf==0.20.2' \
     && pip install --no-cache-dir --upgrade \
-        'ipdb==0.10.3' \
+        'ipdb==0.11' \
         'ipython==6.2.1' \
         'notebook==5.4.0' \
-        'jupyterlab==0.31.8' \
+        'jupyterlab==0.31.12' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     && chown -R docker-user /home/docker-user/.ptpython
 
