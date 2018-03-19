@@ -30,12 +30,38 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
+RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc-7 \
+        g++-7 \
+        libc6-dev \
+        make \
+        cmake \
+        gnupg2 \
+    && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
+    && ln -s /usr/bin/g++-7 /usr/bin/g++ \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'line_profiler==2.1.2' \
+        'memory_profiler==0.52.0' \
+    \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
+# `gnupg2` is needed to use `apt-key add -`.
+# `gnupg2` was removed in debian stretch.
+
+# Installing `line_profiler` needs gcc.
+# Use `snakeviz` to view profiling stats.
+# `snakeviz` is not installed in this Docker image as it's better
+# installed on the hosting machine 'natively'.
+
 RUN pip install --no-cache-dir --upgrade \
         'cython==0.27.3' \
         'cffi==1.11.5' \
         'pybind11==2.2.2'
 
-# `pybind11` header files are stored in /usr/local/include/python3.5m/pybind11/
+# `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
 
 # Have had issues with installing LLVM.
 #
@@ -66,8 +92,8 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
         llvm-${LLVM_VERSION} \
         llvm-${LLVM_VERSION}-dev \
         clang-format-${LLVM_VERSION} \
-        valgrind \
     && rm -rf /var/lib/apt/lists/* \
+    \
     && ln -s /usr/bin/clang-format-${LLVM_VERSION} /usr/bin/clang-format \
     && curl --retry 3 https://github.com/catchorg/Catch2/releases/download/v2.1.2/catch.hpp > /usr/local/include/catch.hpp \
     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
@@ -75,6 +101,7 @@ RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
     && pip install --no-cache-dir --upgrade \
         'llvmlite==0.22.0' \
         'numba==0.37.0'
+
 EOF
 
 echo
