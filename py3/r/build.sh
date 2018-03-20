@@ -63,7 +63,8 @@ EOF
 #RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/apt/sources.list \
 #    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
 #    && apt-get update \
-#
+
+# We no longer use the above because
 # debian stretch has a reasonably recent R.
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
@@ -77,6 +78,9 @@ RUN apt-get update \
     && pip install --no-cache-dir --upgrade \
         'rpy2==2.9.2' \
     \
+    && apt-get remove --purge -y \
+        r-base-dev \
+    && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY ./install.r /usr/local/bin
@@ -84,28 +88,8 @@ COPY ./install.version.r /usr/local/bin
 RUN chmod +x /usr/local/bin/install.r
 RUN chmod +x /usr/local/bin/install.version.r
 
-RUN install.r \
-        futile.logger \
-        testthat \
-        versions \
-    \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libxml2 libxml2-dev \
-    && install.r BH xml2 roxygen2 \
-    \
-    && apt-get install -y --no-install-recommends \
-        libssl-dev \
-        libcurl4-openssl-dev \
-    && install.r \
-        httr \
-        devtools \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+RUN install.r versions
 
-# `devtools` requires `httr`.
-# `roxygen2` requires `BH`, `xml2`.
-
-# This image contains `gcc`, `g++`, `gfortran`.
 EOF
 
 
