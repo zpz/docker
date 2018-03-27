@@ -31,14 +31,14 @@ cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 RUN pip install --no-cache-dir --upgrade \
-        'pip==9.0.1' \
-        'setuptools==38.5.2' \
+        'pip==9.0.3' \
+        'setuptools==39.0.1' \
         \
-        'numpy==1.14.1' \
+        'numpy==1.14.2' \
         'requests==2.18.4' \
         \
         'coverage==4.5.1' \
-        'pytest==3.4.2'
+        'pytest==3.5.0'
 EOF
 
 cat ./pydev.in >> "${thisdir}/Dockerfile"
