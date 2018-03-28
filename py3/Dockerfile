@@ -42,7 +42,7 @@ RUN apt-get update \
         tree \
         unzip \
         xz-utils \
-    && apt-get -y autoremove \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
@@ -96,29 +96,29 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && nvim +UpdateRemotePlugins +qall \
     \
     && ln -s $(which nvim) /usr/local/bin/vim \
-    && cd ${NVIM_HOME}/bundle \
-    && rm -rf */{.git*,doc,test,tests} \
+    \
+    && rm -rf ${NVIM_HOME}/bundle/*/doc \
+    && rm -rf ${NVIM_HOME}/bundle/*/test \
+    && rm -rf ${NVIM_HOME}/bundle/*/.git \
+    && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
+    && rm -rf ${NVIM_HOME}/bundle/*/tests \
     \
     && apt-get purge -y --auto-remove \
         git \
-    && apt-get -y autoremove \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-# TODO: I don't know why but the above fails to delete the useless files
-# under ${NVIM_HOME}/bundle.
-
 ENV EDITOR vim
-
 RUN pip install --no-cache-dir --upgrade \
-        'pip==9.0.1' \
-        'setuptools==38.5.2' \
+        'pip==9.0.3' \
+        'setuptools==39.0.1' \
         \
-        'numpy==1.14.1' \
+        'numpy==1.14.2' \
         'requests==2.18.4' \
         \
         'coverage==4.5.1' \
-        'pytest==3.4.2'
+        'pytest==3.5.0'
 
 # This section installs important tools for Python development.
 # In general, do not install packages that are required for the software to run
@@ -136,22 +136,24 @@ COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 RUN pip install --no-cache-dir --upgrade \
-        'Faker==0.8.11' \
+        'Faker==0.8.12' \
         'mypy==0.570' \
         'ptpython==0.41' \
-        'pylint==1.8.2' \
-        'Sphinx==1.7.1' \
-        'yapf==0.20.2' \
+        'pylint==1.8.3' \
+        'Sphinx==1.7.2' \
+        'yapf==0.21.0' \
     && pip install --no-cache-dir --upgrade \
         'ipdb==0.11' \
         'ipython==6.2.1' \
-        'notebook==5.4.0' \
+        'notebook==5.4.1' \
         'jupyterlab==0.31.12' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     && chown -R docker-user /home/docker-user/.ptpython \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
+    && apt-get autoremove -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 

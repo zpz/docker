@@ -28,17 +28,17 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && nvim +UpdateRemotePlugins +qall \
     \
     && ln -s $(which nvim) /usr/local/bin/vim \
-    && cd ${NVIM_HOME}/bundle \
-    && rm -rf */{.git*,doc,test,tests} \
+    \
+    && rm -rf ${NVIM_HOME}/bundle/*/doc \
+    && rm -rf ${NVIM_HOME}/bundle/*/test \
+    && rm -rf ${NVIM_HOME}/bundle/*/.git \
+    && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
+    && rm -rf ${NVIM_HOME}/bundle/*/tests \
     \
     && apt-get purge -y --auto-remove \
         git \
-    && apt-get -y autoremove \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
-# TODO: I don't know why but the above fails to delete the useless files
-# under ${NVIM_HOME}/bundle.
-
 ENV EDITOR vim
-

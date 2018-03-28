@@ -46,12 +46,12 @@ RUN apt-get update \
     && apt-get remove --purge -y \
         r-base-dev \
     && apt-get autoremove -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin
-RUN chmod +x /usr/local/bin/install.r
-RUN chmod +x /usr/local/bin/install.version.r
 
+RUN chmod +x /usr/local/bin/install.r /usr/local/bin/install.version.r
 RUN install.r versions
 
