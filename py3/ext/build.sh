@@ -30,6 +30,21 @@ EOF
 
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
+RUN pip install --no-cache-dir --upgrade \
+        'cython==0.27.3' \
+        'cffi==1.11.5' \
+        'pybind11==2.2.2' \
+        'llvmlite==0.22.0' \
+        'numba==0.37.0'
+
+# `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
+
+# Install `astyle` instead of `clang-format`, because
+# I don't like the latter's dependency on LLVM.
+
+ARG ASTYLE_VERSION=3.1
+ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
+
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -38,7 +53,6 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
         libc6-dev \
         make \
         cmake \
-        gnupg2 \
     && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
     && ln -s /usr/bin/g++-7 /usr/bin/g++ \
     \
@@ -46,61 +60,60 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
         'line_profiler==2.1.2' \
         'memory_profiler==0.52.0' \
     \
+    && curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
+    && cd /tmp/astyle/build/gcc \
+    && make \
+    && mv bin/astyle /usr/local/bin \
+    \
     && rm -rf /var/lib/apt/lists/* /tmp/*
-
-# `gnupg2` is needed to use `apt-key add -`.
-# `gnupg2` was removed in debian stretch.
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
 # `snakeviz` is not installed in this Docker image as it's better
 # installed on the hosting machine 'natively'.
 
-RUN pip install --no-cache-dir --upgrade \
-        'cython==0.27.3' \
-        'cffi==1.11.5' \
-        'pybind11==2.2.2'
 
-# `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
+#######################
+### installing LLVM ###
+#######################
 
-# Have had issues with installing LLVM.
-#
-# Refer to this page:
-#   https://apt.llvm.org
-#
-# This post may be informative:
-#  https://solarianprogrammer.com/2017/12/14/clang-in-docker-container-cpp-17-development/
-#
-# This page lists downloads, including prebuilt binaries (5.0.1 has debian; earlier versions do not):
-#  http://releases.llvm.org/download.html
-#
-# This page might be useful as well:
-#  https://llvm.org/docs/Docker.html
-
-ENV LLVM_VERSION 5.0
-ENV LLVM_DESKTOP stretch
-
-# This line used to be useful, but not any more.
-#RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
-
-RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
-        | apt-key add - \
-    && echo "deb http://apt.llvm.org/${LLVM_DESKTOP}/ llvm-toolchain-${LLVM_DESKTOP}-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libllvm${LLVM_VERSION} \
-        llvm-${LLVM_VERSION} \
-        llvm-${LLVM_VERSION}-dev \
-        clang-format-${LLVM_VERSION} \
-    && rm -rf /var/lib/apt/lists/* \
-    \
-    && ln -s /usr/bin/clang-format-${LLVM_VERSION} /usr/bin/clang-format \
-    && curl --retry 3 https://github.com/catchorg/Catch2/releases/download/v2.1.2/catch.hpp > /usr/local/include/catch.hpp \
-    && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config \
-    \
-    && pip install --no-cache-dir --upgrade \
-        'llvmlite==0.22.0' \
-        'numba==0.37.0'
+# # Have had issues with installing LLVM.
+# #
+# # Refer to this page:
+# #   https://apt.llvm.org
+# #
+# # This post may be informative:
+# #  https://solarianprogrammer.com/2017/12/14/clang-in-docker-container-cpp-17-development/
+# #
+# # This page lists downloads, including prebuilt binaries (5.0.1 has debian; earlier versions do not):
+# #  http://releases.llvm.org/download.html
+# #
+# # This page might be useful as well:
+# #  https://llvm.org/docs/Docker.html
+# 
+# ENV LLVM_VERSION 5.0
+# ENV LLVM_DESKTOP stretch
+# 
+# # This line used to be useful, but not any more.
+# #RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv 15CF4D18AF4F7421 \
+# 
+# # `gnupg2` is needed to use `apt-key add -`.
+# # `gnupg2` was removed in debian stretch.
+# 
+# RUN curl -skL --retry 3 http://apt.llvm.org/llvm-snapshot.gpg.key \
+#         | apt-key add - \
+#     && echo "deb http://apt.llvm.org/${LLVM_DESKTOP}/ llvm-toolchain-${LLVM_DESKTOP}-${LLVM_VERSION} main" > /etc/apt/sources.list.d/llvm.list \
+#     && apt-get update \
+#     && apt-get install -y --no-install-recommends \
+#         libllvm${LLVM_VERSION} \
+#         llvm-${LLVM_VERSION} \
+#         llvm-${LLVM_VERSION}-dev \
+#         clang-format-${LLVM_VERSION} \
+#     && rm -rf /var/lib/apt/lists/* \
+#     \
+#     && ln -s /usr/bin/clang-format-${LLVM_VERSION} /usr/bin/clang-format \
+#     && curl --retry 3 https://github.com/catchorg/Catch2/releases/download/v2.1.2/catch.hpp > /usr/local/include/catch.hpp \
+#     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config
 
 EOF
 
