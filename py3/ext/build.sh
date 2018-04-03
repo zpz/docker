@@ -57,8 +57,8 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
     && ln -s /usr/bin/g++-7 /usr/bin/g++ \
     \
     && pip install --no-cache-dir --upgrade \
-        'line_profiler==2.1.2' \
-        'memory_profiler==0.52.0' \
+        'line_profiler' \
+        'memory_profiler' \
     \
     && curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
     && cd /tmp/astyle/build/gcc \
@@ -114,6 +114,16 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
 #     && ln -s /usr/bin/clang-format-${LLVM_VERSION} /usr/bin/clang-format \
 #     && curl --retry 3 https://github.com/catchorg/Catch2/releases/download/v2.1.2/catch.hpp > /usr/local/include/catch.hpp \
 #     && export LLVM_CONFIG=/usr/lib/llvm-${LLVM_VERSION}/bin/llvm-config
+
+# Other packages often useful for software development:
+#    autoconf=2.69-8 \
+#    automake=1:1.14.1-4+deb8u1 \
+#    binutils=2.25-5
+#    libtool=2.4.2-1.11 \
+#    zlib1g-dev=1:1.2.8.dfsg-2+b1 \
+#
+# `binutils` contains `gprof`.
+# To use `gprof`, use option `-pg` during both compiling and linking.
 
 EOF
 

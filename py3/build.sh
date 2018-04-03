@@ -4,7 +4,7 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.6.4-slim-stretch"
+PARENT="python:3.6.5-slim-stretch"
 
 version=$(cat "${thisdir}"/version)
 NAME="$(cat "${thisdir}/name"):${version}"
@@ -22,6 +22,10 @@ cat > "${thisdir}"/Dockerfile <<EOF
 FROM ${PARENT}
 
 USER root
+
+RUN pip install --no-cache-dir --upgrade \
+        'pip==9.0.3' \
+        'setuptools==39.0.1'
 EOF
 
 cp -r ../dotfiles .
@@ -30,18 +34,56 @@ cat "$(dirname "${thisdir}")/base.in" >> "${thisdir}/Dockerfile"
 cat "$(dirname "${thisdir}")/nvim.in" >> "${thisdir}/Dockerfile"
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
-RUN pip install --no-cache-dir --upgrade \
-        'pip==9.0.3' \
-        'setuptools==39.0.1' \
-        \
-        'numpy==1.14.2' \
-        'requests==2.18.4' \
-        \
-        'coverage==4.5.1' \
-        'pytest==3.5.0'
-EOF
 
-cat ./pydev.in >> "${thisdir}/Dockerfile"
+# The section below installs important tools for Python development, such as
+# documentation, testing, code analysis, code formatting,
+# IPython, Jupyter Notebook.
+
+# TODO:
+# it is possible that this config file is not loaded by Jupyter Notebook.
+ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
+COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
+COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
+COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
+
+RUN pip install --no-cache-dir --upgrade \
+        'coverage' \
+        'mypy' \
+        'ptpython' \
+        'pylint' \
+        'pytest' \
+        'Sphinx' \
+        'yapf' \
+    && pip install --no-cache-dir --upgrade \
+        'ipython' \
+        'notebook' \
+        'jupyterlab' \
+    && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
+    && chown -R docker-user /home/docker-user/.ptpython \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        graphviz \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
+# Use `yapf` to format Python code in-pace:
+#   yapf -ir -vv --no-local-style .
+
+# `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
+
+# `graphviz` is required by `Sphinx` to generate some graphs such as class hierarchy diagrams.
+
+# Other useful packages:
+#    boltons
+#    Faker
+#    flake8
+#    ipdb
+#    pudb
+#    pyflakes
+#    radon
+
+EOF
 
 echo
 echo Building image "'${NAME}'"
