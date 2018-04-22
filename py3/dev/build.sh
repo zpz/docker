@@ -59,6 +59,10 @@ RUN pip install --no-cache-dir --upgrade \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         graphviz \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'graphviz' \
+    \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*

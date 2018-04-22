@@ -27,11 +27,11 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'cython==0.27.3' \
-        'cffi==1.11.5' \
-        'pybind11==2.2.2' \
-        'llvmlite==0.22.0' \
-        'numba==0.37.0'
+        'cython' \
+        'cffi' \
+        'pybind11' \
+        'llvmlite' \
+        'numba'
 
 # `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
 
@@ -72,7 +72,7 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
 #
 # astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
 
-# A reasonable way to use clang-format:
+# A reasonable way to use clang-format (not installed):
 #
 # find ./ -iname *.h -o -iname *.cc -iname *.hpp -iname *.cpp \
 #    | xargs \

@@ -27,27 +27,25 @@ EOF
 cat >> "${thisdir}"/Dockerfile <<'EOF'
 
 RUN pip install --no-cache-dir --upgrade \
-        'bokeh==0.12.15' \
-        'dask==0.17.2' \
-        'dask-avro==0.2.0' \
-        'dask-ml==0.4.1' \
-        'graphviz==0.8.2' \
-        'h5py==2.7.1' \
-        'pandas==0.22.0' \
-        'partd==0.3.8' \
-        'scikit-learn==0.19.1' \
-        'statsmodels==0.8.0' \
-        'toolz==0.9.0'
+        'bokeh' \
+        'dask' \
+        'dask-avro' \
+        'dask-ml' \
+        'graphviz' \
+        'h5py' \
+        'pandas' \
+        'partd' \
+        'scikit-learn' \
+        'statsmodels' \
+        'toolz'
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        graphviz \
         gcc \
         make \
         libc6-dev \
     && pip install --no-cache-dir --upgrade \
-        'distributed==1.21.4' \
-        'graphviz==0.8.2' \
+        'distributed' \
     && apt-get remove --purge -y \
         gcc make libc6-dev \
     && apt-get autoremove -y \

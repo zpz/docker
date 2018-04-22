@@ -50,6 +50,7 @@ cat > "${thisdir}/Dockerfile" <<EOF
 
 FROM ${PARENT}
 USER root
+
 EOF
 
 
@@ -64,15 +65,13 @@ EOF
 # debian stretch has a reasonably recent R.
 
 cat >> "${thisdir}/Dockerfile" <<'EOF'
-
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         r-base \
         r-base-dev \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2==2.9.2' \
+        'rpy2==2.9.3' \
     \
     && apt-get remove --purge -y \
         r-base-dev \
