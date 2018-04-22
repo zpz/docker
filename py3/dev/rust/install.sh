@@ -2,7 +2,7 @@
 # May need a better solution at some point.
 
 
-python ../../pyinstall.py --cmd=rust --options="-it"
+python ../../../pyinstall.py --cmd=rust --options="-it"
 ( cd ~; rust )
 
 # This will enter docker container.

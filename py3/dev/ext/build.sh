@@ -8,11 +8,7 @@ parent_name=$(cat "${parentdir}"/name)
 parent_version=$(cat "${parentdir}"/version)
 PARENT="${parent_name}":"${parent_version}"
 
-version=$(cat "${thisdir}"/version)
-if [[ "${version}" < "${parent_version}" ]]; then
-    echo "${parent_version}" > "${thisdir}"/version
-    version=${parent_version}
-fi
+version=$(date +%Y%m%d)
 NAME="$(cat "${thisdir}/name"):${version}"
 
 echo
@@ -71,6 +67,16 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
 # Use `snakeviz` to view profiling stats.
 # `snakeviz` is not installed in this Docker image as it's better
 # installed on the hosting machine 'natively'.
+
+# A reasonable way to use astyle:
+#
+# astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
+
+# A reasonable way to use clang-format:
+#
+# find ./ -iname *.h -o -iname *.cc -iname *.hpp -iname *.cpp \
+#    | xargs \
+#    clang-format -style="{BasedOnStyle: webkit, IndentWidth: 4, AccessModifierOffset: -2}" -i
 
 
 #######################
@@ -131,5 +137,11 @@ echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
+rm -f ${thisdir}/Dockerfile
+echo ${version} > ${thisdir}/version
 
+echo
+python ../../../pyinstall.py \
+    --cmd=py3ext \
+    --options="-it --rm"
 

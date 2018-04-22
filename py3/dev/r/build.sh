@@ -8,11 +8,7 @@ parent_name="$(cat "${parentdir}/name")"
 parent_version="$(cat "${parentdir}/version")"
 PARENT="${parent_name}":"${parent_version}"
 
-version="$(cat "${thisdir}/version")"
-if [[ "${version}" < "${parent_version}" ]]; then
-    echo "${parent_version}" > "${thisdir}"/version
-    version=${parent_version}
-fi
+version=$(date +%Y%m%d)
 NAME="$(cat "${thisdir}/name"):${version}"
 
 echo
@@ -97,4 +93,11 @@ echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
+rm -f ${thisdir}/Dockerfile
+echo ${version} > ${thisdir}/version
+
+echo
+python ../../../pyinstall.py \
+    --cmd=py3r \
+    --options="-it --rm"
 

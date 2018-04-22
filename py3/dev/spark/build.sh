@@ -8,11 +8,7 @@ parent_name=$(cat "${parentdir}"/name)
 parent_version=$(cat "${parentdir}"/version)
 PARENT="${parent_name}":"${parent_version}"
 
-version=$(cat "${thisdir}"/version)
-if [[ "${version}" < "${parent_version}" ]]; then
-    echo "${parent_version}" > "${thisdir}"/version
-    version=${parent_version}
-fi
+version=$(date +%Y%m%d)
 NAME="$(cat "${thisdir}/name"):${version}"
 
 echo
@@ -36,17 +32,19 @@ cat >> "${thisdir}"/Dockerfile <<'EOF'
 # How to find the latest version of Java:
 #   search 'oracle download java'
 #   click tab entitled 'Downloads'
-#   download the desired file and note the URL in address bar, esp the '-bxx' part for the 'build' number.
-# Download the 'x64' (not 'x86') version of JRE.
+#   download the desired file and note the URL in address bar, esp the '-bxx' part for the 'build' number
+#   and the long hash-style 'token' string.
+# Download the 'x64' (not 'x86') version of "server JRE".
 #
 # TODO:
 #   switch to openjdk.
 ARG JAVA_MAJOR_VERSION=8
-ARG JAVA_UPDATE_VERSION=162
+ARG JAVA_UPDATE_VERSION=172
 ARG JAVA_VERSION=${JAVA_MAJOR_VERSION}u${JAVA_UPDATE_VERSION}
-ARG JAVA_BUILD_NUMBER=12
+ARG JAVA_BUILD_NUMBER=11
 ARG JAVA_BASE_URL=http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION}-b${JAVA_BUILD_NUMBER}
-ARG JAVA_DOWNLOAD_TOKEN=0da788060d494f5095bf8624735fa2f1
+# ARG JAVA_DOWNLOAD_TOKEN=0da788060d494f5095bf8624735fa2f1
+ARG JAVA_DOWNLOAD_TOKEN=a58eab1ec242421181065cdc37240b08
 RUN mkdir -p /usr/share/java \
     && curl -skL --retry 3 --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
             ${JAVA_BASE_URL}/${JAVA_DOWNLOAD_TOKEN}/server-jre-${JAVA_VERSION}-linux-x64.tar.gz \
@@ -91,5 +89,10 @@ echo
 echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
+rm -f ${thisdir}/Dockerfile
+echo ${version} > ${thisdir}/version
+
+echo
+python ../../../pyinstall.py --cmd=spark --options="--rm -it"
 
 
