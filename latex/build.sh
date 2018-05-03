@@ -83,4 +83,5 @@ echo Building image "'${NAME}'"
 echo
 docker build -t "${NAME}" "${thisdir}"
 rm -rf dotfiles
+rm -f ${thisdir}/Dockerfile
 
