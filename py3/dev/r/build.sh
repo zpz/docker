@@ -44,6 +44,10 @@ cat > "${thisdir}/Dockerfile" <<EOF
 #       'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys xyz'
 # 4. apt-get-update
 #       this should succeed
+# 5. apt-get install r-base
+#
+# If we want to specify exact R version, then
+#
 # 5. get R version number by 'apt-cache show r-base'
 # 6. specify version number in 'apt-get install'
 
@@ -54,18 +58,15 @@ USER root
 EOF
 
 
-# For debian jessie:
-#
-#ENV R_BASE_VERSION 3.4.3-1
-#RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran34/' >> /etc/apt/sources.list \
-#    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
-#    && apt-get update \
-
-# We no longer use the above because
-# debian stretch has a reasonably recent R.
-
 cat >> "${thisdir}/Dockerfile" <<'EOF'
 RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gnupg2 \
+        dirmngr \
+    \
+    && echo 'deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/' >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
         r-base \
         r-base-dev \
@@ -78,6 +79,8 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
+
+# `gnupg2` and `dirmngr` are needed to run `apt-key`.
 
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin
