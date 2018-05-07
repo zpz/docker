@@ -34,7 +34,9 @@ RUN pip install --no-cache-dir --upgrade \
         'scikit-learn' \
         'scipy' \
         'statsmodels' \
-        'tensorflow'
+        'tensorflow' \
+        'torch' \
+        'torchvision'
 
 RUN pip install --no-cache-dir --upgrade \
         'bokeh' \
