@@ -43,6 +43,23 @@ RUN pip install --no-cache-dir --upgrade \
         'holoviews' \
         'matplotlib'
 
+
+RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        g++-7 \
+        make \
+    && ln -s /usr/bin/g++-7 /usr/bin/g++ \
+    \
+    && pip install --no-cache-dir --upgrade \
+        'lightgbm' \
+        'xgboost' \
+    \
+    && apt-get purge --autoremove -y \
+        g++-7 \
+    && rm -f /usr/bin/g++ \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+
 EOF
 
 echo
