@@ -49,6 +49,8 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
     && apt-get install -y --no-install-recommends \
         g++-7 \
         make \
+        cmake \
+        libopenmpi-dev libopenmpi3 \
     && ln -s /usr/bin/g++-7 /usr/bin/g++ \
     \
     && pip install --no-cache-dir --upgrade \
@@ -57,6 +59,8 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
     \
     && apt-get purge --autoremove -y \
         g++-7 \
+        make cmake \
+        libopenmpi-dev \
     && rm -f /usr/bin/g++ \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
