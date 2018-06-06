@@ -4,7 +4,7 @@
 #
 # Recursively build images defined in the subdirectories.
 # Build is attempted for a directory and its subdirectories only if
-# the files `name`, `version`, `build.sh` all exist in the directory.
+# the files `name` and `build.sh` both exist in the directory.
 
 
 set -o nounset
@@ -17,7 +17,7 @@ thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 function build_one() {
     echo
     echo in "'$(pwd)'"
-    if [[ -f ./build.sh && -f ./version && -f ./name ]]; then
+    if [[ -f ./build.sh && -f ./name ]]; then
         bash ./build.sh
         echo
         for f in *; do

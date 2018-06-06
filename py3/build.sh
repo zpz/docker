@@ -23,9 +23,6 @@ FROM ${PARENT}
 
 USER root
 
-RUN pip install --no-cache-dir --upgrade \
-        'pip==10.0.1' \
-        'setuptools==39.0.1'
 EOF
 
 cp -r $(dirname "${thisdir}")/dotfiles ${thisdir}/

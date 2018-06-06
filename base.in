@@ -23,8 +23,8 @@ RUN groupadd --gid 1000 docker \
 # You can simply do this:
 #   sudo PYTHONPAH=$PYTHONPATH command ...
 
-#-----------
-# The very basic
+#-------------------------
+# The very basic utilities
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -40,17 +40,6 @@ RUN apt-get update \
 
 COPY dotfiles/bash/bashrc /etc/bash.bashrc
 RUN chmod +r /etc/bash.bashrc
-
-
-#------------------
-# entrypoint
-
-ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-RUN chmod +x /usr/bin/tini
-
-ENTRYPOINT ["/usr/bin/tini", "--"]
-# TODO: problematic when I terminate some programs within container.
 
 
 ENV SHELL=/bin/bash

@@ -83,6 +83,7 @@ fi
 
 ARGS="\\
     {args} \\
+    --init \\
     -e USER={dockeruser} \\
     -e HOME={dockerhomedir} \\
     -v "{hostworkdir}":"{dockerworkdir}" \\

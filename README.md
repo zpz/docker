@@ -82,7 +82,7 @@ will list some environment settings.
 With most of the commands in `$HOME/work/bin`, say `py3`, type
 
 ```
-py3 ipynb
+py3 notebook
 ```
 
 (meaning 'IPython notebook') will start a `Jupyter Notebook` server in the container.
@@ -90,7 +90,7 @@ py3 ipynb
 Once the server is running, access it at `http://localhost:8888` using your favorite browser.
 
 The server stays in the front of the terminal. You may kill it by `Control-C`.
-  
-You can have only one such `ipynb` container running at any time, because it occupies the port `8888`, which can not be used by another `Jupyter Notebook` server.
+
+You can have only one such `notebook` container running at any time, because it occupies the port `8888`, which can not be used by another `Jupyter Notebook` server.
 
 
