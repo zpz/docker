@@ -9,7 +9,8 @@ parent_version=$(cat "${parentdir}"/version)
 PARENT="${parent_name}":"${parent_version}"
 
 version=$(date +%Y%m%d)
-NAME="$(cat "${thisdir}/name"):${version}"
+name=$(cat "${thisdir}/name")
+NAME="${name}:${version}"
 
 echo
 echo =====================================================
@@ -93,6 +94,6 @@ rm -f ${thisdir}/Dockerfile
 echo ${version} > ${thisdir}/version
 
 echo
-python ../../../pyinstall.py --cmd=spark --options="--rm -it"
+bash ../../../install.sh ${name} ${version}
 
 

@@ -9,7 +9,8 @@ parent_version=$(cat "${parentdir}"/version)
 PARENT="${parent_name}":"${parent_version}"
 
 version=$(date +%Y%m%d)
-NAME="$(cat "${thisdir}/name"):${version}"
+name=$(cat "${thisdir}/name")
+NAME="${name}:${version}"
 
 
 echo
@@ -94,9 +95,5 @@ rm -f ${thisdir}/Dockerfile
 echo ${version} > ${thisdir}/version
 
 echo
-python ../../pyinstall.py \
-    --cmd=py3dev  \
-    --pypath=src/github-zpz/utilities.py \
-    --dockercmd=/bin/bash \
-    --options="--rm -it"
+bash ../../install.sh ${name} ${version}
 

@@ -4,10 +4,11 @@ set -o pipefail
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
 
-PARENT="python:3.6.5-slim-stretch"
+PARENT="python:3.6.6-slim-stretch"
 
+name=$(cat "${thisdir}/name")
 version=$(date +%Y%m%d)
-NAME="$(cat "${thisdir}/name"):${version}"
+NAME="${name}:${version}"
 
 
 echo
@@ -41,9 +42,5 @@ echo ${version} > ${thisdir}/version
 
 
 echo
-python $(dirname "${thisdir}")/pyinstall.py \
-    --cmd=py3 \
-    --asroot \
-    --dockercmd=python \
-    --options="--rm -it"
+bash $(dirname "${thisdir}")/install.sh ${name} ${version}
 
