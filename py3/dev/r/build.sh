@@ -72,7 +72,7 @@ RUN apt-get update \
         r-base-dev \
     \
     && pip install --no-cache-dir --upgrade \
-        'rpy2==2.9.3' \
+        'rpy2' \
     \
     && apt-get remove --purge -y \
         r-base-dev \

@@ -31,6 +31,7 @@ RUN pip install --no-cache-dir --upgrade \
         'dask' \
         'dask-avro' \
         'dask-ml' \
+        'distributed' \
         'graphviz' \
         'h5py' \
         'pandas' \
@@ -38,19 +39,6 @@ RUN pip install --no-cache-dir --upgrade \
         'scikit-learn' \
         'statsmodels' \
         'toolz'
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        make \
-        libc6-dev \
-    && pip install --no-cache-dir --upgrade \
-        'distributed' \
-    && apt-get remove --purge -y \
-        gcc make libc6-dev \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 EOF
 

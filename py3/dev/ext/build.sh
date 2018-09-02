@@ -41,32 +41,8 @@ RUN pip install --no-cache-dir --upgrade \
 ARG ASTYLE_VERSION=3.1
 ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
 
-RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc-7 \
-        g++-7 \
-        libc6-dev \
-        make \
-        cmake \
-    && ln -s /usr/bin/gcc-7 /usr/bin/gcc \
-    && ln -s /usr/bin/g++-7 /usr/bin/g++ \
-    \
-    && pip install --no-cache-dir --upgrade \
-        'line_profiler' \
-        'memory_profiler' \
-    \
-    && curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
-    && cd /tmp/astyle/build/gcc \
-    && make \
-    && mv bin/astyle /usr/local/bin \
-    \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
-
-# Installing `line_profiler` needs gcc.
-# Use `snakeviz` to view profiling stats.
-# `snakeviz` is not installed in this Docker image as it's better
-# installed on the hosting machine 'natively'.
+RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
+    && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
 
 # A reasonable way to use astyle:
 #
