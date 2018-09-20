@@ -37,4 +37,4 @@ function def {
 
 
 def py3
-def py3-dev
+def py3dev

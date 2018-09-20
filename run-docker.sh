@@ -38,16 +38,40 @@ if [[ $# < 1 ]]; then
     exit 1
 fi
 
-imagename="$1"
-shift
-if [[ $# > 0 ]]; then
-    command="$2"
-    shift
-    args="$@"
-else
-    command=/bin/bash
-    args=""
-fi
+
+imagename=""
+command=/bin/bash
+args=""
+opts=""
+
+# Parse arguments. After mandatory arguments are obtained,
+# remaining arguments are stored, to be passed on.
+while [[ $# > 0 ]]; do
+    if [[ "${imagename}" == "" ]]; then
+        if [[ "$1" == -v ]]; then
+            shift
+            opts="${opts} -v $1"
+        elif [[ "$1" == -p ]]; then
+            shift
+            opts="${opts} -p $1"
+        elif [[ "$1" == --network ]]; then
+            shift
+            opts="${opts} --network $1"
+        elif [[ "$1" == -* ]]; then
+            opts="${opts} $1"
+        else
+            imagename="$1"
+        fi
+        shift
+    else
+        # After `image-name`.
+        command="$1"
+        shift
+        args="$@"
+        break
+    fi
+done
+
 
 if [[ "${imagename}" == "" ]]; then
     echo "${USAGE}"
@@ -57,8 +81,6 @@ fi
 
 imageversion=$(find-newest-tag "${imagename}")
 
-
-opts=""
 
 if [[ $(uname) == Linux && $(id -u) != 1000 ]]; then
     # Gateway Linux box.
@@ -110,6 +132,8 @@ opts="${opts} -e TMPDIR=${dockerworkdir}/${TMPDIR}"
 if [[ "${command}" == "notebook" ]]; then
     opts="${opts} --expose=8888 -p 8888:8888"
     command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${dockerworkdir}' --NotebookApp.token=''"
+elif [[ "${command}" == "py.test" ]]; then
+    args="-p no:cacheprovider ${args}"
 else
     opts="${opts} -it"
 fi

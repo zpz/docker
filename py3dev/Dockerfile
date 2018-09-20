@@ -69,3 +69,9 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
 # Use `snakeviz` to view profiling stats.
 # `snakeviz` is not installed in this Docker image as it's better
 # installed on the hosting machine 'natively'.
+
+
+RUN pip install --no-cache-dir --upgrade \
+        'cytoolz' \
+        'dask' \
+        'distributed'
