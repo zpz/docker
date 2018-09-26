@@ -47,51 +47,5 @@ RUN chmod +r /etc/bash.bashrc
 ENV SHELL=/bin/bash
 
 
-#------------------
-# editor
-
-ENV NVIM_HOME=/etc/xdg/nvim
-ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
-COPY dotfiles/nvim ${NVIM_HOME}/
-
-ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
-
-RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
-    && mv /tmp/nvim-linux64 /usr/local/sbin/neovim \
-    && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
-    \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        git \
-        xclip \
-    \
-    && pip install --no-cache-dir --upgrade \
-        neovim \
-        jedi \
-    \
-    && chmod -R +rX ${NVIM_HOME} \
-    && mkdir -p ${NVIM_HOME}/bundle \
-    && git clone https://github.com/VundleVim/Vundle.vim.git ${NVIM_HOME}/bundle/Vundle.vim \
-    && nvim +PluginInstall +qall \
-    && nvim +UpdateRemotePlugins +qall \
-    \
-    && ln -s $(which nvim) /usr/local/bin/vim \
-    \
-    && rm -rf ${NVIM_HOME}/bundle/*/doc \
-    && rm -rf ${NVIM_HOME}/bundle/*/test \
-    && rm -rf ${NVIM_HOME}/bundle/*/.git \
-    && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
-    && rm -rf ${NVIM_HOME}/bundle/*/tests \
-    \
-    && apt-get purge -y --auto-remove \
-        git \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
-
-ENV EDITOR vim
-
-
-
 CMD ["/bin/bash"]
 WORKDIR /
