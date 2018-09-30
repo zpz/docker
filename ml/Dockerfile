@@ -5,6 +5,7 @@ USER root
 
 
 RUN pip install --no-cache-dir --upgrade \
+        'numpy' \
         'pandas' \
         'scikit-learn' \
         'scipy' \
@@ -28,6 +29,7 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libopenmpi-dev libopenmpi3 \
+    && ldconfig \
     && apt-get autoremove -y \
     && rm -f /etc/apt/sources.list.d/myextrarepo.list \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
@@ -39,7 +41,7 @@ RUN pip install --no-cache-dir --upgrade \
         'tensorflow' \
         'tensorflow-probability'
 
-RUN pip install --no-cache-dir --upgrade \
-        'pytorch' \
-        'torchvision'
+# RUN pip install --no-cache-dir --upgrade \
+#         'pytorch' \
+#         'torchvision'
 

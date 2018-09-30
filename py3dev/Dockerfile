@@ -67,7 +67,6 @@ RUN pip install --no-cache-dir --upgrade \
         'ptpython' \
         'pylint' \
         'pytest' \
-        'Sphinx' \
         'yapf' \
     && pip install --no-cache-dir --upgrade \
         'ipython' \
@@ -81,6 +80,7 @@ RUN pip install --no-cache-dir --upgrade \
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
+# Decided to not install Spinx; install it in specific images where needed.
 # To generate some graphs such as class hierarchy diagrams with `Sphinx`,
 # one needs to install the system package `graphviz` and Python package `graphviz`.
 
@@ -101,6 +101,7 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
         make \
     && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
     && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+    && ldconfig \
     \
     && apt-get autoremove -y \
     && apt-get clean \
@@ -108,8 +109,11 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
     && rm -f /etc/apt/sources.list.d/mygccrepo.list \
     \
     && pip install --no-cache-dir --upgrade \
-        'line_profiler' \
         'memory_profiler'
+
+# `pip install line_profiler` fails on Python 3.7.
+# See https://github.com/rkern/line_profiler/issues/132
+# Hopefully the fix will be integrated soon.
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
