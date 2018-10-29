@@ -59,7 +59,7 @@ env
 
 will list some environment settings.
 
-`git` is **not** available in the containers. use `git` commands outside of a container.
+`git` is **not** available in the containers. Use `git` commands outside of a container.
 
 
 <a name="jupyter-notebook"></a>

@@ -3,7 +3,7 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
-#------------------
+#---------------
 # group and user
 
 RUN groupadd --gid 1000 docker \
@@ -47,6 +47,37 @@ RUN chmod +r /etc/bash.bashrc
 
 
 ENV SHELL=/bin/bash
+
+
+#-------------------------
+# Some packages most useful for Python development related to
+# testing, code analysis, code formatting, etc.
+
+COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
+
+RUN pip install --no-cache-dir --upgrade \
+        'coverage' \
+        'mypy' \
+        'ptpython' \
+        'pylint' \
+        'pytest' \
+        'yapf' \
+    && chown -R docker-user /home/docker-user/.ptpython
+
+# Use `yapf` to format Python code in-pace:
+#   yapf -ir -vv --no-local-style .
+
+# Decided to not install Spinx; install it in specific images where needed.
+# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
+# one needs to install the system package `graphviz` and Python package `graphviz`.
+
+# Other useful packages:
+#    boltons
+#    Faker
+#    flake8
+#    pudb
+#    pyflakes
+#    radon
 
 
 CMD ["/bin/bash"]

@@ -4,6 +4,7 @@ FROM ${PARENT}
 USER root
 
 
+
 #------------------
 # editor
 
@@ -49,49 +50,8 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
 ENV EDITOR vim
 
 
-#-------------------------
-# The section below installs important tools for Python development, such as
-# documentation, testing, code analysis, code formatting,
-# IPython, Jupyter Notebook.
-
-# TODO:
-# it is possible that this config file is not loaded by Jupyter Notebook.
-ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
-COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
-COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
-COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
-
-RUN pip install --no-cache-dir --upgrade \
-        'coverage' \
-        'mypy' \
-        'ptpython' \
-        'pylint' \
-        'pytest' \
-        'yapf' \
-    && pip install --no-cache-dir --upgrade \
-        'ipython' \
-        'notebook' \
-        'jupyterlab' \
-    && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
-    && chown -R docker-user /home/docker-user/.ptpython
-
-# Use `yapf` to format Python code in-pace:
-#   yapf -ir -vv --no-local-style .
-
-# `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
-
-# Decided to not install Spinx; install it in specific images where needed.
-# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
-# one needs to install the system package `graphviz` and Python package `graphviz`.
-
-# Other useful packages:
-#    boltons
-#    Faker
-#    flake8
-#    ipdb
-#    pudb
-#    pyflakes
-#    radon
+#---------------
+# C/C++ compiler
 
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
     && apt-get update \
@@ -126,7 +86,6 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'numpy' \
         'cython' \
         'cffi' \
         'pybind11' \

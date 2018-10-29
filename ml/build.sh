@@ -7,4 +7,6 @@ source "${parentdir}/common.sh"
 
 parent=py3dev:$(find-newest-tag py3dev)
 
+cp -r ../dotfiles .
 build-simple ${thisdir} ${parent}
+rm -rf ./dotfiles

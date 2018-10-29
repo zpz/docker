@@ -4,6 +4,27 @@ FROM ${PARENT}
 USER root
 
 
+#-----------------
+# Jupyter notebook
+
+# TODO:
+# it is possible that this config file is not loaded by Jupyter Notebook.
+ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
+COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
+COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
+
+RUN pip install --no-cache-dir --upgrade \
+        'ipython' \
+        'notebook' \
+        'jupyterlab' \
+    && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
+
+# `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
+
+
+#--------------------
+# Numpy, Scipy, ML
+
 RUN pip install --no-cache-dir --upgrade \
         'numpy' \
         'pandas' \
@@ -13,9 +34,10 @@ RUN pip install --no-cache-dir --upgrade \
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'bokeh' \
+        'bokeh' 'holoviews' \
         'matplotlib' \
-        'seaborn'
+        'seaborn' \
+        'plotly' 'dash'
 
 
 RUN pip install --no-cache-dir --upgrade \
@@ -40,8 +62,4 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
 RUN pip install --no-cache-dir --upgrade \
         'tensorflow' \
         'tensorflow-probability'
-
-# RUN pip install --no-cache-dir --upgrade \
-#         'pytorch' \
-#         'torchvision'
 
