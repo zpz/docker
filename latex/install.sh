@@ -1,22 +1,14 @@
-set -o errexit
-set -o nounset
-set -o pipefail
+set -Eeuo pipefail
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
+parentdir="$( dirname ${thisdir} )"
+source "${parentdir}/common.sh"
+
+NAME=$(basename $thisdir)
+TAG=$(find-newest-tag $NAME)
+
 bindir="${HOME}/work/bin"
-
-
-function check_file {
-    local f="$1"
-    if [[ -f "${f}" ]]; then
-        if ! grep -q 'docker run' "${f}"; then
-            echo "'${f}' already exists and it doesn't look like a file I created before; don't know how to proceed!"
-            return 1
-        fi
-    fi
-    return 0
-}
 
 
 function main {
@@ -25,16 +17,15 @@ function main {
         return 1
     fi
 
-    local dockeruser=docker-user
-    local dockeruserhome=/home/"${dockeruser}"
+    local dockeruser=root
+    local dockeruserhome=/root
 
     local cmdname="latex"
-    local imgname=$(cat "${thisdir}/name")
-    local version=$(cat "${thisdir}/version")
+    local imgname=$NAME
+    local version=$TAG
     local image="${imgname}:${version}"
 
     local target="${bindir}/${cmdname}"
-    check_file "${target}"
 
     echo "installing '${cmdname}' into '${bindir}'"
     cat > "${target}" <<EOF
