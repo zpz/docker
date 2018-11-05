@@ -1,0 +1,168 @@
+#!/bin/bash
+#
+# Check, clean up, and format a bibTeX database file.
+# A series of scripts written by Nelson Beebe are called.
+#
+# Zepu Zhang, November 2007.
+
+help()
+{
+cat <<EOF
+Usage: $(basename $0)
+           BibTeXfile
+
+Check grammer, clean up, and format a bibTeX database file.
+The user will be prompted at certain points in the processing
+to check outputs, etc. to make sure things are right.
+If everything goes well, typically the user should rename the original
+file as a backup and rename the output file to the original file name.
+EOF
+}
+
+
+if (( $# == 0))
+then
+    help
+    exit 1
+fi
+
+while (( $# > 0 ))
+do
+    case "$1" in
+    -*)
+        help
+        exit 0
+        ;;
+    *)
+        FILE="$1"
+        ;;
+    esac
+    shift
+done
+
+
+echo "You can make changes to $FILE when processing is paused with error or warnings."
+echo "You can also quit at any step by CTRL-z"
+
+while true
+do
+    echo
+    echo "Check grammer..."
+    bibparse $FILE
+    if (( $? != 0))
+    then
+        echo "Now, pick up my changes and repeat this step (ENTER), or"
+        echo -n "     proceed to next step (p): "
+        read res
+        if [ "$res" == 'p' ]
+        then
+            break
+        fi
+    else
+        echo "  .................OK"
+        break
+    fi
+done
+
+
+while true
+do
+    echo "Make a backup file ${FILE}.bak..."
+    cp -f $FILE ${FILE}.bak
+
+    tempfile1=$(mktemp ${FILE}XXX)
+    if (($? != 0))
+    then
+        echo "$(basename $0): Can't create temp file, exiting..."
+        exit 1
+    fi
+
+    biblabel $FILE 2>&1 > $tempfile1 \
+        |grep -v 'sort: Warning.*deprecated' \
+        |grep -v 'string too long for field.*abstract'
+    awk '$1 !~ $2' < $tempfile1
+        # Show only those keys that are to be changed.
+    rm -f $tempfile1
+    if (($? == 0))
+    then
+        echo
+        echo "Replace citation keys with an 'Author:year:ABC' style."
+        echo "Above are suggested changes to the citation keys."
+        echo "Pay attention to"
+        echo -n "(1) generated successive citation keys that differ "
+        echo -n "by only a trailing 'a', 'b', 'c', etc. "
+        echo "These may be duplicate entries!"
+        echo "(2) whether 'year' is available in each citation key."
+        echo
+        echo -n "You can make changes and then repeat this check (ENTER),"
+        echo -n " or proceed to the next step (p): "
+        read res
+        if [ "$res" == 'p' ]
+        then
+    #        echo "Let the computer make the above suggested substitutions? (Y/N)"
+    #        read res
+    #        if [ "$res" == 'Y' ]
+    #        then
+    #            tempfile1=$(mktemp ${FILE}XXXX)
+    #            if (($? != 0))
+    #            then
+    #                echo "$(basename $0): Can't create temp file, exiting..."
+    #                exit 1
+    #            fi
+    #            tempfile2=$(mktemp ${FILE}XXXX)
+    #            if (($? != 0))
+    #            then
+    #                echo "$(basename $0): Can't create temp file, exiting..."
+    #                exit 1
+    #            fi
+
+    #            echo "Update citation keys..."
+    #            biblabel $FILE > $tempfile1
+    #            citesub -f $tempfile1 $FILE > $tempfile2
+    #            rm -f $tempfile1
+    #            mv -f $tempfile2 $FILE
+    #        fi
+            echo
+            break
+        fi
+    else
+        break
+    fi
+done
+
+
+tempfile1=$(mktemp ${FILE}XXX)
+if (($? != 0))
+then
+    echo "$(basename $0): Can't create temp file, exiting..."
+    exit 1
+fi
+
+echo "Clean up and reformat..."
+bibclean -keep-preamble-spaces -align-equals $FILE 2>&1 > $tempfile1 \
+        |grep -v 'String length.*abstract' \
+        |grep -v 'string too long for field.*abstract'
+
+bibparse $tempfile1
+# safty check
+
+# A sed script.
+# Consecutive blank lines collapse to a single blank line.
+# Blank line preceding a '@string{' record is suppressed.
+PROG='
+/^$/{
+    N
+    /^\n$/D
+    /^\n@[sS][tT][rR][iI][nN][gg]{/D
+}
+'
+
+
+echo "Sort fields in each entry and entire entries..."
+biborder $tempfile1 |bibsort |sed "$PROG" > $FILE
+
+rm -f $tempfile1
+
+echo "Processing complete."
+echo "The oringinal file is backed up in $FILE.bak"
+

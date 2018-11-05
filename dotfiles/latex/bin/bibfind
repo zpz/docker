@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# I plan to make the following enhancements:
+#
+#   Commandline arguments restricting where to find matches:
+#     case 1: name a specific field to look into for matches, e.g., 'title';
+#     case 2: a switch for narrow or broad search, where 'narrow'
+#             looks in a fixed set of fields (e.g., author, title, keywords,
+#             annote, year), and 'broad' search looks everywhere in the
+#             entry.
+#
+# David Kotz wrote a script called 'looktex' that does the same work.
+# It assumes less about the format of the bib file.
+#
+# Zepu Zhang, September 2006.
+
+help()
+{
+cat <<EOF
+Usage: $(basename $0)
+           [-l|--lines n]
+           pattern
+           BibTeXfiles or <infile
+           >outfile
+
+The pattern is matched anywhere in the whole entry.
+If there is a match, print out the whole entry or the first 'n' lines.
+The matching is insensetive to case.
+
+The pattern can be any regex that awk recognizes;
+just make sure it's properly quoted.
+
+I assume bib entries are separated by blank lines, and nothing else.
+So, the input actually can be anyting that is blank-line delimited blocks.
+EOF
+}
+
+
+nlprint=1000
+  # print out first 6 lines by default.
+
+while (( $# > 0 ))
+do
+    case "$1" in
+    -l | --line | --lines)
+        shift
+        if (( $# < 1 )); then
+            echo option --lines expects an argument
+            exit 1
+        fi
+        nlprint=$1
+        if (( $nlprint < 1 )); then
+            nlprint=1000
+        fi
+        ;;
+    -*)
+        help
+        exit 0
+        ;;
+    *)
+        if [ -z "$pattern" ]; then
+            # The first non-option argument is assumed
+            # the search pattern.
+            pattern="$1"
+        else
+            # Everything else is assumed a file name.
+            files="$files $1"
+        fi
+        ;;
+    esac
+    shift
+done
+
+
+# Store the awk script in a string.
+# Be careful about the quotings:
+# it's concatenated with several single-quoted segments.
+PROGRAM='
+BEGIN { RS = ""; FS = "\n" }
+
+tolower($0) ~ tolower("'$pattern'") {
+    i = 1
+    while (i <= '$nlprint' && i <= NF) {
+        printf("%s\n", $i)
+        i++
+    }
+    print ""
+}'
+
+awk "$PROGRAM" $files
+

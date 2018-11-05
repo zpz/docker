@@ -1,0 +1,13 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{gareuler}[2006/04/27]
+\typeout{Adobe Garamond for the text, eulervm for the math ---}
+
+\RequirePackage{AGaramondPro}
+\renewcommand{\bfdefault}{sb}
+\renewcommand{\slshape}{\itshape}
+
+\RequirePackage[small, euler-digits, euler-hat-accent]{eulervm}
+\renewcommand{\mathbf}[1]{\mathbold{#1}}
+% eulervm must be loaded AFTER default text fonts are redefined.
+% while using eulervm, use 'mathbold' instead of 'mathbf'.
+

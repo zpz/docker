@@ -1,0 +1,71 @@
+\RequirePackage{lastpage}
+\RequirePackage{url}
+%\RequirePackage{amssymb}
+%\RequirePackage{ulem}
+%\usepackage[colorlinks, citecolor=blue, linkcolor=black]{hyperref}
+%\RequirePackage[colorlinks, urlcolor=black, citecolor=black, linkcolor=black]{hyperref}
+
+\parindent = 0pt
+\clubpenalty = 10000
+\widowpenalty = 10000
+
+%\advance\topmargin by .3\headsep
+%\headsep = .7\headsep
+%\footskip = .85\footskip
+
+\newdimen\parhang
+\parhang=8mm
+
+%\makeatletter
+\renewcommand\@oddfoot{%
+  \hfil\small\thepage\ of \pageref{LastPage}\hfil
+  }
+\let\@evenfoot\@oddfoot
+\renewcommand\@oddhead{%
+  \ifnum\thepage>1 {\hfil\small\scshape Zepu Zhang \hfil}%
+  \else\@empty
+  \fi}
+\let\@evenhead\@oddhead
+%\makeatother
+
+\renewcommand{\section}[1]{%
+    \vskip0pt plus.075\textheight\penalty-200
+    \vskip0pt plus-.075\textheight\bigskip
+
+    \leftskip=0mm
+    {\interlinepenalty=10000
+    {\Large\sffamily\bfseries #1}}
+     %\large\bfseries\MakeUppercase{#1}
+    \par
+    \nobreak\smallskip\nobreak
+    \advance\leftskip by 8mm
+    }
+
+\renewcommand{\subsection}[1]{%
+    \vskip0pt plus.05\textheight\penalty-100
+    \vskip0pt plus-.05\textheight\medskip
+
+    \leftskip=8mm
+    {\interlinepenalty=10000
+    {\bfseries #1}}
+    \par
+    \nobreak
+    \advance\leftskip by 5mm
+    }
+
+
+\def\vhrulefill#1{\leavevmode\leaders\hrule\@height#1\hfill\kern\z@}
+
+\renewcommand\maketitle{
+    \vspace*{-6mm}
+    {\Huge\scshape Zepu Zhang}
+    %\hfill \raisebox{-4pt}[0mm][0mm]{\today}\\[4pt]
+    \hfill zepu.zhang@gmail.com,\ \ \ 510.316.0450 (cell)
+    \par\vskip-2pt \vhrulefill{2pt} \par
+    http://www.linkedin.com/in/zhangzepu
+    \hfill San Francisco Bay Area
+    \smallskip
+    }
+
+%\newcommand\software[1]{{\small\texttt{\textbf{#1}}}}
+\newcommand\software[1]{{\textsf{#1}}}

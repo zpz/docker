@@ -1,13 +1,5 @@
 set -Eeuo pipefail
 
-thisfile="${BASH_SOURCE[0]}"
-thisdir="$( cd "$( dirname "${thisfile}" )" && pwd )"
-parentdir="$( dirname ${thisdir} )"
-source "${parentdir}/common.sh"
-
-NAME=$(basename $thisdir)
-TAG=$(find-newest-tag $NAME)
-
 bindir="${HOME}/work/bin"
 
 
@@ -17,18 +9,11 @@ function main {
         return 1
     fi
 
-    local dockeruser=root
-    local dockeruserhome=/root
-
     local cmdname="latex"
-    local imgname=$NAME
-    local version=$TAG
-    local image="${imgname}:${version}"
-
     local target="${bindir}/${cmdname}"
 
     echo "installing '${cmdname}' into '${bindir}'"
-    cat > "${target}" <<EOF
+    cat > "${target}" <<'EOF'
 #!/usr/bin/env bash
 
 # Usage: in the directory that contains the LaTeX source file, type
@@ -46,13 +31,28 @@ function main {
 #
 # to process, where 'source.tex' is the source file.
 
-docker run --rm -it \\
-    -e TZ=America/Los_Angeles \\
-    -v "\$(pwd)":'${dockeruserhome}' \\
-    -u ${dockeruser} \\
-    -w ${dockeruserhome} \\
-    ${image} \\
-    \$@
+function find-newest-tag {
+    docker images "$1" --format "{{.Tag}}" | sort | tail -n 1
+}
+
+image=latex:$(find-newest-tag latex)
+
+if [[ $(uname) == Linux && $(id -u) != 1000 ]]; then
+    uid=$(id -u)
+    dockeruser=${uid}
+    opts="-e USER=${dockeruser} -u ${dockeruser}:docker -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
+else
+    dockeruser='root'
+    opts="-e USER=${dockeruser} -u ${dockeruser}"
+fi
+
+docker run --rm -it \
+    -e TZ=America/Los_Angeles \
+    -v "$(pwd)":'/root' \
+    -w /root \
+    ${opts} \
+    ${image} \
+    $@
 EOF
     chmod +x "${target}"
 }

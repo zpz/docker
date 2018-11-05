@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# cleantex -- clean up auxiliary files generated in LaTeX processing.
+#
+# Usage:   cleantex [base|base.|base.tex]
+#
+# If no argument is given, all such files are removed.
+# Otherwise, base.* (with chosen extensions) are removed.
+# Only one argument is taken.
+#
+# Zepu Zhang
+#   September, 2006.
+#   October, 2006.
+
+if [[ $# == 0 ]]; then
+    files="*.tex"
+else
+    files="$*"
+fi
+
+for f in $files
+do
+    f=${f%.*}       # Remove suffix.
+    if [ -e "$f.tex" ]; then
+        # Clean only if this is the stem of a LaTeX source file.
+        # This precautious is taken to avoid inadvertently deleting
+        # useful .log files.
+        rm -f $f.{aux,log,toc,dvi}  # garbage from latex
+        rm -f $f.{bbl,blg,out}     # garbage from bibtex
+        rm -f $f.{ent,inx,lof,lot}  # garbage from ...
+        rm -f $f.{nav,snm}          # garbage from Beamer
+    fi
+done
+

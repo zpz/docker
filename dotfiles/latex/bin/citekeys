@@ -1,0 +1,61 @@
+#!/bin/bash
+# Zepu Zhang
+#  September 2006
+#  March 2007
+
+help()
+{
+cat <<EOF
+Usage: $(basename $0)
+            TeXfile or < TeXfile
+
+Print out citation keys that are referenced in a TeX source.
+The first line of the output lists the referenced BibTeX files.
+EOF
+}
+
+while (( $# > 0 ))
+do
+    case "$1" in
+    -*)
+        help
+        exit 0
+        ;;
+    *)
+        FILE=$1
+        shift $#
+        ;;
+    esac
+    shift
+done
+
+if [ "$FILE" ]; then
+    tempfoo=$(basename $(basename $FILE "tex") ".")
+    fileroot=$(mktemp ${tempfoo}XXX)
+    if [ $? -ne 0 ]; then
+        echo "$0: Can't create temp file, exiting..."
+        exit 1
+    fi
+    cp ${tempfoo}.tex ${fileroot}.tex
+
+    # Process file to generate .aux file which contains
+    # citation information.
+    latex ${fileroot}.tex &> /dev/null
+else
+    # Process stdin as TeX source;
+    # output files have root name 'texput'
+    fileroot="texput"
+    latex &> /dev/null
+fi
+
+
+egrep 'bibdata|citation' ${fileroot}.aux |
+sort |
+sed '
+    s/^\\citation{//
+    s/^\\bibdata{//
+    s/}$//
+    s/ //
+    '
+rm -f ${fileroot}*
+

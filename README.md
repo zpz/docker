@@ -2,7 +2,8 @@
 
 Some Docker images aimed at software development, especially using Python.
 
-The installation script (`install.sh`) assume a directory `$HOME/work/bin`, where `$HOME` is the user's home directory. Make sure this directory is on the system `PATH` so that commands installed there can be found.
+The installation script (`install.sh`) assume a directory `$HOME/work/bin`, where `$HOME` is the user's home directory.
+Make sure this directory is on the system `PATH` so that commands installed there can be found.
 
 
 <!-- toc -->

@@ -1,0 +1,112 @@
+% Developed by Zepu Zhang for course notes and sketches.
+%  September, 2008.
+
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{coursenote}[2009/09/01 v0.1 A package for course notes]
+\typeout{`coursenote` style for teaching ---}
+\typeout{ }
+
+%=============================
+% Load commonly-used packages
+
+\RequirePackage{ulem}
+
+\RequirePackage{amsmath, amssymb, amsfonts, amsthm}
+\RequirePackage{bm}
+\RequirePackage{graphicx}
+\RequirePackage{epstopdf}
+   % Convert EPS to PDF on the fly for pdftex.
+   % See inline documentation of script 'tex2pdf'.
+\RequirePackage{latexsym}
+\RequirePackage{url}
+\RequirePackage[colorlinks, citecolor=blue, linkcolor=black]{hyperref}
+
+\RequirePackage{lastpage}
+\RequirePackage{xspace}
+\RequirePackage{techsymb}
+
+
+\RequirePackage[lmargin=1.5in,rmargin=3in, top=1in,bottom=1in]{geometry}
+\AtBeginDocument{\setlength{\headsep}{.75\headsep}}
+\AtBeginDocument{\setlength{\footskip}{.85\footskip}}
+
+\parindent=0pt
+\parskip=8pt
+
+
+\def\@maketitle{
+    {\LARGE\bf \@title\\[7pt]}
+    \ifx\@subtitle\@empty\relax\else
+        {\LARGE \@subtitle\\[8pt]}\fi
+    \ifx\@author\@empty \relax\else {\large \@author\\[2pt]}\fi
+    \ifx\@date\@empty \relax\else {\large \@date}\fi
+  \vskip 5pt}
+
+\gdef\@author{Zepu Zhang}
+
+\gdef\@subtitle{\@empty}
+\newcommand\subtitle[1]{\gdef\@subtitle{#1}}
+
+
+%===========
+% Sectioning
+
+\renewcommand\section{\@startsection {section}{1}{-.7in}%
+                                     {-3ex \@plus -1ex \@minus -.2ex}%
+                                     {2ex \@plus .2ex}%
+                                     {\normalfont\Large\bfseries}}
+
+\renewcommand\subsection{\@startsection {subsection}{2}{-.7in}%
+                                     {-2.5ex \@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\large\bfseries}}
+
+\renewcommand\subsubsection{\@startsection {subsubsection}{3}{-.35in}%
+                                     {-2ex \@plus -1ex \@minus -.2ex}%
+                                     {1ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+
+\setcounter{secnumdepth}{3}
+
+%===============
+% Special blocks
+
+\reversemarginpar
+    % Put marginpar on left.
+\marginparwidth=0.65in
+\marginparsep=0.15in
+
+\newcommand\alert[1][Note]{\strut\marginpar{\textsf{\makebox[.5in][r]{#1}}}}
+    % 'strut' starts a new paragraph.
+    % 'marginpar' itself will not start a new paragraph.
+\newcommand\example{\alert[Example]}
+\newcommand\exercise{\alert[Exercise]}
+\newcommand\note{\alert[Note]}
+\newcommand\remark{\alert[Remark]}
+\newcommand\definition{\alert[Definition]}
+\newcommand\theorem{\alert[Theorem]}
+
+\newcommand\indentblock[1]{%
+    \addtolength\leftskip{12mm}
+    #1\par
+    \addtolength\leftskip{-12mm}}
+
+
+%=======================
+% Running Head and Folio
+
+% The default page style is 'plain',
+% which prints the page number centered at the foot.
+% Customize this default.
+
+\def\print@pageno{%
+        \hss{\small\thepage\ of \pageref{LastPage}}\hss
+%       \hss{\small\thepage}\hss
+    }
+\renewcommand\ps@plain{%
+    \renewcommand\@oddfoot\print@pageno
+    \let\@evenfoot\@oddfoot
+}
+\pagestyle{plain}
+

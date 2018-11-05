@@ -7,6 +7,7 @@ source "${parentdir}/common.sh"
 
 parent=debian:stretch
 
+rm -rf ./dotfiles
 cp -r ../dotfiles .
 build-simple ${thisdir} ${parent}
 rm -rf ./dotfiles

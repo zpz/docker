@@ -1,0 +1,208 @@
+#!/bin/bash
+#  Zepu Zhang
+#    Nov 2005
+#    Nov 2006.
+#    Jan 2007.
+
+#  I have decided to use 'pdflatex' to generate PDF from TEX directly
+#  in most situations.
+#  When the  latex -> dvips -> ps2pdf route is desired,
+#  it is signaled by the use of \special{papersize=xxx, xxx} directive
+#  in the preamble.
+
+#  There are several things that may cause trouble:
+#    figures
+#    paper size
+#    advanced PDF effects such as overlays if implemented using
+#      PostScript
+
+#  Regarding paper size:
+#
+#  The LaTeX documentclass has options
+#  'letterpaper', 'a4paper', 'portrait', 'landscape', etc.
+#  These options tell LaTeX to set up the correct working area and margins
+#  for the intended paper.
+#
+#  The default is 'letterpaper', 'portrait'.
+#  If non-default paper size or orientation is to be used,
+#  proper options must be set for 'documentclass[...]{...}'
+#  to let it set paper margins, etc. correctly.
+
+#  Using pdflatex:
+#
+#  'pdflatex' works with images in formats JPG, PNG, TIF, GIF, and PDF,
+#  but not EPS.
+#  Do not include the image file suffix in the
+#    \includegraphics[...]{foo}
+#  command. 'pdflatex' will find the correct one automatically.
+#  (If all the images are in EPS format, this also allows the same
+#  source file to be processed through the latex-dvips-ps2pdf route
+#  without any change.)
+#
+#  EPS must be converted to PDF by, say, 'epstopdf'.
+#  If they are not converted beforehand, there is a package
+#    \usepackage{epstopdf}
+#  that does it on the fly. It creates PDF files from the EPS files
+#  that are included in the document and leavs the PDF files in
+#  the same directory as the EPS files.
+#  (The package 'epstopdf' is loaded in my 'techart' style.)
+#
+#  If
+#    \includegraphics[...]{foo}
+#  is used, the convesion is performed only when foo.eps is found
+#  but foo.pdf is not. (So, if foo.eps has changed, remember to delete
+#  the obsolete foo.pdf.)
+#  If
+#    \includegraphics[...]{foo.eps}
+#  is used, the convesion is always performed.
+#
+#  The package 'epstopdf' needs the `--shell-escape` commandline option.
+#
+#  'pdflatex' leaves behind an AUX file and a LOG file for logistic help.
+#  These garbage files can be removed using my 'cleantex' script.
+
+
+#  Using latex -> dvips -> ps2pdf
+#
+#  In this case one needs to tend to paper size.
+#
+#  When DVI output is converted to PS by dvips,
+#  dvips has its own idea of paper size. Its default paper size is A4.
+#  There're three ways to change this,
+#  each working alone without the need of the others
+#
+#   a) command line option -t xxx, where xxx can be 'a4', 'letter', etc.
+#
+#   b) permanently modify the config file of dvips,
+#      called config.ps or something else.
+#
+#   c) in the preamble of the LaTeX document, use
+#        \special{papersize=width, height}
+#      or (maybe)
+#        \AtBeginDvi{\special{papersize=width,height}}
+#      Common TeX units (in, mm, cm, ...) are recognized.
+#      These are the paper dimensions when you read the document;
+#      in other words, for landscape pages 'width' > 'height'.
+#
+#      This should work for any paper size, that is,
+#      you can alway use this 'special' instruction in the document
+#      and never use papersize arguments on the commandline.
+#
+#  If the papersize special is used more than once,
+#  my observation is that the first one takes effect.
+#  Therefore it is discouraged to set it in packages;
+#  instead leave the ultimate control to individual documents.
+
+#  The default paper size for several programs are set
+#  in their "config" files, such as
+#    .../texmf/dvips/config/config.ps
+#    .../texmf/pdftex/config/pdftex.cfg
+#    .../texmf/dvipdfm/config/config
+#
+#  The best solution to the paper size headache is to
+#  set the correct default using
+#
+#    texconfig dvips paper letter
+#    texconfig dvipdfm paper letter
+#    texconfig pdftex paper letter
+#
+#  These commands will do something to your local texmf,
+#  to which you have writing permission.
+
+#  To generate a document for A4 paper, use
+#  'a4paper' option in '\documentclass' AND
+#  include
+#    \special{papersize=210mm,297mm}
+#  in the preamble.
+
+#  The 'pdflatex' route may be slower than the second route,
+#  which conducts the dvi-ps-pdf convertion only once and the
+#  several repeat runs are all 'latex'.
+
+
+if (( $# == 0 )); then
+cat <<HELP
+Process one LaTeX source file to generate a PDF document.
+
+Usage: $(basename $0) [options] foo[.[tex]]
+
+    -bib    BibTeX is used
+
+If bibliography is used but the command \bibliography does not occur
+in the source file (instead it is in another file that is '\input' into
+the main file), the script can not tell, and by default bibtex is not called.
+In this case one should use the '-bib' option.
+HELP
+exit 1
+fi
+
+
+withbib=
+
+while (( $# > 0 )); do
+    case "$1" in
+    -bib | --bib | -b)
+        withbib=yes
+        ;;
+    *)
+        fileroot="$1"
+        fileroot=${fileroot%.tex}
+        fileroot=${fileroot%.}
+            # Keep root of file name only.
+        ;;
+    esac
+    shift
+done
+
+
+# If BibTeX is not specified, make an effort to guess
+# whether it is needed.
+[ "$withbib" ] || withbib=$(grep '^\\bibliography{' "$fileroot.tex")
+
+
+if $(grep -qi '\\special{papersize=' $fileroot.tex)
+then
+    # Go the latex -> dvips -> ps2pdf route.
+
+    latex $fileroot
+    if [ "$withbib" ]; then
+        bibtex $fileroot
+        latex $fileroot
+    fi
+    latex $fileroot
+    dvips \
+        -Ppdf \
+        -G0 \
+        -D8000 \
+        -R0 \
+        -o $fileroot.ps \
+        $fileroot.dvi
+        # These dvips settings are better set
+        # in .bashrc by an alias.
+        # Someone recommends -Pdownload35;
+        # I don't know if that's bettern than -Ppdf.
+
+    if (( $? == 0 )); then
+        cleantex $fileroot
+
+        ps2pdf4me $fileroot.ps
+        if (( $? == 0 )); then
+            rm -f $fileroot.ps
+        fi
+    fi
+else
+    pdflatex --shell-escape $fileroot
+        # shell-escape makes it legal to run other programs
+        # during typesetting.
+        # A particular reason for this is to allow for the
+        # 'epstopdf' package.
+    if [ "$withbib" ]; then
+        bibtex $fileroot
+        pdflatex $fileroot
+    fi
+    pdflatex $fileroot
+    if (( $? == 0 )); then
+        cleantex $fileroot
+    fi
+fi
+

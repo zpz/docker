@@ -1,0 +1,43 @@
+% A Beamer presentation theme.
+%
+% Zepu Zhang
+%  Jan 2007.
+
+% The main purpose of this package is to set certain preferences.
+% If this package is missing, all slides that have been made using this
+% package will still compile without any nontrivial change.
+% Restrain from defining new macros.
+
+% To make handouts, use these in the preamble (see beamer user manual):
+% \documentclass[handout]{beamer}
+% \usepackage{pgfpages}
+% \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=4mm]
+
+% Use beamer class option [14pt]
+
+% To turn the output into letter paper with one slide per page:
+% pdfnup --nup 1x1 --orient landscape --paper letterpaper ...
+%
+% Or make handouts with
+%   --nup 2x2
+
+\DeclareOptionBeamer{section}{\PassOptionsToPackage{section}{beamerouterthemezz}}
+\DeclareOptionBeamer{sections}{\PassOptionsToPackage{sections}{beamerouterthemezz}}
+\DeclareOptionBeamer{subsection}{\PassOptionsToPackage{subsection}{beamerouterthemezz}}
+\DeclareOptionBeamer{author}{\PassOptionsToPackage{author}{beamerouterthemezz}}
+\DeclareOptionBeamer{title}{\PassOptionsToPackage{title}{beamerouterthemezz}}
+\DeclareOptionBeamer{nopageno}{\PassOptionsToPackage{nopageno}{beamerouterthemezz}}
+\DeclareOptionBeamer{pagetotal}{\PassOptionsToPackage{pagetotal}{beamerouterthemezz}}
+\ProcessOptionsBeamer
+
+%\RequirePackage{epstopdf}
+
+\mode<presentation>
+
+\usecolortheme{rose}
+%\usecolortheme{dolphin}
+\usecolortheme{crane}
+\useoutertheme{zz}
+\useinnertheme{zz}
+
+\mode<all>

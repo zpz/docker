@@ -83,7 +83,6 @@ imageversion=$(find-newest-tag "${imagename}")
 
 
 if [[ $(uname) == Linux && $(id -u) != 1000 ]]; then
-    # Gateway Linux box.
     # Other Linux machines --- not tested.
     uid=$(id -u)
     dockeruser=${uid}

@@ -1,0 +1,101 @@
+% Developed by Zepu Zhang
+%   December, 2005.
+%   November, 2006
+%
+% This style should be used in a document of class 'letter'.
+% It makes some changes to the default settings.
+% It provides two personalized letterheads: \workletterhead and \homeletterhead
+
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{zzmail}[%
+    2006/11/02 Zepu Zhang letter style for personal use]
+
+\newlength{\@salutationsep}
+\setlength{\@salutationsep}{\baselineskip}
+
+\newcommand\longletter{%
+    \textwidth=\paperwidth
+    \advance\textwidth by -2in
+    \oddsidemargin=0pt
+    \advance\textwidth by -2\oddsidemargin
+
+    \textheight=\paperheight
+    \advance\textheight by -2in
+    \topmargin=0in
+    \headsep=.70\headsep
+    \advance\textheight by -\topmargin
+    \advance\textheight by -\headheight
+    \advance\textheight by -\headsep
+
+    %\setlength{\@salutationsep}{0pt}
+    }
+
+% If need to put the entire letter on one page and
+% \longletter still isn't enough, use
+%   \longletter\squeeze
+% which will use the space for headers and increase
+% the text width.
+% If this is still not enough, then the letter is too
+% long for one page.
+\newcommand\squeeze{%
+    \advance\textheight by 2\headheight
+    \headheight=0in
+    \advance\textheight by 2\headsep
+    \headsep=0in
+    \advance\textwidth by 0.5in
+    \advance\oddsidemargin by -.25in
+    }
+
+
+\name{Zepu Zhang}
+\address{}
+%\signature{Zepu Zhang, PhD\\\mbox{University of California, Berkeley}}
+\signature{Zepu Zhang}
+    % Prevent the above line from being wrapped by putting it in a box.
+    % Can also achieve this by setting \longindentation to 0;
+    % but other effects of that setting may be undesirable.
+
+\pagestyle{headings}
+%\setlength{\longindentation}{0pt}
+
+
+% Personalized letterhead
+% \letterhead should be used after \begin{letter} and
+% before \opening.
+
+\newcommand\workaddr{City, State}
+\newcommand\workcontact{phone number,\ email.com}
+\newcommand\homeaddr{City, State}
+\newcommand\homecontact{phone number,\ email.com}
+
+\newcommand\letterhead[2]{
+    \vspace*{-4\baselineskip}\vspace*{-8pt}
+    \noindent{\Large Zepu Zhang}\hfill{\normalfont #1}\par
+    \vskip3pt\hrule\relax\vskip3pt \vskip-\parskip
+    \strut\hfill{\normalfont #2}
+    \vskip-\parskip \vskip\baselineskip
+}
+\newcommand\workletterhead{\letterhead\workaddr\workcontact}
+\newcommand\homeletterhead{\letterhead\homeaddr\homecontact}
+
+
+\renewcommand*{\opening}[1]{%
+  \thispagestyle{firstpage}
+  \@date\par
+  \toname\\
+  \toaddress\par
+  \vskip \@salutationsep
+  #1\par\nobreak}
+
+\renewcommand{\closing}[1]{%
+  \par\nobreak\vspace{\parskip}
+  \stopbreaks
+  \noindent
+  \ignorespaces #1\\[3\baselineskip]
+  \ifx\@empty\fromsig
+    \fromname
+  \else \fromsig
+  \fi\strut
+  \par}
+

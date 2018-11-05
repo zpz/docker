@@ -1,0 +1,156 @@
+% Developed by Zepu Zhang
+%  April, 2004.
+%  May, 2005.
+%  August, 2005.
+%  November, 2005.
+%  April, 2006.
+%  September, 2006
+%  December, 2006
+%  June, 2007
+%  March, 2008
+%  June, 2011
+%
+% This package should be loaded late in the package list to avoid
+% its settings being overwritten by other packages.
+
+% Commonly used technical symbols.
+% This file does not re-define any structural commands,
+% e.g. heading and sectioning, therefore it is safe to use it
+% with most document classes (e.g. presentations).
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{techsymb}[2008/07/17 v0.2 Technical symbols]
+\typeout{`techsymb` style for technical symbols ---}
+\typeout{ }
+
+\RequirePackage{amsmath, amssymb, amsfonts}
+    % \mathbf generates bold, _upright_, _Roman_ letters.
+    % It has no effect on Greek letters, symbols, operators, etc.
+    % When applying \mathbf to a group of letters including intermittent
+    % operators, apply \mathbf to the entire group rather than apply
+    % \mathbf to one letter/symbol at a time.
+    % The latter approach will get the spacing wrong.
+    %
+    % \pmb generates bold Roman and Greek letters, symbols, and operators.
+    % Italic Roman letters come out bold italic.
+    % The boldness seems to be achieved by crude scaling,
+    % and the quality of the resultant font can be poor.
+    % There appears to be no difference whether
+    % \pmb is applied to a group of symbols at once
+    % or to one symbol at a time.
+
+\RequirePackage{bm}
+    % \boldsymbol generates bold Roman and Greek letters, symbols, and
+    % operators.
+    % The resultant fonts are of a higher quality than \pmb.
+    % There appears to be no difference whether
+    % \boldsymbol is applied to a group of symbols at once
+    % or to one symbol at a time.
+    % It seems \boldsymbol has no effect on \%.
+    % There might be other symbols that this command fails to enbold.
+
+\RequirePackage{latexsym}
+    % What is this for?
+\RequirePackage{xspace}
+
+\newcommand\ie{i.e.\@\xspace}
+\newcommand\eg{e.g.\@\xspace}
+
+%\DeclareMathAccent{\ring}{\mathalpha}{operators}{"17"}
+%\providecommand*{\angs}{\ensuremath{\smash{\mathrm{\ring A}}}}
+\providecommand*{\degree}{\ensuremath{^\circ}}
+\providecommand*{\celsius}{\ensuremath{\mathrm{^\circ C}}}
+\providecommand*{\unit}[1]{\ensuremath{\mathrm{\,#1}}}
+\providecommand*{\ped}[1]{_\textmd{#1}}
+    % Subscript in roman style.
+    % Short for Latin 'pedex'.
+    % The '\mdseries' make sure that the superscript is normal weight
+    % even if the main symbol is put in bold face.
+\providecommand*{\ap}[1]{^\textmd{#1}}
+    % Superscript in roman style.
+    % Short for Latin 'apex'.
+\providecommand*{\given}{\ensuremath{\,\vert\,}}
+\providecommand*{\biggiven}{\ensuremath{\,\bigm\vert\,}}
+\providecommand*{\Biggiven}{\ensuremath{\,\Bigm\vert\,}}
+
+\providecommand*{\rme}{\ensuremath{\mathrm{e}}}
+    % Used for exponential.
+\providecommand*{\rmi}{\ensuremath{\mathrm{i}}}
+    % Use for imaginary part.
+
+\DeclareMathOperator{\cov}{cov}
+    % Same as
+    %\providecommand*{\cov}{\mathop{\mathrm{cov}}\nolimits}
+\DeclareMathOperator{\var}{var}
+    % Same as
+    %\providecommand*{\var}{\mathop{\mathrm{var}}\nolimits}
+\DeclareMathOperator{\corr}{corr}
+\DeclareMathOperator{\diag}{diag}
+    % Diagonal matrix.
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator{\prob}{Pr}
+
+% The differential operator should be set in roman shape by ISO
+% standard. Left of it should be operator spacing; right of it should be
+% no space if immediately followed by its argument.
+\providecommand*{\diff}{\@ifnextchar^{\DIfF}{\DIfF^{}}}
+\def\DIfF^#1{%
+    \mathop{\mathrm{\mathstrut d}}%
+        \nolimits^{#1}\gobblespace}
+\def\gobblespace{\futurelet\diffarg\opspace}
+\def\opspace{%
+    \let\DiffSpace\!%
+    \ifx\diffarg(\let\DiffSpace\relax
+    \else
+        \ifx\diffarg[%
+            \let\DiffSpace\relax
+        \else
+            \ifx\diffarg\{\let\DiffSpace\relax
+            \fi
+        \fi
+    \fi
+    \DiffSpace}
+
+%\renewcommand{\vec}[1]{\ensuremath{\boldsymbol{#1}}}
+    % Better re-define 'vec' in a specific document where needed,
+    % because the default 'over arrow' version is hard to recover
+    % if needed.
+%\newcommand{\mat}[1]{\ensuremath{\boldsymbol{\MakeUppercase{#1}}}}
+\newcommand{\mat}[1]{\ensuremath{\boldsymbol{#1}}}
+
+% An extensible equals sign.
+% Example use:
+%   \stackrel{\text{definition}}{\eqfill} Y
+\newcommand\eqfill{\hbox{$
+    \m@th\mathord=\mkern-7mu
+    \cleaders\hbox{$\!\mathord=\!$}\hfill
+    \mkern-7mu\mathord=$}}
+
+
+% Extra spaces for tables and displayed equations
+%
+\newcommand{\ms}{\noalign{\vspace{3\p@ plus2\p@ minus1\p@}}}
+\newcommand{\bs}{\noalign{\vspace{6\p@ plus2\p@ minus2\p@}}}
+\newcommand{\ns}{\noalign{\vspace{-3\p@ plus-1\p@ minus-1\p@}}}
+\newcommand{\es}{\noalign{\vspace{6\p@ plus2\p@ minus2\p@}}\displaystyle}%
+
+% Adding vertical space between rows in tabulars.
+%\def\tabvskip#1{\noalign{\vskip #1}}
+
+%
+% Rules for tables with extra space around
+%
+\newcommand{\boldarrayrulewidth}{1\p@}
+    % Width of bold rule in tabular environment.
+\def\bhline{\noalign{\ifnum0=`}\fi\hrule \@height
+    \boldarrayrulewidth \futurelet \@tempa\@xhline}
+
+\newcommand{\br}{\ms\bhline\ms}
+    % Bold rule for tables.
+\newcommand{\mr}{\ms\hline\ms}
+    % Medium rule for tables.
+
+
+\endinput
+

@@ -1,0 +1,374 @@
+% Developed by Zepu Zhang
+%  April, 2004.
+%  May, 2005.
+%  August, 2005.
+%  November, 2005.
+%  April, 2006.
+%  September, 2006
+%  December, 2006
+%  June, 2007
+%  March, 2008
+%  May, 2011
+%
+% This package should be loaded late in the package list to avoid
+% its settings being overwritten by other packages.
+%
+% In this package I'm not trying to design a whole new style;
+% instead, I only make changes that are necessary.
+% I try to minimize new commands defined for use outside this package.
+%
+
+% If any segment of the following that contains '@'
+% is copied into the preamble of a LaTeX source file,
+% use the commands \makeatletter and \makeatother.
+
+% Upon updating this package, run
+% $ texhash $TEXMFHOME
+% to bring the LaTeX system up to date this this change.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{techart}[2011/05/09 v0.2 A package for technical articles]
+\typeout{`techart` style for technical articles ---}
+\typeout{ }
+
+
+%========
+% Options
+
+\newif\iftightpage
+\tightpagetrue
+  % For more effective use of the space.
+
+\newif\ifttightpage
+\ttightpagefalse
+
+\newif\iftotalpageno
+\totalpagenofalse
+
+\DeclareOption{nocolorlinks}{%
+%   \PassOptionsToPackage{colorlinks=false}{hyperref}}
+    \PassOptionsToPackage{colorlinks, citecolor=black, linkcolor=black}{hyperref}}
+\DeclareOption{colorlinks}{%
+    \PassOptionsToPackage{colorlinks, citecolor=blue, linkcolor=black}{hyperref}}
+\DeclareOption{loose}{\tightpagefalse}
+\DeclareOption{tight}{\ttightpagetrue}
+\DeclareOption{showtotalpage}{\totalpagenotrue}
+\ExecuteOptions{colorlinks}
+\ProcessOptions\relax
+
+\ifttightpage
+  \RequirePackage[hmargin=0.85in,top=0.88in,bottom=0.85in]{geometry}
+  \AtBeginDocument{\setlength{\headsep}{.75\headsep}}
+  \AtBeginDocument{\setlength{\footskip}{.80\footskip}}
+\else
+    \iftightpage
+      \RequirePackage[hmargin=1in,top=1in,bottom=1in]{geometry}
+      \AtBeginDocument{\setlength{\headsep}{.75\headsep}}
+      \AtBeginDocument{\setlength{\footskip}{.85\footskip}}
+    \fi
+\fi
+
+% Increase \marginparwidth
+\AtBeginDocument{%
+    \marginparwidth=\paperwidth
+    \advance\marginparwidth -\textwidth
+    \marginparwidth=.5\marginparwidth
+    \advance\marginparwidth -\marginparsep
+    \marginparwidth=.95\marginparwidth%
+    }
+
+
+%=============================
+% Load commonly-used packages
+
+\RequirePackage{graphicx}
+\RequirePackage{epstopdf}
+   % Convert EPS to PDF on the fly for pdftex.
+   % See inline documentation of script 'tex2pdf'.
+\RequirePackage{url}
+\RequirePackage{hyperref}
+
+%\RequirePackage[sort]{natbib}
+\RequirePackage{natbib}
+\citestyle{plainnat}
+\bibpunct{[}{]}{;}{a}{,}{,~}
+%\setlength\bibsep{1pt plus 1pt minus 1pt}
+\setlength\bibsep{3pt plus 1pt minus 2pt}
+\bibliographystyle{abbrvnat}
+    % Use a simple default bib style.
+%\bibliographystyle{jasa}
+%\bibliographystyle{ims}
+    % To customize the formatting of bibliography,
+    % see TLC 2nd ed. p. 707.
+
+\RequirePackage{lastpage}
+%\RequirePackage{everypage}  % Need its \AddThispageHook
+    % This package causes problems with image files.
+
+\RequirePackage{techsymb}
+    % A package of math symbols defined by Zepu Zhang.
+    % The reason to separate it out is that
+    % 'techsymb' may be needed in documents for slides or posters,
+    % which should no load the current package.
+
+
+%================================
+% Title, author, and affiliations
+% and title page footnotes.
+
+% When more control is needed for author list,
+% use
+%
+%   \title{....}
+%   \author{}
+%   \date{}
+%   \maketitle
+%
+% to generate title only,
+% and typeset other things manually.
+%
+% Title, author, and author affiliations should be centered.
+%
+% Fonts
+%  author:       \large
+%  affiliation:  \normalsize
+%
+% Vertical spacings
+%  between author and affliation: 1mm
+%  between authors:               2mm
+%
+
+% To change the space above the title, use \vskip within \title{...}.
+
+% Redefine \@maketitle to leave less room above the title.
+% This can be modified if any other twists are needed in the title.
+% This command is called by \maketitle, which is not used within
+% a `titlepage' environment.
+% But if a `titlepage' is used, we don't mind the excess white spaces anyway.
+\def\@maketitle{
+%  \newpage         % A title always happen on a new page.
+        % Comment out \newpage so that one can adjust the space
+        % above the title by calling
+        % \makeatletter\@maketitle\makeatother
+        % But, one may just as well type the title directly
+        % without using \maketitle or \@maketitle.
+  \begin{center}
+    \strut\\       % Leave one blank line above.
+    \let\footnote\thanks
+    {\LARGE \@title\\[10pt]}
+    \ifx\@author\@empty \relax\else {\large \@author\\[5pt]}\fi
+    \ifx\@date\@empty \relax\else {\large \@date}\fi
+  \end{center}
+  \vskip 1em}
+
+\gdef\@author{Zepu Zhang}
+
+% +++ new command +++
+% Generate a footnote with no numbering and no mark in the text.
+% Typical use is to put date, contact, remarks, etc.
+% on the bottom of the first page.
+\long\def\barefoot#1{{\def\@makefnmark{}%
+    \footnote{\hskip-1.75em\raggedright #1}}%
+    \addtocounter{footnote}{-1}}
+
+
+%=======================================
+% Running Head and Folio and page style.
+
+\gdef\@runninghead{}
+
+% +++ new command +++
+\def\runninghead#1{\gdef\@runninghead{#1}}
+
+% The default page style is 'plain',
+% which prints the page number centered at the foot.
+% Customize this default.
+
+\def\print@pageno{%
+    \iftotalpageno
+        \hss{\small\thepage\ of \pageref{LastPage}}\hss
+    \else
+        \hss{\small\thepage}\hss
+    \fi}
+
+\renewcommand\ps@plain{%
+    %\renewcommand\@oddfoot{\hss\small\thepage\ of \pageref{LastPage}\hss}
+    \renewcommand\@oddfoot{%
+        \ifx\@runninghead\@empty
+            % No running head:
+            %  page number printed at bottom on page 1,
+            %  at top on subsequent pages.
+            \ifnum\thepage=1
+                \print@pageno
+            \else
+                % On subsequent pages,
+                % print page number on top if 'tight',
+                % otherwise on bottom.
+                \iftightpage\relax
+                \else
+                    \ifttightpage\relax
+                    \else\print@pageno
+                    \fi
+                \fi
+            \fi
+        \else
+            \print@pageno
+            % With running head:
+            %  page number printed at bottom.
+        \fi
+    }
+    \let\@evenfoot\@oddfoot
+
+    \renewcommand\@oddhead{%
+        \ifnum\thepage>1
+            % No page header on the first page.
+            \ifx\@runninghead\@empty
+                % Without running head, print page number at the top
+                % if 'tightpage' is true.
+                \ifttightpage\print@pageno
+                \else
+                    \iftightpage\print@pageno
+                    \else\relax
+                    \fi
+                \fi
+            \else
+                % With 'runninghead', always print it at the top
+                % and print page number at the bottom (which is defined
+                % in the footer).
+                \hss{\small\MakeUppercase{\@runninghead}}\hss
+            \fi
+        \fi
+    }
+    \let\@evenhead\@oddhead
+}
+
+\pagestyle{plain}
+
+% If fancier header and foot are desired, define them
+% referring to the preceding usage.
+% One may want to renew command \ps@myheadings
+% and use \pagestyle{myheadings}.
+% If the first page has a different style, use
+%   \ifnum\thepage=1 blah blah
+%   \else blah blah blah
+%   \fi
+
+% Command \maketitle sets \pagestyle{plain}
+% To change the style of the title page,
+% either modify the 'plain' style,
+% or use \thispagestyle{...} following \maketile.
+
+
+%===========
+% Sectioning
+
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                     {-3ex \@plus -1ex \@minus -.2ex}%
+                                     {2ex \@plus .2ex}%
+                                     {\normalfont\large\bfseries}}
+
+\renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
+                                     {-2.5ex \@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+
+\renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
+                                     {-2ex \@plus -1ex \@minus -.2ex}%
+                                     {1ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+
+
+%=======================================
+% Positioning floats, and other settings
+% related to page breaking.
+
+\widowpenalty=10000
+\clubpenalty=10000
+\predisplaypenalty=10000
+
+% Override the default floats positioning parameters.
+% See p.105 of "TeX Unbound" for suggested values.
+% See pp. 199-200 of Lamport's "LaTeX" book for details.
+
+% General parameters, for ALL pages:
+\renewcommand{\topfraction}{0.9}    % max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8} % max fraction of floats at bottom
+
+% Parameters for TEXT pages (non-float pages):
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}     % 2 may work better
+\setcounter{dbltopnumber}{2}    % for 2-column pages
+\renewcommand{\dbltopfraction}{0.9} % fit big float above 2-col. text
+\renewcommand{\textfraction}{0.07}  % allow minimal text w. figs
+
+% Parameters for FLOAT pages (not text pages):
+% floatpagefraction MUST be less than topfraction!!
+\renewcommand{\floatpagefraction}{0.7}      % require fuller float pages
+\renewcommand{\dblfloatpagefraction}{0.7}   % require fuller float pages
+
+
+% Usually, typeset tables within the document but put all figures
+% at the end of the document, probably in a separate file.
+% Floats should be either half textwidth or (allmost) full textwidth
+% so that little change is needed when the document is to be published.
+% Once the document is fairly stable, it's nice to set the half-width
+% figures in two-column mode to save paper.
+% To do this, use
+%
+% \documentclass[twocolumn]{article}
+% ...
+% \begin{document}
+% \onecolumn
+% ...  % main text in one-column mode
+% ...
+% ...
+% \twocolumn  % begin narrow figures
+%  ...
+% \onecolumne % begin wide figures
+%  ...
+% \twocolumn  % more narrow figures, for example
+%  ...
+% \onecolumn  % figures finished
+%
+% \end{document}
+%
+% Each time \onecolumn or \twocolumn is used, a new page will start.
+
+% Since figures are pushed to the end of the document,
+% it is recommended to put a mark on the paper margin using \marginpar
+% when a figure is mentioned the first time (or every time).
+% I have increased the allowable width of the margin note.
+
+
+%====================================================
+% Misc definitions or tips to be used in the document
+
+% To rotate text (e.g. in margin notes), use
+%   \rotatebox
+% probably with help of \makebox or \parbox.
+
+% To test the equility of two strings, say #1 and #2, use
+%   \def\testa{#1}\def\testb{#2}
+%   \ifx\testa\testb
+%     blah blah
+%   \else
+%     blah
+%   \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% Small utility commands
+\newcommand\deleted[2][del]{%
+  [$^{\scriptscriptstyle{#1}}\negthickspace\surd\negmedspace\backprime$ #2]}
+\newcommand\memo[2][!]{%
+  [$^{\scriptscriptstyle{#1}}\negthickspace\surd$#2]}
+  % Common usages would be
+  %  \memo{...}
+  %  \memo[add]{...}
+  %  \memo[todo]{...}
+  %  \memo[?]{...}
+
+
+\endinput
+
+

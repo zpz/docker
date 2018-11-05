@@ -25,13 +25,22 @@ RUN apt-get update \
     && apt-get clean
 
 
-RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C /tmp/ \
-    && mv /tmp/latex-master/bin/* /usr/local/bin/ \
+COPY dotfiles/latex /tmp/latex
+
+RUN mv /tmp/latex/bin/* /usr/local/bin/ \
     && mkdir -p /usr/local/share/texmf/tex/latex \
-    && mv /tmp/latex-master/sty /usr/local/share/texmf/tex/latex/zz \
+    && mv /tmp/latex/sty /usr/local/share/texmf/tex/latex/zz \
     && chmod +x /usr/local/bin/* \
     && texhash \
     && rm -rf /tmp/*
+
+#RUN curl -skL https://github.com/zpz/latex/archive/master.tar.gz -o - |tar xz -C /tmp/ \
+#    && mv /tmp/latex-master/bin/* /usr/local/bin/ \
+#    && mkdir -p /usr/local/share/texmf/tex/latex \
+#    && mv /tmp/latex-master/sty /usr/local/share/texmf/tex/latex/zz \
+#    && chmod +x /usr/local/bin/* \
+#    && texhash \
+#    && rm -rf /tmp/*
 
 
 # RUN apt-get update \

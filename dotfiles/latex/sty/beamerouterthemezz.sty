@@ -1,0 +1,137 @@
+% An "outer theme" for Beamer presentations.
+%
+% Zepu Zhang
+%   Jan 2007.
+
+\newif\ifbeamer@section
+\newif\ifbeamer@sections
+\newif\ifbeamer@subsection
+\newif\ifbeamer@author
+\newif\ifbeamer@title
+\newif\ifbeamer@pageno
+\newif\ifbeamer@pagetotal
+\beamer@sectionfalse
+\beamer@sectionsfalse
+\beamer@subsectionfalse
+\beamer@authorfalse
+\beamer@titlefalse
+\beamer@pagenotrue
+\beamer@pagetotalfalse
+
+\DeclareOptionBeamer{section}{\beamer@sectiontrue}
+    % Print title of current section on headline.
+    % Recommended for long talks and lecture notes.
+\DeclareOptionBeamer{sections}{\beamer@sectionstrue}
+    % Print titles of all sections on headline,
+    % with current section highlighted.
+    % Can be used in place of "section."
+    % "sections" and "section" should not be used simultaneously.
+\DeclareOptionBeamer{subsection}{\beamer@subsectiontrue}
+    % Print title of current subsection on headline.
+    % Goes along well with "section" or "sections."
+    % Recommended only for long talks and lecture notes.
+\DeclareOptionBeamer{author}{\beamer@authortrue}
+    % Print author on the left of the footline.
+\DeclareOptionBeamer{title}{\beamer@titletrue}
+    % Print document title on footline.
+\DeclareOptionBeamer{nopageno}{\beamer@pagenofalse}
+    % Do not print slide number (supress the default printing).
+    % Recommended only for very short talks in an attempt to create
+    % really bare slides.
+\DeclareOptionBeamer{pagetotal}{\beamer@pagetotaltrue}
+    % Print total number of slides on footline, make it look like
+    %   n / N;
+    % otherwise it would be just n.
+    % Recommended for long talks and lecture notes.
+\ProcessOptionsBeamer
+
+
+\mode<presentation>
+
+\setbeamercolor*{foot}{}
+\ifbeamer@author\setbeamercolor*{foot}{parent=palette primary}\fi
+\ifbeamer@title\setbeamercolor*{foot}{parent=palette primary}\fi
+\setbeamercolor*{section in head/foot}{parent=palette secondary}
+\setbeamercolor*{subsection in head/foot}{parent=palette tertiary}
+
+
+\defbeamertemplate*{footline}{zzinfolines theme}
+{
+  \leavevmode%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,left]{foot}%
+    \hspace*{2ex}
+    \ifbeamer@author\usebeamerfont{author in head/foot}\insertshortauthor\fi
+    \hskip0pt plus 1filll
+    \ifbeamer@title\usebeamerfont{title in head/foot}\insertshorttitle\fi
+    \hskip0pt plus 1filll
+    \ifbeamer@pageno
+        \usebeamerfont{date in head/foot}\insertframenumber
+        \ifbeamer@pagetotal{} / \inserttotalframenumber\fi
+    \fi
+    \hspace*{2ex}
+  \end{beamercolorbox}%
+  \vskip0pt%
+}
+  % The foot line shows three things:
+  % short author, short title, and slide number (and possibly total).
+  % Remember to provide the short versions of author and title.
+  % The space left for showing the author is quite small.
+  % If there are two authors, the "short author" may consist of two
+  % last names; if there is only one author, the "short author"
+  % may be the full name or the last name, depending on the length
+  % of the full name; if there are more than two authors, use
+  % three last names, or first author et al.
+
+\newlength\beamer@headleft
+\newlength\beamer@headright
+\setlength\beamer@headleft{0pt}
+\setlength\beamer@headright{0pt}
+\ifbeamer@section
+  \setlength\beamer@headleft{\paperwidth}
+\fi
+\ifbeamer@sections
+  \setlength\beamer@headleft{\paperwidth}
+\fi
+\ifbeamer@subsection
+  \setlength\beamer@headleft{.5\beamer@headleft}
+  \setlength\beamer@headright{\paperwidth}
+  \addtolength\beamer@headright{-\beamer@headleft}
+\fi
+
+\defbeamertemplate*{headline}{zzinfolines theme}
+{%
+  \leavevmode%
+  \ifbeamer@section
+      \begin{beamercolorbox}[wd=\beamer@headleft,ht=2.5ex,dp=1.125ex,right]%
+        {section in head/foot}%
+            \usebeamerfont{section in head/foot}
+            \insertsectionhead
+            \hspace*{2ex}
+      \end{beamercolorbox}%
+  \else\ifbeamer@sections
+      \begin{beamercolorbox}[wd=\beamer@headleft,ht=2.5ex,dp=1.125ex,right]%
+        {section in head/foot}%
+            \usebeamerfont{section in head/foot}
+            \insertsectionnavigationhorizontal{\beamer@headleft}{\hskip0pt plus1filll}{}%
+            \hspace*{2ex}
+      \end{beamercolorbox}%
+  \fi\fi
+  \ifbeamer@subsection
+      \begin{beamercolorbox}[wd=\beamer@headright,ht=2.5ex,dp=1.125ex,right]%
+        {subsection in head/foot}%
+            \usebeamerfont{subsection in head/foot}
+            \insertsubsectionhead
+            \hspace*{2ex}
+      \end{beamercolorbox}%
+  \fi
+}
+
+
+% Suppress the small navigation icons at the bottom.
+% I have seen many slides made with \emph{beamer}
+% that show (by default) the totally unused navigation symbols
+% ``go forward,'' ``go backward,'' etc.
+% (One can also choose which symbols to show.)
+\setbeamertemplate{navigation symbols}{}
+
+\mode<all>

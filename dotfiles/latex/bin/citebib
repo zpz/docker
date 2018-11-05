@@ -1,0 +1,55 @@
+#!/bin/bash
+# Zepu Zhang, September 2006.
+
+
+help()
+{
+cat <<EOF
+Usage: $(basename $0)
+            [-l|--lines n]
+            LaTeXfile.tex or <infile
+
+Print out the bib entries for the references
+cited in a LaTeX document (one step further after 'citekeys').
+
+See also: bibfind, citekeys.
+EOF
+}
+
+
+
+nlprint=1000
+  # print out entire bib entries by default.
+
+while (( $# > 0 ))
+do
+    case "$1" in
+    -l | --line*)
+        shift
+        if (( $# < 1 )); then
+            echo option --lines expects an argument
+            exit 1
+        fi
+        if (( $1 > 0 )); then
+            nlprint=$1
+        fi
+        ;;
+    -*)
+        help
+        exit 0
+        ;;
+    *)
+        FILE="$FILE $1"
+        ;;
+    esac
+    shift
+done
+
+cites=$(citekeys $FILE)
+pattern=$(echo $cites |tr ' ' '|')
+pattern=${pattern#*|}
+bibs=${cites:0:$((${#cites} - ${#pattern}))}
+bibs=$(echo $bibs |tr ',' ' ')
+bibs=$(echo $bibs |sed 's/\([^b]\) /\1.bib /g; s/\([^b]\)$/\1.bib/')
+bibfind -l $nlprint "$pattern" $bibs
+
