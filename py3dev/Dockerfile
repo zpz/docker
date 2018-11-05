@@ -18,7 +18,7 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
     \
     && apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends --allow-unauthenticated \
         git \
         xclip \
     \

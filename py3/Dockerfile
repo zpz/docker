@@ -29,9 +29,9 @@ RUN groupadd --gid 1000 docker \
 # The very basic utilities
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends --allow-unauthenticated \
         apt-utils \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends --allow-unauthenticated \
         bzip2 \
         curl \
         less \
@@ -54,6 +54,8 @@ ENV SHELL=/bin/bash
 # testing, code analysis, code formatting, etc.
 # Keep this selection to the minimum.
 
+COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
+
 RUN pip install --no-cache-dir --upgrade \
         'coverage' \
         'mypy' \
@@ -62,8 +64,6 @@ RUN pip install --no-cache-dir --upgrade \
         'pytest' \
         'yapf' \
     && chown -R docker-user /home/docker-user/.ptpython
-
-COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 # Use `yapf` to format Python code in-pace:
 #   yapf -ir -vv --no-local-style .
