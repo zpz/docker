@@ -37,20 +37,14 @@ function find-newest-tag {
 
 image=latex:$(find-newest-tag latex)
 
-if [[ $(uname) == Linux && $(id -u) != 1000 ]]; then
-    uid=$(id -u)
-    dockeruser=${uid}
-    opts="-e USER=${dockeruser} -u ${dockeruser}:docker -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
-else
-    dockeruser='root'
-    opts="-e USER=${dockeruser} -u ${dockeruser}"
-fi
+dockeruser=docker-user
+dockeruserhome=/home/$dockeruser
 
 docker run --rm -it \
+    -u ${dockeruser} \
     -e TZ=America/Los_Angeles \
-    -v "$(pwd)":'/root' \
-    -w /root \
-    ${opts} \
+    -v "$(pwd)":"${dockeruserhome}" \
+    -w "${dockeruserhome}" \
     ${image} \
     $@
 EOF

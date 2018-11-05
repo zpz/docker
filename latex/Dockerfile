@@ -4,9 +4,18 @@ FROM $PARENT
 USER root
 
 
+#---------------
+# group and user
+RUN groupadd --gid 1000 docker \
+    && mkdir -p /home/docker-user \
+    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
+    && chown -R docker-user:docker /home/docker-user \
+    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
+
 COPY dotfiles/bash/bashrc /etc/bash.bashrc
 RUN chmod +r /etc/bash.bashrc
 ENV SHELL=/bin/bash
+
 
 #--------------
 # latex
