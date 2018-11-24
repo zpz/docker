@@ -34,14 +34,15 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
+# RUN apt-get update \
+#     && apt-get install -y --no-install-recommends \
+#         gnupg2 \
+#         dirmngr \
+#     \
+#     && echo 'deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/' > /etc/apt/sources.list.d/myrrepo.list \
+#     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
+#     && apt-get update \
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gnupg2 \
-        dirmngr \
-    \
-    && echo 'deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/' > /etc/apt/sources.list.d/myrrepo.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
-    && apt-get update \
     && apt-get install -y --no-install-recommends \
         r-base \
         r-base-dev \
@@ -53,8 +54,9 @@ RUN apt-get update \
         r-base-dev \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && rm -f /etc/apt/sources.list.d/myrrepo.list
+    && rm -rf /var/lib/apt/lists/* /tmp/*
+#     && rm -rf /var/lib/apt/lists/* /tmp/* \
+#     && rm -f /etc/apt/sources.list.d/myrrepo.list
 
 # `gnupg2` and `dirmngr` are needed to run `apt-key`.
 

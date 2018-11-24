@@ -65,7 +65,7 @@ RUN pip install --no-cache-dir --upgrade \
         'yapf' \
     && chown -R docker-user /home/docker-user/.ptpython
 
-# Use `yapf` to format Python code in-pace:
+# Use `yapf` to format Python code in-place:
 #   yapf -ir -vv --no-local-style .
 
 
