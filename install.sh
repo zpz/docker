@@ -48,6 +48,7 @@ function install {
 install py3
 install ml
 install py3x py3x \
-    -e PYTHONPATH=/home/docker-user/work/src/github-zpz/py-extensions/src \
-    -v ~/work/src/github-zpz/py-extensions:/home/docker-user/work/src/github-zpz/py-extensions
+    -v ~/work/src/github-zpz/py-extensions:/home/docker-user/work/src/py-extensions \
+    -v ~/work/src/github-zpz/utilities.py:/home/docker-user/work/src/utilities.py \
+    -e PYTHONPATH=/home/docker-user/work/src/py-extensions/src:/home/docker-user/work/src/utilities.py/src
 
