@@ -57,6 +57,9 @@ while [[ $# > 0 ]]; do
         elif [[ "$1" == --network ]]; then
             shift
             opts="${opts} --network $1"
+        elif [[ "$1" == -e ]]; then
+            shift
+            opts="${opts} -e $1"
         elif [[ "$1" == -* ]]; then
             opts="${opts} $1"
         else

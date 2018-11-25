@@ -24,18 +24,30 @@ mkdir -p "${bindir}"
 
 
 
-function def {
-    name="$1"
+function install {
+    cmd="$1"
+    shift
+    img="$cmd"
+    opts=""
+    if [[ $# > 0 ]]; then
+        img="$1"
+        shift
+        opts="$@"
+    fi
+
     cd /tmp
-    rm -f "${name}"
-    echo "#!/usr/bin/env bash" > "${name}"
-    echo >> "${name}"
-    echo "run-docker ${name} \$@">> "${name}"
-    chmod +x "${name}"
-    mv -f "${name}" ${bindir}/
+    rm -f "${cmd}"
+    echo "#!/usr/bin/env bash" > "${cmd}"
+    echo >> "${cmd}"
+    echo "run-docker ${opts} ${img} \$@">> "${cmd}"
+    chmod +x "${cmd}"
+    mv -f "${cmd}" ${bindir}/
 }
 
 
-def py3
-def py3dev
-def ml
+install py3
+install ml
+install py3x py3x \
+    -e PYTHONPATH=/home/docker-user/work/src/github-zpz/py-extensions/src \
+    -v ~/work/src/github-zpz/py-extensions:/home/docker-user/work/src/github-zpz/py-extensions
+
