@@ -9,7 +9,9 @@ USER root
 
 RUN pip install --no-cache-dir --upgrade \
         'memory_profiler' \
-        'line_profiler'
+        'line_profiler' \
+        'numpy' \
+        'pytz'
 
 # `pip install line_profiler` fails on Python 3.7.
 # See https://github.com/rkern/line_profiler/issues/132

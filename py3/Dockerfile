@@ -58,6 +58,7 @@ COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 RUN pip install --no-cache-dir --upgrade \
         'coverage' \
+        'Faker' \
         'mypy' \
         'ptpython' \
         'pylint' \
