@@ -108,3 +108,21 @@ RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
 # `binutils` contains `gprof`.
 # To use `gprof`, use option `-pg` during both compiling and linking.
 
+# Rust
+
+USER docker-user
+RUN cd /tmp \
+    && curl https://sh.rustup.rs -sSf > tt.sh \
+    && sh tt.sh -y \
+    && rm -rf tt.sh \
+    && cd /home/docker-user/.cargo/bin \
+    && ./rustup update nightly \
+    && ./rustup default nightly
+ENV PATH=/home/docker-user/.cargo/bin:$PATH
+USER root
+
+# linker
+RUN ln -s /usr/bin/gcc /usr/bin/cc
+
+RUN pip install --no-cache-dir --upgrade \
+        'setuptools-rust'
