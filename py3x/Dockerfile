@@ -125,4 +125,4 @@ USER root
 RUN ln -s /usr/bin/gcc /usr/bin/cc
 
 RUN pip install --no-cache-dir --upgrade \
-        'setuptools-rust'
+        'setuptools-rust' 'pyo3-pack'
