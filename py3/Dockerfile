@@ -70,5 +70,13 @@ RUN pip install --no-cache-dir --upgrade \
 #   yapf -ir -vv --no-local-style .
 
 
+#-------------------------
+# Other very commonly needed packages.
+
+RUN pip install --no-cache-dir --upgrade \
+        'numpy' \
+        'requests'
+
+
 CMD ["ptpython"]
 WORKDIR /

@@ -47,6 +47,10 @@ function install {
 
 install py3
 install ml
+
+install py3zpz py3zpz \
+    -v ~/work/src/github-zpz/utilities.py:/home/docker-user/work/src/utilities.py
+
 install py3x py3x \
     -v ~/work/src/github-zpz/experiments.py:/home/docker-user/work/src/experiments.py \
     -v ~/work/src/github-zpz/utilities.py:/home/docker-user/work/src/utilities.py \

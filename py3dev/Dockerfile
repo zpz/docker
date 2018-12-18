@@ -98,3 +98,19 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
     && rm -f /etc/apt/sources.list.d/mygccrepo.list
 
 
+RUN pip install --no-cache-dir --upgrade \
+        'line_profiler' \
+        'memory_profiler' \
+        'twine' \
+        'readme-renderer[md]'
+
+# `pip install line_profiler` fails on Python 3.7.
+# See https://github.com/rkern/line_profiler/issues/132
+# Hopefully the fix will be integrated soon.
+
+# Installing `line_profiler` needs gcc.
+# Use `snakeviz` to view profiling stats.
+# `snakeviz` is not installed in this Docker image as it's better
+# installed on the hosting machine 'natively'.
+
+

@@ -4,24 +4,9 @@ FROM ${PARENT}
 USER root
 
 
-#--------------------------
-# Profilers
-
 RUN pip install --no-cache-dir --upgrade \
-        'memory_profiler' \
-        'line_profiler' \
         'numpy' \
         'pytz'
-
-# `pip install line_profiler` fails on Python 3.7.
-# See https://github.com/rkern/line_profiler/issues/132
-# Hopefully the fix will be integrated soon.
-
-# Installing `line_profiler` needs gcc.
-# Use `snakeviz` to view profiling stats.
-# `snakeviz` is not installed in this Docker image as it's better
-# installed on the hosting machine 'natively'.
-
 
 #------------------------------
 # For writing Python extensions
