@@ -5,7 +5,6 @@ USER root
 
 
 RUN pip install --no-cache-dir --upgrade \
-        'numpy' \
         'pytz'
 
 #------------------------------
