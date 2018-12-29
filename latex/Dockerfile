@@ -12,9 +12,9 @@ RUN groupadd --gid 1000 docker \
     && chown -R docker-user:docker /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 
-COPY dotfiles/bash/bashrc /etc/bash.bashrc
-RUN chmod +r /etc/bash.bashrc
-ENV SHELL=/bin/bash
+# COPY dotfiles/bash/bashrc /etc/bash.bashrc
+# RUN chmod +r /etc/bash.bashrc
+# ENV SHELL=/bin/bash
 
 
 #--------------

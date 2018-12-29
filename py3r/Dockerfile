@@ -47,7 +47,7 @@ RUN apt-get update \
         r-base \
         r-base-dev \
     \
-    && pip install --no-cache-dir --upgrade \
+    && pip install \
         'rpy2' \
     \
     && apt-get remove --purge -y \

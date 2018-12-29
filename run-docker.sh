@@ -105,31 +105,31 @@ opts="${opts}
 --workdir ${dockerworkdir}
 -e IMAGE_NAME=${imagename}
 -e IMAGE_VERSION=${imageversion}
--w ${dockerworkdir}
 -e TZ=America/Los_Angeles
 --rm --init"
 
 
-LOGDIR=log/"${imagename}"
-mkdir -p "${hostworkdir}/${LOGDIR}"
-opts="${opts} -v ${hostworkdir}/${LOGDIR}:${dockerworkdir}/${LOGDIR}"
-opts="${opts} -e LOGDIR=${dockerworkdir}/${LOGDIR}"
+# LOGDIR=log/"${imagename}"
+# mkdir -p "${hostworkdir}/${LOGDIR}"
+# opts="${opts} -v ${hostworkdir}/${LOGDIR}:${dockerworkdir}/${LOGDIR}"
+# opts="${opts} -e LOGDIR=${dockerworkdir}/${LOGDIR}"
 
-DATADIR="data/${imagename}"
-mkdir -p "${hostworkdir}/${DATADIR}"
-opts="${opts} -v ${hostworkdir}/${DATADIR}:${dockerworkdir}/${DATADIR}"
-opts="${opts} -e DATADIR=${dockerworkdir}/${DATADIR}"
+# DATADIR="data/${imagename}"
+# mkdir -p "${hostworkdir}/${DATADIR}"
+# opts="${opts} -v ${hostworkdir}/${DATADIR}:${dockerworkdir}/${DATADIR}"
+# opts="${opts} -e DATADIR=${dockerworkdir}/${DATADIR}"
 
-CFGDIR="config/${imagename}"
-mkdir -p "${hostworkdir}/${CFGDIR}"
-opts="${opts} -v ${hostworkdir}/${CFGDIR}:${dockerworkdir}/${CFGDIR}"
-opts="${opts} -e CFGDIR=${dockerworkdir}/${CFGDIR}"
+# CFGDIR="config/${imagename}"
+# mkdir -p "${hostworkdir}/${CFGDIR}"
+# opts="${opts} -v ${hostworkdir}/${CFGDIR}:${dockerworkdir}/${CFGDIR}"
+# opts="${opts} -e CFGDIR=${dockerworkdir}/${CFGDIR}"
 
-TMPDIR="tmp"
-mkdir -p "${hostworkdir}/${TMPDIR}"
-opts="${opts} -v ${hostworkdir}/${TMPDIR}:${dockerworkdir}/${TMPDIR}"
-opts="${opts} -e TMPDIR=${dockerworkdir}/${TMPDIR}"
+# TMPDIR="tmp"
+# mkdir -p "${hostworkdir}/${TMPDIR}"
+# opts="${opts} -v ${hostworkdir}/${TMPDIR}:${dockerworkdir}/${TMPDIR}"
+# opts="${opts} -e TMPDIR=${dockerworkdir}/${TMPDIR}"
 
+opts="${opts} -v ${hostworkdir}:${dockerworkdir}"
 
 if [[ "${command}" == "notebook" ]]; then
     opts="${opts} --expose=8888 -p 8888:8888"

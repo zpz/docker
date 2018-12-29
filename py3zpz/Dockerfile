@@ -5,6 +5,5 @@ USER root
 
 RUN pip install --no-cache-dir --upgrade \
     'arrow' \
-    'avro-python3' \
-    'pandas'
+    'avro-python3'
 
