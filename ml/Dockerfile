@@ -1,32 +1,14 @@
+# machine learning
+
 ARG PARENT
 
 FROM ${PARENT}
 USER root
 
 
-#--------------------
-# Numpy, Scipy, ML
-
-RUN pip install --no-cache-dir --upgrade \
-        'numpy' \
-        'pandas' \
+RUN pip install \
         'scikit-learn' \
-        'scipy' \
         'statsmodels'
-
-
-RUN pip install --no-cache-dir --upgrade \
-        'bokeh' 'holoviews' \
-        'matplotlib' \
-        'seaborn' \
-        'plotly' 'dash'
-
-
-RUN pip install --no-cache-dir --upgrade \
-        'cytoolz' \
-        'dask' \
-        'dask-ml' \
-        'distributed'
 
 
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list.d/myextrarepo.list \
@@ -41,7 +23,7 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
         'lightgbm'
 
 
-RUN pip install --no-cache-dir --upgrade \
-        'tensorflow' \
-        'tensorflow-probability'
-
+RUN pip install \
+        'dask' \
+        'distributed' \
+        'dask-ml'

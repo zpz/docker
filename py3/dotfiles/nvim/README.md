@@ -1,8 +1,8 @@
 # Prerequisites
 
-- `Python 3`
+- `Python 3` (this is required by a couple `neovim` extensions that we want to install)
 
--  Python packages `neovim` and `jedi` have been `pip` installed
+-  Python packages `neovim` and `jedi` have been `pip` (or `pip3`) installed
 
 # Where to put `neovim` config files?
 
@@ -15,21 +15,11 @@ User local, on Mac there is `~/.local/share/nvim/` and `~/.config/nvim/`; on Lin
 
 # Set up `neovim` on Mac
 
-1. Download and unpack the Mac binary of `neovim`, put it somewhere (e.g. in `/Applications`), create a link or add to PATH so that the command can be found.
+1. Install by `homebrew`:
 
 ```
-rm -f /usr/bin/vim
-ln -s /Applications/nvim-osx64/bin/nvim /usr/bin/vim
+brew install neovim
 ```
-
-If you do not have permission to change `/usr/bin`,
-then create the links in `/usr/local/bin`, and put
-
-```
-PATH=/usr/local/bin:$PATH
-```
-in `~/.bashrc`.
-
 
 2. Do the following things in a terminal:
 
@@ -55,8 +45,8 @@ nvim +UpdateRemotePlugins +qall
 
 ```
 
-3. Launch `nvim` (or your custom or linked name). There should be no welcome intro screen (which is turned off in our config) or any warning.
-   In 'insert` mode, type `:CheckHealth`; verify things are all right.
+3. Launch `nvim`. There should be no welcome intro screen (which is turned off in our config) or any warning.
+   In 'command' mode, type `:CheckHealth`; verify things are all right.
 
 4. Edit a short Python or other text file to confirm auto-completion is working. As you type, there should be suggestion windows popping up
    from time to time; each suggestion row should contain `[...]` in the middle or at the end.
