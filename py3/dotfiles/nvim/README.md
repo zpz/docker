@@ -26,7 +26,7 @@ brew install neovim
 ```
 cd /tmp
 git clone https://github.com/zpz/docker.git
-cd docker/dotfiles/nvim
+cd docker/py3/dotfiles/nvim
 
 mkdir -p ~/.local/share/nvim
 cp *.vim ~/.local/share/nvim
