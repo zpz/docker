@@ -1,4 +1,4 @@
-# machine learning
+# deep learning
 
 ARG PARENT
 
@@ -7,6 +7,7 @@ USER root
 
 
 RUN pip install \
-        'tensorflow' \
-        'tensorflow-probability' \
-        'pytorch'
+        https://download.pytorch.org/whl/cpu/torch-1.0.0-cp36-cp36m-linux_x86_64.whl \
+        torchvision
+
+RUN pip install tensorflow tensorflow-probability

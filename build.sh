@@ -1,6 +1,6 @@
 set -Eeuo pipefail
 
-IMAGES=( py3 py3x ml nlp visual py3zpz py3r latex data )
+IMAGES=( py3 py3x ml nlp visual py3zpz py3r latex data dl )
 
 
 thisfile="${BASH_SOURCE[0]}"
