@@ -1,8 +1,16 @@
 set -Eeuo pipefail
 
+IMAGES=( py3 py3x ml nlp visual py3zpz py3r latex data )
+
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
-source "${thisdir}/common.sh"
+
+
+function find-newest-tag {
+    docker images "$1" --format "{{.Tag}}" | sort | tail -n 1
+}
+
 
 # Usually this script is run w/o any argument, to build everything:
 #
@@ -11,6 +19,7 @@ source "${thisdir}/common.sh"
 # After at least one successful build of everything,
 # you can specify a particular image to build, using that image's name
 # as the argument.
+
 
 IMAGE_TO_BUILD=""
 if (( $# > 0 )); then
@@ -62,7 +71,6 @@ function build-one {
 
 
 if [[ ${IMAGE_TO_BUILD} == "" ]]; then
-    IMAGES=( py3 ml nlp visual py3x dl py3zpz)
     for img in "${IMAGES[@]}"; do
         build-one $img
     done

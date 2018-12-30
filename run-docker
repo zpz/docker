@@ -82,6 +82,11 @@ if [[ "${imagename}" == "" ]]; then
 fi
 
 
+function find-newest-tag {
+    docker images "$1" --format "{{.Tag}}" | sort | tail -n 1
+}
+
+
 imageversion=$(find-newest-tag "${imagename}")
 
 

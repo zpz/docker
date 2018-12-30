@@ -8,16 +8,18 @@ thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
 bindir="${HOME}/work/bin"
 mkdir -p "${bindir}"
 
+(
+    echo "installing 'run-docker' into '${bindir}'"
+    cp -f "${thisdir}/run-docker" ${bindir}/run-docker
+)
 
-cd /tmp
-rm -f run-docker
-echo "#!/usr/bin/env bash" > run-docker
-echo >> run-docker
-echo >> run-docker
-cat "${thisdir}/common.sh" >> run-docker
-echo >> run-docker
-echo >> run-docker
-cat "${thisdir}/run-docker.sh" >> run-docker
-chmod +x run-docker
-mv -f run-docker ${bindir}/
+(
+    cd latex
+    bash install.sh
+)
 
+
+(
+    cd jekyll
+    bash install.sh
+)
