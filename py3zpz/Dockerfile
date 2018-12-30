@@ -3,7 +3,7 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
-RUN pip install --no-cache-dir --upgrade \
+RUN pip-install \
     'arrow' \
     'avro-python3'
 

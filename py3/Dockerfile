@@ -25,35 +25,38 @@ RUN groupadd --gid 1000 docker \
 # You can simply do this:
 #   sudo PYTHONPAH=$PYTHONPATH command ...
 
+COPY dotfiles/bash/bashrc /etc/bash.bashrc
+RUN chmod +r /etc/bash.bashrc
+
+ENV SHELL=/bin/bash
+
+# COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
+# This controls behavior of `pip` when we use it to install Python packages.
+# In particular, the config instructs `pip` to not save cache, hence reducing size
+# of the resultant Docker image.
+# Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
+COPY pip-install /usr/local/bin
+
+# COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
+COPY apt-get-install /usr/local/bin
+COPY apt-get-remove /usr/local/bin
+COPY apt-get-clean /usr/local/bin
+
+
 #-------------------------
 # The very basic utilities
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends --allow-unauthenticated \
+    && apt-get-install --allow-unauthenticated \
         apt-utils \
-    && apt-get install -y --no-install-recommends --allow-unauthenticated \
+    && apt-get-install --allow-unauthenticated \
         bzip2 \
         curl \
         less \
         tree \
         unzip \
         xz-utils \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
-
-COPY dotfiles/bash/bashrc /etc/bash.bashrc
-RUN chmod +r /etc/bash.bashrc
-
-
-ENV SHELL=/bin/bash
-
-
-COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
-# This controls behavior of `pip` when we use it to install Python packages.
-# In particular, the config instructs `pip` to not save cache, hence reducing size
-# of the resultant Docker image.
-# Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
+    && apt-get-clean
 
 
 #===== BEGIN dev tools =====
@@ -72,11 +75,11 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
     \
     && apt-get update \
-    && apt-get install -y --no-install-recommends --allow-unauthenticated \
+    && apt-get-install --allow-unauthenticated \
         git \
         xclip \
     \
-    && pip install \
+    && pip-install \
         'neovim' \
         'jedi' \
     \
@@ -94,13 +97,66 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
     && rm -rf ${NVIM_HOME}/bundle/*/tests \
     \
-    && apt-get purge -y --auto-remove \
-        git \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+    && apt-get-remove git \
+    && apt-get-clean \
+    && rm -rf /tmp/*
 
 ENV EDITOR vim
+
+
+#---------------
+# C/C++ compiler
+
+RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
+    && apt-get update \
+    && apt-get-install \
+        gcc-8 \
+        g++-8 \
+        make \
+    && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
+    && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+    && ldconfig \
+    \
+    && rm -f /etc/apt/sources.list.d/mygccrepo.list \
+    && apt-get-clean \
+    && rm -rf /tmp/*
+
+
+COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
+
+RUN pip-install  \
+        'line_profiler' \
+        'memory_profiler' \
+        'ptpython' \
+        'coverage' \
+        'pylint' \
+        'mypy' \
+        'twine' \
+        'readme-renderer[md]' \
+        'yapf' \
+    && chown -R docker-user /home/docker-user/.ptpython
+
+# Use `yapf` to format Python code in-place:
+#   yapf -ir -vv --no-local-style .
+
+
+# `pip install line_profiler` fails on Python 3.7.
+# See https://github.com/rkern/line_profiler/issues/132
+# Hopefully the fix will be integrated soon.
+
+# Installing `line_profiler` needs gcc.
+# Use `snakeviz` to view profiling stats.
+# `snakeviz` is not installed in this Docker image as it's better
+# installed on the hosting machine 'natively'.
+
+# Other useful packages:
+#    flake8
+#    pudb
+#    pyflakes
+#    radon
+
+
+#===== END dev tools =====
 
 
 #-----------------------------------------
@@ -112,10 +168,11 @@ ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
 COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
-RUN pip install \
+RUN pip-install \
         'ipython' \
         'notebook' \
         'jupyterlab' \
+        'ipywidgets' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
@@ -124,73 +181,23 @@ RUN pip install \
 # To generate some graphs such as class hierarchy diagrams with `Sphinx`,
 # one needs to install the system package `graphviz` and Python package `graphviz`.
 
-# Other useful packages:
-#    flake8
-#    pudb
-#    pyflakes
-#    radon
-
-
-#---------------
-# C/C++ compiler
-
-RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc-8 \
-        g++-8 \
-        make \
-    && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
-    && ln -s /usr/bin/g++-8 /usr/bin/g++ \
-    && ldconfig \
-    \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && rm -f /etc/apt/sources.list.d/mygccrepo.list
-
-
-RUN pip install  \
-        'line_profiler' \
-        'memory_profiler' \
-        'twine' \
-        'readme-renderer[md]'
-
-# `pip install line_profiler` fails on Python 3.7.
-# See https://github.com/rkern/line_profiler/issues/132
-# Hopefully the fix will be integrated soon.
-
-# Installing `line_profiler` needs gcc.
-# Use `snakeviz` to view profiling stats.
-# `snakeviz` is not installed in this Docker image as it's better
-# installed on the hosting machine 'natively'.
-
-#===== END dev tools =====
-
 
 # ------------------------------
-# Very commonly useful packages
+# Other useful packages
 
 
-COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
-
-RUN pip install  \
-        'coverage' \
-        'Faker' \
-        'mypy' \
-        'ptpython' \
-        'pylint' \
-        'pytest' \
-        'yapf' \
-    && chown -R docker-user /home/docker-user/.ptpython
-
-# Use `yapf` to format Python code in-place:
-#   yapf -ir -vv --no-local-style .
-
-RUN pip install \
-        'cytoolz' \
+RUN pip-install  \
         'boltons' \
+        'cytoolz' \
+        'pytz' \
+        'requests' \
+        \
+        'Faker' \
+        'pytest' \
+        \
         'numpy' \
         'pandas' \
-        'requests' \
-        'scipy'
+        'scipy' \
+        \
+        'distributed' \
+        'dask'

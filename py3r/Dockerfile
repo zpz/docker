@@ -43,18 +43,15 @@ USER root
 #     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
 #     && apt-get update \
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && apt-get-install \
         r-base \
         r-base-dev \
     \
-    && pip install \
+    && pip-install \
         'rpy2' \
     \
-    && apt-get remove --purge -y \
-        r-base-dev \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+    && apt-get-remove r-base-dev \
+    && apt-get-clean
 #     && rm -rf /var/lib/apt/lists/* /tmp/* \
 #     && rm -f /etc/apt/sources.list.d/myrrepo.list
 

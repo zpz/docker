@@ -3,15 +3,11 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
-
-RUN pip install \
-        'pytz'
-
 #------------------------------
 # For writing Python extensions
 
 
-RUN pip install \
+RUN pip-install \
         'cython' \
         'cffi' \
         'pybind11' \
@@ -108,5 +104,5 @@ USER root
 # linker
 RUN ln -s /usr/bin/gcc /usr/bin/cc
 
-RUN pip install \
+RUN pip-install \
         'setuptools-rust' 'pyo3-pack'
