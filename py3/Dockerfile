@@ -35,12 +35,11 @@ ENV SHELL=/bin/bash
 # In particular, the config instructs `pip` to not save cache, hence reducing size
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
-COPY pip-install /usr/local/bin
 
 # COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY apt-get-install /usr/local/bin
-COPY apt-get-remove /usr/local/bin
-COPY apt-get-clean /usr/local/bin
+
+
+COPY bin/* /usr/local/bin/
 
 
 #-------------------------
@@ -200,4 +199,5 @@ RUN pip-install  \
         'scipy' \
         \
         'distributed' \
-        'dask'
+        'dask' \
+        'numba'

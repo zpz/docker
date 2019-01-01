@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-apt-get install --no-install-recommends -y $@

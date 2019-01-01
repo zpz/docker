@@ -21,9 +21,3 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> 
     && apt-get-clean \
     && pip-install \
         'lightgbm'
-
-
-RUN pip-install \
-        'dask' \
-        'distributed' \
-        'dask-ml'
