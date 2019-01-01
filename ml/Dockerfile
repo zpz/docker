@@ -6,24 +6,18 @@ FROM ${PARENT}
 USER root
 
 
-RUN pip install \
+RUN pip-install \
         'scikit-learn' \
         'statsmodels'
 
 
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list.d/myextrarepo.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && apt-get-install \
         libopenmpi-dev libopenmpi3 \
     && ldconfig \
     && apt-get autoremove -y \
     && rm -f /etc/apt/sources.list.d/myextrarepo.list \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
-    && pip install --no-cache-dir --upgrade \
+    && apt-get-clean \
+    && pip-install \
         'lightgbm'
-
-
-RUN pip install \
-        'dask' \
-        'distributed' \
-        'dask-ml'
