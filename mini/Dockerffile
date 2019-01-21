@@ -1,0 +1,7 @@
+ARG PARENT
+FROM ${PARENT}
+USER root
+
+RUN apk add --no-cache bash curl
+
+COPY bin/* /usr/local/bin/
