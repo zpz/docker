@@ -1,14 +1,75 @@
-set -Eeuo pipefail
-
-IMAGES=( py3 py3x ml nlp visual py3zpz py3r latex data dl )
-
-
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
 
+source "${thisdir}/mini/bin/docker_build_utils.sh"
 
-function find-newest-tag {
-    docker images "$1" --format "{{.Tag}}" | sort | tail -n 1
+
+function add-image {
+    dd="$1"  # Either a directory name or an external image name
+    shift
+    if (( $# > 1)); then
+        images="${@}"  # Capture all remaining args as a string
+    else
+        images=''
+    fi
+
+    if [[ "${dd}" != *:* ]]; then
+        # Now "$dd" is not an external image; must be a directory.
+        if [ -e "${dd}/parent" ] && [ -e "${dd}/Dockerfile" ]; then
+            if [[ " ${images} " != *\ ${dd}\ * ]]; then
+                # Not yet processed and added to list.
+                parent="$(cat ${dd}/parent)"
+                images="$(add-image ${parent} ${images}) $dd"
+            fi
+        fi
+    fi
+    echo "${images}"
+}
+
+
+function find-images {
+    images=''
+    cd "${thisdir}"
+    subdirs=( $(ls -d */) )
+    for dd in "${subdirs[@]}"; do
+        dd=${dd%%/}
+        images="$(add-image $dd ${images})"
+    done
+    echo "${images}"
+}
+
+
+function main {
+    old_images=''
+    new_images=''
+    for img in "${IMAGES[@]}"; do
+        old_img=$(find-latest-image ${img})
+
+        builddir="${thisdir}/${img}"
+        parent=$(cat "${builddir}/parent")
+        build-image $img $parent $builddir || return 1
+
+        new_img=$(find-latest-image-local ${img})
+        if [[ "${new_img}" == "${old_img}" ]]; then
+            new_img=-
+        fi
+        new_images="${new_images} ${new_img}"
+    done
+
+    if [[ "$(uname)" != Darwin ]]; then
+        echo
+        echo
+        echo '=== pushing images to Dockerhub ==='
+        echo
+        new_images=( ${new_images} )
+        for img in "${new_images[@]}"; do
+            if [[ "${img}" != - ]]; then
+                echo
+                echo "pushing ${img}"
+                docker push "${img}"
+            fi
+        done
+    fi
 }
 
 
@@ -19,61 +80,17 @@ function find-newest-tag {
 # After at least one successful build of everything,
 # you can specify a particular image to build, using that image's name
 # as the argument.
+#
+# Usage:
+#    $ bash build.sh [image-name]
 
-
-IMAGE_TO_BUILD=""
-if (( $# > 0 )); then
-    IMAGE_TO_BUILD="$1"
-    shift
-fi
+set -Eeuo pipefail
 
 if (( $# > 0 )); then
-    echo "Unknown arguments $@"
-    exit 1
-fi
-
-
-function build-simple {
-    BUILDDIR="$1"
-    PARENT="$2"
-    NAME="$(basename ${BUILDDIR})"
-
-    VERSION="$(date -u +%Y%m%dT%H%M%SZ)"
-    # UTC. This command with these arguments work the same on Mac and Linux.
-    # Version format is like this:
-    #    20180923T081243Z
-    # which indicates full datetime accurate to seconds in UTC.
-    # VERSION="$(date -u +%Y%m%d)"
-
-    FULLNAME="${NAME}:${VERSION}"
-
-    echo
-    echo
-    echo "=== building $FULLNAME, based on ${PARENT} ==="
-    echo
-    docker build --build-arg PARENT="${PARENT}" -t "${FULLNAME}" "${BUILDDIR}" >&2
-
-    # set -x
-    # docker tag ${FULLNAME} ${NAME}:latest
-    # set +x
-}
-
-
-function build-one {
-    name="$1"
-    builddir="${thisdir}/${name}"
-    parent=$(cat "${builddir}/parent")
-    if [[ "$parent" != *:* ]]; then
-        parent=${parent}:$(find-newest-tag ${parent})
-    fi
-    build-simple "${builddir}" "${parent}"
-}
-
-
-if [[ ${IMAGE_TO_BUILD} == "" ]]; then
-    for img in "${IMAGES[@]}"; do
-        build-one $img
-    done
+    IMAGES=( $@ )
 else
-    build-one ${IMAGE_TO_BUILD}
+    IMAGES=( $(find-images) )
 fi
+
+# echo "IMAGES: ${IMAGES[@]}"
+main

@@ -127,6 +127,7 @@ function find-latest-image-remote {
             echo "${name}"
         else
             echo -
+        fi
     elif [[ "${name}" != zppz/* ]]; then
         echo "image '${name}' must have its exact tag specified"
         return 1
@@ -208,5 +209,6 @@ function build-image {
             echo
             echo "Newly built image is identical to an older build; discarding the new tag..."
             docker rmi "${new_img}"
+        fi
     fi
 }
