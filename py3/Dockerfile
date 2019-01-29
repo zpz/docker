@@ -46,9 +46,9 @@ COPY bin/* /usr/local/bin/
 # The very basic utilities
 
 RUN apt-get update \
-    && apt-get-install --allow-unauthenticated \
-        apt-utils=1.4.8 \
-    && apt-get-install --allow-unauthenticated \
+    && apt-get-install \
+        apt-utils=1.4.9 \
+    && apt-get-install \
         bzip2=1.0.6-8.1 \
         curl=7.52.1-5+deb9u8 \
         less=481-2.1 \
@@ -67,14 +67,14 @@ ENV NVIM_HOME=/etc/xdg/nvim
 ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
 COPY dotfiles/nvim ${NVIM_HOME}/
 
-ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/v0.4.0/nvim-linux64.tar.gz
+ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/v0.3.4/nvim-linux64.tar.gz
 
 RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && mv /tmp/nvim-linux64 /usr/local/sbin/neovim \
     && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
     \
     && apt-get update \
-    && apt-get-install --allow-unauthenticated \
+    && apt-get-install \
         git=1:2.11.0-3+deb9u4 \
         xclip=0.12+svn84-4+b1 \
     \
@@ -106,7 +106,7 @@ ENV EDITOR vim
 #---------------
 # C/C++ compiler
 
-GCC_VERSION=8.2.0-14
+ENV GCC_VERSION=8.2.0-14
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
     && apt-get update \
     && apt-get-install \
@@ -127,13 +127,11 @@ COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 RUN pip-install  \
         'line_profiler==2.1.2' \
         'memory_profiler==0.55.0' \
-        'ptpython' \
-        'coverage' \
-        'pylint' \
-        'mypy' \
-        'twine' \
-        'readme-renderer[md]' \
-        'yapf' \
+        'ptpython==2.0.4' \
+        'coverage==4.5.2' \
+        'pylint==2.2.2' \
+        'mypy==0.660' \
+        'yapf==0.25.0' \
     && chown -R docker-user /home/docker-user/.ptpython
 
 # Use `yapf` to format Python code in-place:
@@ -183,26 +181,17 @@ RUN pip-install \
 
 
 # ------------------------------
-# Other useful packages
+# Other widely useful packages
 
 
 RUN pip-install  \
-        'boltons' \
-        'cytoolz' \
-        'pytz' \
+        'boltons==18.0.1' \
+        'cytoolz==0.9.0.1' \
+        'pytz==2018.9' \
         'requests==2.21.0' \
         \
-        'coverage==4.5.2' \
-        'Faker==1.0.1' \
+        'Faker==1.0.2' \
         'pytest==4.1.1' \
-        'mypy==0.650' \
         \
         'numpy==1.16.0' \
-        'pandas==0.23.4' \
-        'scipy==1.2.0' \
-        \
-        'distributed' \
-        'dask' \
-        'numba' \
-        \
-        'yapf==0.25.0'
+        'numba==0.42.0'

@@ -8,8 +8,11 @@ USER root
 
 RUN pip-install \
         'scikit-learn' \
-        'statsmodels'
-
+        'statsmodels' \
+        'pandas==0.24.0' \
+        'scipy==1.2.0' \
+        'distributed' \
+        'dask'
 
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list.d/myextrarepo.list \
     && apt-get update \

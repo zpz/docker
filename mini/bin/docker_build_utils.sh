@@ -1,20 +1,26 @@
+# There are two ways to specify an image name (except for tag):
+#   python
+#   somerepo/xyz
+#
+# The first one means the "official image" 'python'.
+# The second one includes namespace such as 'zppz'.
+
+set -Eeuo pipefail
+
+
+function echoerr {
+    >&2 echo "$@"
+}
+
 
 function get-image-tags-local {
-    # Input is image name w/o tag, e.g.
-    #   library/postgres
-    #   zppz/py3
-    #
-    # 'library/' can be omitted.
-    #
+    # Input is image name w/o tag.
     # Returns space separated list of tags;
     # '-' if not found.
     name="$1"
     if [[ "${name}" == *:* ]]; then
-        echo "image name '${name}' already contains tag"
+        echoerr "image name '${name}' already contains tag"
         return 1
-    fi
-    if [[ "${name}" == library/* ]]; then
-        name="${name#library/}"
     fi
     tags=$(docker images "${name}" --format "{{.Tag}}" )
     if [[ "${tags}" == '' ]]; then
@@ -27,19 +33,27 @@ function get-image-tags-local {
 
 function get-image-tags-remote {
     # Analogous `get-image-tags-local`.
+    #
+    # For an "official" image, the image name should be 'library/xyz'.
+    # However, the API response is not complete.
+    # For now, just work on 'zppz/' images only.
     name="$1"
     if [[ "${name}" == *:* ]]; then
-        echo "image name '${name}' already contains tag"
+        echoerr "image name '${name}' already contains tag"
+        return 1
+    fi
+    if [[ "${name}" != zppz/* ]]; then
+        echoerr "image name '${name}' is not in the 'zppz' namespace; not supported at present"
         return 1
     fi
     url=https://hub.docker.com/v2/repositories/${name}/tags
     tags="$(curl -L -s ${url} | tr -d '{}[]"' | tr ',' '\n' | grep name)"
     if [[ "$tags" == "" ]]; then
         echo -
-        return
+    else
+        tags="$(echo $tags | sed 's/name: //g' | sed 's/results: //g')"
+        echo "${tags}"
     fi
-    tags="$(echo $tags | sed 's/name: //g' | sed 's/results: //g')"
-    echo "${tags}"
 }
 
 
@@ -49,7 +63,7 @@ function has-image-local {
 
     name="$1"
     if [[ "${name}" != *:* ]]; then
-        echo "input image '${name}' does not contain tag"
+        echoerr "input image '${name}' does not contain tag"
         return 1
     fi
     tag=$(docker images "${name}" --format "{{.Tag}}" )
@@ -64,25 +78,28 @@ function has-image-local {
 function has-image-remote {
     name="$1"
     if [[ "${name}" != *:* ]]; then
-        echo "input image '${name}' does not contain tag"
+        echoerr "input image '${name}' does not contain tag"
         return 1
     fi
-    tag="${name##*:}"
-    name="${name%:*}"
-    tags=$(get-image-tags-remote "${name}")
-    if [[ "${tags}" == *" ${tag} "* ]]; then
+    if [[ "${name}" != zppz/* ]]; then
+        # In this case, the function `get-image-tags-remote`
+        # is not reliable, so just return 'yes'.
         echo yes
     else
-        echo no
+        tag="${name##*:}"
+        name="${name%:*}"
+        tags=$(get-image-tags-remote "${name}")
+        if [[ "${tags}" == *" ${tag} "* ]]; then
+            echo yes
+        else
+            echo no
+        fi
     fi
 }
 
 
 function find-latest-image-local {
     # Find Docker image of specified name with the latest tag on local machine.
-    # Input is image name like
-    #
-    #   zppz/py3
     #
     # For a non-zppz image, must specify exact tag.
     # In this case, this function checks whether that image exists.
@@ -91,17 +108,7 @@ function find-latest-image-local {
     # Returns '-' if not found
 
     name="$1"
-    if [[ "${name}" != zppz/* ]]; then
-        if [[ "${name}" != *:* ]]; then
-            echo "image '${name}' must have its exact tag specified"
-            return 1
-        fi
-        if [[ $(has-image-local "${name}") == yes ]]; then
-            echo "${name}"
-        else
-            echo -
-        fi
-    else
+    if [[ "${name}" == zppz/* ]]; then
         if [[ "${name}" == *:* ]]; then
             if [[ $(has-image-local "${name}") == yes ]]; then
                 echo "${name}"
@@ -116,6 +123,17 @@ function find-latest-image-local {
                 echo "${name}:${tag}"
             fi
         fi
+    else
+        if [[ "${name}" != *:* ]]; then
+            echoerr "image '${name}' must have its exact tag specified"
+            return 1
+        fi
+
+        if [[ $(has-image-local "${name}") == yes ]]; then
+            echo "${name#library/}"
+        else
+            echo -
+        fi
     fi
 }
 
@@ -123,18 +141,19 @@ function find-latest-image-local {
 function find-latest-image-remote {
     name="$1"
     if [[ "${name}" == *:* ]]; then
-        if [[ $(has-image-local "${name}") == yes ]]; then
+        if [[ $(has-image-remote "${name}") == yes ]]; then
             echo "${name}"
         else
             echo -
         fi
-    elif [[ "${name}" != zppz/* ]]; then
-        echo "image '${name}' must have its exact tag specified"
-        return 1
     else
+        if [[ "${name}" != zppz/* ]]; then
+            echoerr "image '${name}' must have its exact tag specified"
+            return 1
+        fi
         tags="$(get-image-tags-remote ${name})"
         if [[ "${tags}" != '-' ]]; then
-            tag=$(echo "${tags}" | tr ' ' '\n' | sort -r | head - n 1)
+            tag=$(echo "${tags}" | tr ' ' '\n' | sort -r | head -n 1)
             echo "${name}:${tag}"
         else
             echo -
@@ -161,7 +180,8 @@ function find-latest-image {
 
 function find-image-id-local {
     # Input is a full image name including tag.
-    docker image "$1" --format "{{.ID}}"
+    name="$1"
+    docker image "${name}" --format "{{.ID}}"
 }
 
 
@@ -176,7 +196,7 @@ function build-image {
 
     PARENT=$(find-latest-image ${parent})
     if [[ "${PARENT}" == - ]]; then
-        echo "Unable to find parent image '${parent}'"
+        echoerr "Unable to find parent image '${parent}'"
         return 1
     fi
 
@@ -204,7 +224,7 @@ function build-image {
     new_img="${FULLNAME}"
     if [[ "${old_img}" != - ]]; then
         old_id=$(find-image-id-local "${old_img}")
-        new_id=$(find-image-id-new "${new_img}")
+        new_id=$(find-image-id-local "${new_img}")
         if [[ "${old_img}" == "${new_img}" ]]; then
             echo
             echo "Newly built image is identical to an older build; discarding the new tag..."

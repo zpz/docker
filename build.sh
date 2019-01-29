@@ -1,3 +1,5 @@
+set -Eeuo pipefail
+
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
 
@@ -5,22 +7,22 @@ source "${thisdir}/mini/bin/docker_build_utils.sh"
 
 
 function add-image {
-    dd="$1"  # Either a directory name or an external image name
+    dd="$1"  # A directory name.
     shift
-    if (( $# > 1)); then
+    if (( $# > 0)); then
         images="${@}"  # Capture all remaining args as a string
     else
         images=''
     fi
 
-    if [[ "${dd}" != *:* ]]; then
-        # Now "$dd" is not an external image; must be a directory.
-        if [ -e "${dd}/parent" ] && [ -e "${dd}/Dockerfile" ]; then
-            if [[ " ${images} " != *\ ${dd}\ * ]]; then
-                # Not yet processed and added to list.
-                parent="$(cat ${dd}/parent)"
-                images="$(add-image ${parent} ${images}) $dd"
+    if [ -e "${dd}/parent" ] && [ -e "${dd}/Dockerfile" ]; then
+        if [[ " ${images} " != *\ ${dd}\ * ]]; then
+            # Not yet processed and added to list.
+            parent="$(cat ${dd}/parent)"
+            if [[ "${parent}" == zppz/* ]]; then
+                images="$(add-image ${parent#zppz/} ${images})"
             fi
+            images="${images} ${dd}"
         fi
     fi
     echo "${images}"
@@ -43,20 +45,20 @@ function main {
     old_images=''
     new_images=''
     for img in "${IMAGES[@]}"; do
-        old_img=$(find-latest-image ${img})
+        old_img=$(find-latest-image zppz/${img})
 
         builddir="${thisdir}/${img}"
         parent=$(cat "${builddir}/parent")
-        build-image $img $parent $builddir || return 1
+        build-image zppz/$img $parent $builddir || return 1
 
-        new_img=$(find-latest-image-local ${img})
+        new_img=$(find-latest-image-local zppz/${img})
         if [[ "${new_img}" == "${old_img}" ]]; then
             new_img=-
         fi
         new_images="${new_images} ${new_img}"
     done
 
-    if [[ "$(uname)" != Darwin ]]; then
+    if [[ "${PUSH}" == yes ]]; then
         echo
         echo
         echo '=== pushing images to Dockerhub ==='
@@ -84,10 +86,23 @@ function main {
 # Usage:
 #    $ bash build.sh [image-name]
 
-set -Eeuo pipefail
-
-if (( $# > 0 )); then
-    IMAGES=( $@ )
+PUSH=no
+if [[ $# > 0 ]]; then
+    # IMAGES=( $@ )
+    IMAGES=''
+    while [[ $# > 0 ]]; do
+        if [[ "$1" == --push ]]; then
+            PUSH=yes
+        else
+            IMAGES="${IMAGES} $1"
+        fi
+        shift
+    done
+    if [[ "${IMAGES}" == '' ]]; then
+        IMAGES=( $(find-images) )
+    else
+        IMAGES=( $IMAGES )
+    fi
 else
     IMAGES=( $(find-images) )
 fi
