@@ -169,7 +169,7 @@ function find-latest-image {
     if [[ "${local}" == - ]]; then
         echo "${remote}"
     elif [[ "${remote}" == - ]]; then
-        echo "{local}"
+        echo "${local}"
     elif [[ "${local}" < "${remote}" ]]; then
         echo "${remote}"
     else
@@ -181,18 +181,17 @@ function find-latest-image {
 function find-image-id-local {
     # Input is a full image name including tag.
     name="$1"
-    docker image "${name}" --format "{{.ID}}"
+    docker images "${name}" --format "{{.ID}}"
 }
 
 
 function build-image {
-    NAME="$1"
-    parent="$2"
-    BUILDDIR="$3"
-    shift
-    shift
+    BUILDDIR="$1"
     shift
     BUILD_ARGS="$@"
+
+    NAME=zppz/$(basename "${BUILDDIR}")
+    parent=$(cat "${BUILDDIR}/parent")
 
     PARENT=$(find-latest-image ${parent})
     if [[ "${PARENT}" == - ]]; then
@@ -225,7 +224,7 @@ function build-image {
     if [[ "${old_img}" != - ]]; then
         old_id=$(find-image-id-local "${old_img}")
         new_id=$(find-image-id-local "${new_img}")
-        if [[ "${old_img}" == "${new_img}" ]]; then
+        if [[ "${old_id}" == "${new_id}" ]]; then
             echo
             echo "Newly built image is identical to an older build; discarding the new tag..."
             docker rmi "${new_img}"

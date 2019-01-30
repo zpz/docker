@@ -106,7 +106,7 @@ ENV EDITOR vim
 #---------------
 # C/C++ compiler
 
-ENV GCC_VERSION=8.2.0-14
+ENV GCC_VERSION=8.2.0-15
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
     && apt-get update \
     && apt-get-install \
@@ -120,6 +120,19 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
     && rm -f /etc/apt/sources.list.d/mygccrepo.list \
     && apt-get-clean \
     && rm -rf /tmp/*
+
+# Install `astyle` instead of `clang-format`, because
+# I don't like the latter's dependency on LLVM.
+
+ARG ASTYLE_VERSION=3.1
+ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
+
+RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
+    && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
+
+# A reasonable way to use astyle:
+#
+# astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
 
 
 COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
@@ -194,4 +207,6 @@ RUN pip-install  \
         'pytest==4.1.1' \
         \
         'numpy==1.16.0' \
+        'scipy==1.2.0' \
+        'pandas==0.24.0' \
         'numba==0.42.0'

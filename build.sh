@@ -34,7 +34,7 @@ function find-images {
     cd "${thisdir}"
     subdirs=( $(ls -d */) )
     for dd in "${subdirs[@]}"; do
-        dd=${dd%%/}
+        dd=${dd%%/*}
         images="$(add-image $dd ${images})"
     done
     echo "${images}"
@@ -48,8 +48,7 @@ function main {
         old_img=$(find-latest-image zppz/${img})
 
         builddir="${thisdir}/${img}"
-        parent=$(cat "${builddir}/parent")
-        build-image zppz/$img $parent $builddir || return 1
+        build-image $builddir || return 1
 
         new_img=$(find-latest-image-local zppz/${img})
         if [[ "${new_img}" == "${old_img}" ]]; then
