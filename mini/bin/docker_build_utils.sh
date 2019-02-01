@@ -164,8 +164,8 @@ function find-latest-image-remote {
 
 function find-latest-image {
     name="$1"
-    local=$(find-latest-image-local "${name}")
-    remote=$(find-latest-image-remote "${name}")
+    local=$(find-latest-image-local "${name}") || return 1
+    remote=$(find-latest-image-remote "${name}") || return 1
     if [[ "${local}" == - ]]; then
         echo "${remote}"
     elif [[ "${remote}" == - ]]; then
@@ -187,19 +187,16 @@ function find-image-id-local {
 
 function build-image {
     BUILDDIR="$1"
-    shift
-    BUILD_ARGS="$@"
-
-    NAME=zppz/$(basename "${BUILDDIR}")
+    NAME="$2"
+    
     parent=$(cat "${BUILDDIR}/parent")
-
-    PARENT=$(find-latest-image ${parent})
+    PARENT=$(find-latest-image ${parent}) || return 1
     if [[ "${PARENT}" == - ]]; then
         echoerr "Unable to find parent image '${parent}'"
         return 1
     fi
 
-    old_img=$(find-latest-image ${NAME})
+    old_img=$(find-latest-image ${NAME}) || return 1
     if [[ "${old_img}" != - ]] && [[ $(has-image-local "${old_img}") == no ]]; then
         echo
         docker pull ${old_img}
@@ -218,7 +215,7 @@ function build-image {
     echo "=== $(date) ==="
     echo
 
-    docker build --build-arg PARENT="${PARENT}" ${BUILD_ARGS} -t "${FULLNAME}" "${BUILDDIR}" >&2 || return 1
+    docker build --build-arg PARENT="${PARENT}" -t "${FULLNAME}" "${BUILDDIR}" >&2 || return 1
 
     new_img="${FULLNAME}"
     if [[ "${old_img}" != - ]]; then

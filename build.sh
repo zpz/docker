@@ -1,3 +1,7 @@
+# Usage:
+#
+#   bash build.sh [--push] [image-name]
+
 set -Eeuo pipefail
 
 thisfile="${BASH_SOURCE[0]}"
@@ -45,30 +49,27 @@ function main {
     old_images=''
     new_images=''
     for img in "${IMAGES[@]}"; do
-        old_img=$(find-latest-image zppz/${img})
+        old_img=$(find-latest-image zppz/${img}) || return 1
 
         builddir="${thisdir}/${img}"
-        build-image $builddir || return 1
+        build-image $builddir zppz/${img} || return 1
 
-        new_img=$(find-latest-image-local zppz/${img})
-        if [[ "${new_img}" == "${old_img}" ]]; then
-            new_img=-
+        new_img=$(find-latest-image-local zppz/${img}) || return 1
+        if [[ "${new_img}" != "${old_img}" ]]; then
+            new_images="${new_images} ${new_img}"
         fi
-        new_images="${new_images} ${new_img}"
     done
 
-    if [[ "${PUSH}" == yes ]]; then
+    if [[ "${PUSH}" == yes ]] && [[ "${new_images}" != '' ]]; then
         echo
         echo
         echo '=== pushing images to Dockerhub ==='
         echo
         new_images=( ${new_images} )
         for img in "${new_images[@]}"; do
-            if [[ "${img}" != - ]]; then
-                echo
-                echo "pushing ${img}"
-                docker push "${img}"
-            fi
+            echo
+            echo "pushing ${img}"
+            docker push "${img}"
         done
     fi
 }

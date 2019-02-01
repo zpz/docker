@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+thisfile="${BASH_SOURCE[0]}"
+thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
+
+cat "${thisdir}/docker_build_utils.sh"
+echo
+cat "${thisdir}/build_proj_stub.sh"
