@@ -116,8 +116,6 @@ function main {
 # else
 #     IMAGES=( $(find-images) )
 # fi
-#
-# echo "IMAGES: ${IMAGES[@]}"
 
 if [[ $# > 0 ]]; then
     IMAGES=( $@ )
@@ -126,16 +124,9 @@ else
 fi
 echo "IMAGES: ${IMAGES[@]}"
 
-echo "thisdir: ${thisdir}"
-echo
-echo $(ls -a ${thisdir})
-echo
-echo $(ls -a ${thisdir}/.git)
-echo
-echo $(cat ${thisdir}/.git/HEAD)
-echo
-echo "travis-branch: ${TRAVIS_BRANCH}"
-echo
+# BRANCH=$(cat "${thisdir}/.git/HEAD")
+# BRANCH="${BRANCH##*/}"
+BRANCH=$TRAVIS_BRANCH
 
 if [[ ${TRAVIS_BRANCH} == master ]]; then
     PUSH=yes
