@@ -4,13 +4,10 @@ if [ ! -d "${thisdir}/.git" ]; then
     exit 1
 fi
 
-PUSH=no
-if [[ $# > 0 ]]; then
-    if [[ "$1" != --push ]]; then
-        echo "Unknown arguments '$@'"
-        exit 1
-    fi
+if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
     PUSH=yes
+else
+    PUSH=no
 fi
 
 
@@ -72,6 +69,7 @@ if [[ "${BRANCH}" == master ]]; then
         echo
         echo
         echo "=== pushing image to dockerhub ==="
+        docker login --username ${DOCKERHUBUSERNAME} --password ${DOCKERHUBPASSWORD}
         echo
         echo "Pushing '${new_branch_img}'"
         docker push "${new_branch_img}"
@@ -96,6 +94,7 @@ else
         echo
         echo
         echo "=== pushing images to dockerhub ==="
+        docker login --username ${DOCKERHUBUSERNAME} --password ${DOCKERHUBPASSWORD}
         echo
         if [[ "${new_dev_img}" != - ]]; then
             echo "pushing '${new_dev_img}'..."
