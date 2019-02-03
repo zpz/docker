@@ -4,7 +4,10 @@ if [ ! -d "${thisdir}/.git" ]; then
     exit 1
 fi
 
-if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
+# BRANCH=$(cat "${thisdir}/.git/HEAD")
+# BRANCH="${BRANCH##*/}"
+BRANCH="${TRAVIS_BRANCH}"
+if [[ "${BRANCH}" == master ]]; then
     PUSH=yes
 else
     PUSH=no
@@ -12,9 +15,6 @@ fi
 
 
 REPO=$(basename "${thisdir}")
-
-branch=$(cat "${thisdir}/.git/HEAD")
-BRANCH=${branch##*refs/heads/}
 
 
 function build-dev {
