@@ -126,6 +126,11 @@ else
 fi
 echo "IMAGES: ${IMAGES[@]}"
 
+echo "thisdir: ${thisdir}"
+ls ${thisdir}
+ls ${thisdir}/.git
+cat ${thisdir}/.git/HEAD
+
 if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
     PUSH=yes
 else
