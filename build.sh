@@ -2,10 +2,15 @@
 #
 #   bash build.sh [--push] [image-name]
 
-set -Eeuov pipefail
+set -Eeuo pipefail
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
+
+if [ ! -d "${thisdir}/.git" ]; then
+    echo "Please `cd` the root level of the repo and try again"
+    exit 1
+fi
 
 source "${thisdir}/mini/bin/docker_build_utils.sh"
 
@@ -64,6 +69,7 @@ function main {
         echo
         echo
         echo '=== pushing images to Dockerhub ==='
+        docker login --username ${DOCKERHUBUSERNAME} --password ${DOCKERHUBPASSWORD}
         echo
         new_images=( ${new_images} )
         for img in "${new_images[@]}"; do
@@ -86,26 +92,39 @@ function main {
 # Usage:
 #    $ bash build.sh [image-name]
 
-PUSH=no
+# PUSH=no
+# if [[ $# > 0 ]]; then
+#     # IMAGES=( $@ )
+#     IMAGES=''
+#     while [[ $# > 0 ]]; do
+#         if [[ "$1" == --push ]]; then
+#             PUSH=yes
+#         else
+#             IMAGES="${IMAGES} $1"
+#         fi
+#         shift
+#     done
+#     if [[ "${IMAGES}" == '' ]]; then
+#         IMAGES=( $(find-images) )
+#     else
+#         IMAGES=( $IMAGES )
+#     fi
+# else
+#     IMAGES=( $(find-images) )
+# fi
+#
+# echo "IMAGES: ${IMAGES[@]}"
+
 if [[ $# > 0 ]]; then
-    # IMAGES=( $@ )
-    IMAGES=''
-    while [[ $# > 0 ]]; do
-        if [[ "$1" == --push ]]; then
-            PUSH=yes
-        else
-            IMAGES="${IMAGES} $1"
-        fi
-        shift
-    done
-    if [[ "${IMAGES}" == '' ]]; then
-        IMAGES=( $(find-images) )
-    else
-        IMAGES=( $IMAGES )
-    fi
+    IMAGES=( $@ )
 else
     IMAGES=( $(find-images) )
 fi
 
-# echo "IMAGES: ${IMAGES[@]}"
+if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
+    PUSH=yes
+else
+    PUSH=no
+fi
+
 main
