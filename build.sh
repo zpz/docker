@@ -120,11 +120,14 @@ if [[ $# > 0 ]]; then
 else
     IMAGES=( $(find-images) )
 fi
+echo "IMAGES: ${IMAGES[@]}"
 
 if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
     PUSH=yes
 else
     PUSH=no
 fi
+echo "PUSH: ${PUSH}"
+
 
 main
