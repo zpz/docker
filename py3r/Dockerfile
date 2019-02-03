@@ -52,7 +52,8 @@ RUN apt-get update \
     && pip-install 'rpy2==2.9.5' \
     \
     && apt-get-remove r-base-dev \
-    && apt-get-clean
+    && apt-get-clean \
+    && rm -rf /tmp/*
 #     && rm -rf /var/lib/apt/lists/* /tmp/* \
 #     && rm -f /etc/apt/sources.list.d/myrrepo.list
 

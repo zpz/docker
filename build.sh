@@ -2,7 +2,7 @@
 #
 #   bash build.sh [--push] [image-name]
 
-set -Eeuo pipefail
+set -Eeuov pipefail
 
 thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"

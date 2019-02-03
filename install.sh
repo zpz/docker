@@ -10,7 +10,7 @@ mkdir -p "${bindir}"
 
 (
     echo "installing 'run-docker' into '${bindir}'"
-    cp -f "${thisdir}/run-docker" ${bindir}/run-docker
+    cp -f "${thisdir}/bin/run-docker" ${bindir}/run-docker
 )
 
 (

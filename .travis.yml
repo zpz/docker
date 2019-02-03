@@ -1,0 +1,11 @@
+language: bash
+
+branches:
+  only:
+  - master
+
+install: true
+
+script:
+  - ./build.sh --push
+
