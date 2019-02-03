@@ -134,8 +134,10 @@ echo $(ls -a ${thisdir}/.git)
 echo
 echo $(cat ${thisdir}/.git/HEAD)
 echo
+echo "travis-branch: ${TRAVIS_BRANCH}"
+echo
 
-if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
+if [[ ${TRAVIS_BRANCH} == master ]]; then
     PUSH=yes
 else
     PUSH=no
