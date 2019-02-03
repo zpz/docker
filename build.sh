@@ -65,6 +65,10 @@ function main {
         fi
     done
 
+    echo
+    echo "Finished building new images: ${new_images[@]}"
+    echo
+
     if [[ "${PUSH}" == yes ]] && [[ "${new_images}" != '' ]]; then
         echo
         echo
