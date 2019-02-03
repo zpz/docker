@@ -127,9 +127,9 @@ fi
 echo "IMAGES: ${IMAGES[@]}"
 
 echo "thisdir: ${thisdir}"
-ls ${thisdir}
-ls ${thisdir}/.git
-cat ${thisdir}/.git/HEAD
+echo $(ls ${thisdir})
+echo $(ls ${thisdir}/.git)
+echo $(cat ${thisdir}/.git/HEAD)
 
 if [[ $(cat "${thisdir}/.git/HEAD") == */master ]]; then
     PUSH=yes
