@@ -21,14 +21,14 @@ RUN groupadd --gid 1000 docker \
 # latex
 
 # textlive-latex-extra provides 'lastpage', among others.
-
+ARG TEXLIVE_VERSION=2016.20170123-5
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        curl \
-        texlive-base \
-        texlive-fonts-recommended \
-        texlive-latex-base \
-        texlive-latex-extra \
+        curl=7.52.1-5+deb9u8 \
+        texlive-base=${TEXLIVE_VERSION} \
+        texlive-fonts-recommended=${TEXLIVE_VERSION} \
+        texlive-latex-base=${TEXLIVE_VERSION} \
+        texlive-latex-extra=${TEXLIVE_VERSION} \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && apt-get -y autoremove \
     && apt-get clean

@@ -46,15 +46,15 @@ COPY bin/* /usr/local/bin/
 # The very basic utilities
 
 RUN apt-get update \
-    && apt-get-install --allow-unauthenticated \
-        apt-utils \
-    && apt-get-install --allow-unauthenticated \
-        bzip2 \
-        curl \
-        less \
-        tree \
-        unzip \
-        xz-utils \
+    && apt-get-install \
+        apt-utils=1.4.9 \
+    && apt-get-install \
+        bzip2=1.0.6-8.1 \
+        curl=7.52.1-5+deb9u8 \
+        less=481-2.1 \
+        tree=1.7.0-5 \
+        unzip=6.0-21 \
+        xz-utils=5.2.2-1.2+b1 \
     && apt-get-clean
 
 
@@ -67,24 +67,24 @@ ENV NVIM_HOME=/etc/xdg/nvim
 ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
 COPY dotfiles/nvim ${NVIM_HOME}/
 
-ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/v0.3.4/nvim-linux64.tar.gz
 
 RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && mv /tmp/nvim-linux64 /usr/local/sbin/neovim \
     && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
     \
     && apt-get update \
-    && apt-get-install --allow-unauthenticated \
-        git \
-        xclip \
+    && apt-get-install \
+        git=1:2.11.0-3+deb9u4 \
+        xclip=0.12+svn84-4+b1 \
     \
     && pip-install \
-        'neovim' \
-        'jedi' \
+        'neovim==0.3.1' \
+        'jedi==0.13.2' \
     \
     && chmod -R +rX ${NVIM_HOME} \
     && mkdir -p ${NVIM_HOME}/bundle \
-    && git clone https://github.com/VundleVim/Vundle.vim.git ${NVIM_HOME}/bundle/Vundle.vim \
+    && git clone --branch 'v0.10.2' --single-branch --depth 1 https://github.com/VundleVim/Vundle.vim.git ${NVIM_HOME}/bundle/Vundle.vim \
     && nvim +PluginInstall +qall \
     && nvim +UpdateRemotePlugins +qall \
     \
@@ -106,12 +106,13 @@ ENV EDITOR vim
 #---------------
 # C/C++ compiler
 
+ENV GCC_VERSION=8.2.0-15
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
     && apt-get update \
     && apt-get-install \
-        gcc-8 \
-        g++-8 \
-        make \
+        gcc-8=${GCC_VERSION} \
+        g++-8=${GCC_VERSION} \
+        make=4.2.1-1.2 \
     && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
     && ln -s /usr/bin/g++-8 /usr/bin/g++ \
     && ldconfig \
@@ -120,19 +121,30 @@ RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /
     && apt-get-clean \
     && rm -rf /tmp/*
 
+# Install `astyle` instead of `clang-format`, because
+# I don't like the latter's dependency on LLVM.
+
+ARG ASTYLE_VERSION=3.1
+ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
+
+RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
+    && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
+
+# A reasonable way to use astyle:
+#
+# astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
+
 
 COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 RUN pip-install  \
-        'line_profiler' \
-        'memory_profiler' \
-        'ptpython' \
-        'coverage' \
-        'pylint' \
-        'mypy' \
-        'twine' \
-        'readme-renderer[md]' \
-        'yapf' \
+        'line_profiler==2.1.2' \
+        'memory_profiler==0.55.0' \
+        'ptpython==2.0.4' \
+        'coverage==4.5.2' \
+        'pylint==2.2.2' \
+        'mypy==0.660' \
+        'yapf==0.25.0' \
     && chown -R docker-user /home/docker-user/.ptpython
 
 # Use `yapf` to format Python code in-place:
@@ -168,10 +180,10 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
-        'ipython' \
-        'notebook' \
-        'jupyterlab' \
-        'ipywidgets' \
+        'ipython==7.2.0' \
+        'notebook==5.7.4' \
+        'jupyterlab==0.35.4' \
+        'ipywidgets==7.4.2' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
@@ -182,22 +194,19 @@ RUN pip-install \
 
 
 # ------------------------------
-# Other useful packages
+# Other widely useful packages
 
 
 RUN pip-install  \
-        'boltons' \
-        'cytoolz' \
-        'pytz' \
-        'requests' \
+        'boltons==18.0.1' \
+        'cytoolz==0.9.0.1' \
+        'pytz==2018.9' \
+        'requests==2.21.0' \
         \
-        'Faker' \
-        'pytest' \
+        'Faker==1.0.2' \
+        'pytest==4.1.1' \
         \
-        'numpy' \
-        'pandas' \
-        'scipy' \
-        \
-        'distributed' \
-        'dask' \
-        'numba'
+        'numpy==1.16.0' \
+        'scipy==1.2.0' \
+        'pandas==0.24.0' \
+        'numba==0.42.0'

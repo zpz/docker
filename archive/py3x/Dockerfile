@@ -8,26 +8,12 @@ USER root
 
 
 RUN pip-install \
-        'cython' \
-        'cffi' \
-        'pybind11' \
-        'llvmlite' \
-        'numba'
+        'cython==0.29.3' \
+        'cffi==1.11.5' \
+        'pybind11==2.2.4'
 
 # `pybind11` header files are stored in /usr/local/include/python3.6m/pybind11/
 
-# Install `astyle` instead of `clang-format`, because
-# I don't like the latter's dependency on LLVM.
-
-ARG ASTYLE_VERSION=3.1
-ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
-
-RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
-    && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
-
-# A reasonable way to use astyle:
-#
-# astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
 
 # A reasonable way to use clang-format (not installed):
 #
@@ -105,4 +91,4 @@ USER root
 RUN ln -s /usr/bin/gcc /usr/bin/cc
 
 RUN pip-install \
-        'setuptools-rust' 'pyo3-pack'
+        'setuptools-rust==0.10.6' 'pyo3-pack==0.4.2'

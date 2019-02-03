@@ -34,6 +34,8 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
+ENV R_VERSION=3.3.3-1
+
 # RUN apt-get update \
 #     && apt-get install -y --no-install-recommends \
 #         gnupg2 \
@@ -44,14 +46,14 @@ USER root
 #     && apt-get update \
 RUN apt-get update \
     && apt-get-install \
-        r-base \
-        r-base-dev \
+        r-base=${R_VERSION} \
+        r-base-dev=${R_VERSION} \
     \
-    && pip-install \
-        'rpy2' \
+    && pip-install 'rpy2==2.9.5' \
     \
     && apt-get-remove r-base-dev \
-    && apt-get-clean
+    && apt-get-clean \
+    && rm -rf /tmp/*
 #     && rm -rf /var/lib/apt/lists/* /tmp/* \
 #     && rm -f /etc/apt/sources.list.d/myrrepo.list
 
