@@ -6,6 +6,5 @@ branches:
 
 install: true
 
-script:
-  - ./build.sh --push
+script: ./build.sh
 
