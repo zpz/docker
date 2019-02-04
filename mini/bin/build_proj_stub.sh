@@ -6,7 +6,11 @@ fi
 
 # BRANCH=$(cat "${thisdir}/.git/HEAD")
 # BRANCH="${BRANCH##*/}"
-BRANCH="${TRAVIS_BRANCH}"
+if [ -z ${TRAVIS_BRANCH+x} ]; then
+    BRANCH=''
+else
+    BRANCH=${TRAVIS_BRANCH}
+fi
 if [[ "${BRANCH}" == master ]] || [[ "${BRANCH}" == develop ]]; then
     PUSH=yes
 else
