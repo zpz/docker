@@ -45,17 +45,17 @@ COPY bin/* /usr/local/bin/
 #-------------------------
 # The very basic utilities
 
-RUN apt-get update \
-    && apt-get-install \
+RUN apt-update \
+    && apt-install \
         apt-utils=1.4.9 \
-    && apt-get-install \
+    && apt-install \
         bzip2=1.0.6-8.1 \
-        curl=7.52.1-5+deb9u8 \
+        curl=7.52.1-5+deb9u9 \
         less=481-2.1 \
         tree=1.7.0-5 \
         unzip=6.0-21 \
         xz-utils=5.2.2-1.2+b1 \
-    && apt-get-clean
+    && apt-clean
 
 
 #===== BEGIN dev tools =====
@@ -73,8 +73,8 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && mv /tmp/nvim-linux64 /usr/local/sbin/neovim \
     && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
     \
-    && apt-get update \
-    && apt-get-install \
+    && apt-update \
+    && apt-install \
         git=1:2.11.0-3+deb9u4 \
         xclip=0.12+svn84-4+b1 \
     \
@@ -96,8 +96,8 @@ RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
     && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
     && rm -rf ${NVIM_HOME}/bundle/*/tests \
     \
-    && apt-get-remove git \
-    && apt-get-clean \
+    && apt-remove git \
+    && apt-clean \
     && rm -rf /tmp/*
 
 ENV EDITOR vim
@@ -106,20 +106,33 @@ ENV EDITOR vim
 #---------------
 # C/C++ compiler
 
-ENV GCC_VERSION=8.2.0-15
-RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
-    && apt-get update \
-    && apt-get-install \
-        gcc-8=${GCC_VERSION} \
-        g++-8=${GCC_VERSION} \
-        make=4.2.1-1.2 \
-    && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
-    && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+# ENV GCC_VERSION=8.2.0-15
+# RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
+#     && apt-update \
+#     && apt-install \
+#         gcc-8=${GCC_VERSION} \
+#         g++-8=${GCC_VERSION} \
+#         make=4.2.1-1.2 \
+#     && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
+#     && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+#     && ldconfig \
+#     \
+#     && rm -f /etc/apt/sources.list.d/mygccrepo.list \
+#     && apt-clean \
+#     && rm -rf /tmp/*
+
+ENV GCC_VERSION=6.3.0-18+deb9u1
+RUN apt-update \
+    && apt-install \
+        gcc-6=${GCC_VERSION} \
+        g++-6=${GCC_VERSION} \
+        libc6-dev=2.24-11+deb9u4 \
+        make=4.1-9.1 \
+    && ln -s /usr/bin/gcc-6 /usr/bin/gcc \
+    && ln -s /usr/bin/g++-6 /usr/bin/g++ \
     && ldconfig \
     \
-    && rm -f /etc/apt/sources.list.d/mygccrepo.list \
-    && apt-get-clean \
-    && rm -rf /tmp/*
+    && apt-clean
 
 # Install `astyle` instead of `clang-format`, because
 # I don't like the latter's dependency on LLVM.
@@ -138,7 +151,6 @@ RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
 COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 RUN pip-install  \
-        'line_profiler==2.1.2' \
         'memory_profiler==0.55.0' \
         'ptpython==2.0.4' \
         'coverage==4.5.2' \
@@ -149,11 +161,18 @@ RUN pip-install  \
 
 # Use `yapf` to format Python code in-place:
 #   yapf -ir -vv --no-local-style .
-
+#
+# Also check out `black`.
 
 # `pip install line_profiler` fails on Python 3.7.
 # See https://github.com/rkern/line_profiler/issues/132
 # Hopefully the fix will be integrated soon.
+#
+# Check out alternatives `pprofile` and `pyflame`.
+#
+# For other profilers, refer to
+#  https://devopedia.org/profiling-python-code
+
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
@@ -165,6 +184,10 @@ RUN pip-install  \
 #    pudb
 #    pyflakes
 #    radon
+
+# Decided to not install Spinx; install it in specific images where needed.
+# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
+# one needs to install the system package `graphviz` and Python package `graphviz`.
 
 
 #===== END dev tools =====
@@ -188,9 +211,6 @@ RUN pip-install \
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
-# Decided to not install Spinx; install it in specific images where needed.
-# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
-# one needs to install the system package `graphviz` and Python package `graphviz`.
 
 
 # ------------------------------
@@ -208,5 +228,4 @@ RUN pip-install  \
         \
         'numpy==1.16.0' \
         'scipy==1.2.0' \
-        'pandas==0.24.0' \
         'numba==0.42.0'

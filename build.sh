@@ -1,6 +1,18 @@
 # Usage:
 #
 #   bash build.sh [--push] [image-name]
+#
+# Usually this script is run w/o any argument, to build everything:
+#
+#   $ bash build.sh
+#
+# After at least one successful build of everything,
+# you can specify a particular image to build, using that image's name
+# as the argument.
+#
+# Usage:
+#    $ bash build.sh [image-name]
+
 
 set -Eeuo pipefail
 
@@ -85,20 +97,9 @@ function main {
 }
 
 
-# Usually this script is run w/o any argument, to build everything:
-#
-#   $ bash build.sh
-#
-# After at least one successful build of everything,
-# you can specify a particular image to build, using that image's name
-# as the argument.
-#
-# Usage:
-#    $ bash build.sh [image-name]
 
 # PUSH=no
-# if [[ $# > 0 ]]; then
-#     # IMAGES=( $@ )
+if [[ $# > 0 ]]; then
 #     IMAGES=''
 #     while [[ $# > 0 ]]; do
 #         if [[ "$1" == --push ]]; then
@@ -113,16 +114,14 @@ function main {
 #     else
 #         IMAGES=( $IMAGES )
 #     fi
-# else
-#     IMAGES=( $(find-images) )
-# fi
-
-if [[ $# > 0 ]]; then
     IMAGES=( $@ )
 else
     IMAGES=( $(find-images) )
 fi
 echo "IMAGES: ${IMAGES[@]}"
+
+# The images are pushed to Dockerhub only when built at github
+# by the integrated Travis-CI in branch `master`.
 
 # BRANCH=$(cat "${thisdir}/.git/HEAD")
 # BRANCH="${BRANCH##*/}"
