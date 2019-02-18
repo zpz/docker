@@ -7,6 +7,7 @@ USER root
 
 
 RUN pip-install \
+        'pandas==0.24.0' \
         'scikit-learn==0.20.2' \
         'statsmodels==0.9.0' \
         'xgboost==0.81' \
@@ -15,12 +16,12 @@ RUN pip-install \
 
 
 RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list.d/myextrarepo.list \
-    && apt-get update \
-    && apt-get-install \
+    && apt-update \
+    && apt-install \
         libopenmpi-dev=3.1.3-10 libopenmpi3=3.1.3-10 \
     && ldconfig \
     && rm -f /etc/apt/sources.list.d/myextrarepo.list \
-    && apt-get-clean \
+    && apt-clean \
     && pip-install \
         'lightgbm==2.2.2'
 
@@ -31,7 +32,7 @@ RUN pip-install \
         'plotly==3.5.0' 'dash==0.36.0'
 
 # 'gif' support in Holoviews requires ImageMagick
-RUN apt-get update \
-    && apt-get-install \
+RUN apt-update \
+    && apt-install \
         imagemagick=8:6.9.7.4+dfsg-11+deb9u6 \
-    && apt-get-clean
+    && apt-clean

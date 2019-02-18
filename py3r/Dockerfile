@@ -44,15 +44,15 @@ ENV R_VERSION=3.3.3-1
 #     && echo 'deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/' > /etc/apt/sources.list.d/myrrepo.list \
 #     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
 #     && apt-get update \
-RUN apt-get update \
-    && apt-get-install \
+RUN apt-update \
+    && apt-install \
         r-base=${R_VERSION} \
         r-base-dev=${R_VERSION} \
     \
     && pip-install 'rpy2==2.9.5' \
     \
-    && apt-get-remove r-base-dev \
-    && apt-get-clean \
+    && apt-remove r-base-dev \
+    && apt-clean \
     && rm -rf /tmp/*
 #     && rm -rf /var/lib/apt/lists/* /tmp/* \
 #     && rm -f /etc/apt/sources.list.d/myrrepo.list
