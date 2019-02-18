@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-thisfile="${BASH_SOURCE[0]}"
+thisfile="$0"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
 
 cat "${thisdir}/docker_build_utils.sh"

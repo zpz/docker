@@ -4,17 +4,16 @@ if [ ! -d "${thisdir}/.git" ]; then
     exit 1
 fi
 
-# BRANCH=$(cat "${thisdir}/.git/HEAD")
-# BRANCH="${BRANCH##*/}"
+
+PUSH=no
 if [ -z ${TRAVIS_BRANCH+x} ]; then
-    BRANCH=''
+    BRANCH=$(cat "${thisdir}/.git/HEAD")
+    BRANCH="${BRANCH##*/}"
 else
     BRANCH=${TRAVIS_BRANCH}
-fi
-if [[ "${BRANCH}" == master ]] || [[ "${BRANCH}" == develop ]]; then
-    PUSH=yes
-else
-    PUSH=no
+    if [[ "${BRANCH}" == master ]] || [[ "${BRANCH}" == develop ]]; then
+        PUSH=yes
+    fi
 fi
 
 
