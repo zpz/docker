@@ -11,8 +11,7 @@ RUN pip-install \
         torchvision==0.2.1 \
         torchtext==0.3.1
 
-# Installation encountered problems.
-# RUN pip-install tensorflow tensorflow-probability
+RUN pip-install tensorflow tensorflow-probability
 
 RUN pip-install \
         'nltk==3.4' \
@@ -22,3 +21,5 @@ RUN pip-install \
         conll2000 movie_reviews \
     && pip-install 'spacy==2.0.18' \
     && python -m spacy download en
+
+RUN pip-install matplotlib==3.0.2

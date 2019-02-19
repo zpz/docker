@@ -1,4 +1,4 @@
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python3_host_prog = '/usr/bin/python3'
 
 if system('uname -s') == "Darwin\n"
     set rtp^=~/.local/share/nvim
@@ -13,4 +13,3 @@ else
     source /etc/xdg/nvim/keys.vim
     source /etc/xdg/nvim/plugins.vim
 endif
-

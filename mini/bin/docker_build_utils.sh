@@ -221,6 +221,7 @@ function build-image {
     if [[ "${old_img}" != - ]]; then
         old_id=$(find-image-id-local "${old_img}")
         new_id=$(find-image-id-local "${new_img}")
+        echo
         echo "old_img: ${old_img}"
         echo "new_img: ${new_img}"
         echo "old_id: ${old_id}"
