@@ -111,6 +111,6 @@ if [[ ${USER} == root ]]; then
     chown -R $u ${HOME}/.local/share/nvim
 fi
 
-pip3 install --no-cache-dir neovim jedi
+pip3 install --no-cache-dir pynvim jedi
 
 # apt-get install --no-install-recommends --no-upgrade -y xclip
