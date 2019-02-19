@@ -1,21 +1,21 @@
-# On Linux, run this script with `sudo`.
-# On Mac, run w/o `sudo`.
+# Run this script w/o `sudo`.
 
 # Where to put neovim config files?
 # There is some confusion.
-# 
-# System-wide, there is /etc/xdg/nvim/ and /usr/local/share/nvim/.
-# 
-# User local, on Mac there is ~/.local/share/nvim/ and ~/.config/nvim/;
-# on Linux there is ~/.local/share/nvim/.
-#
-# On Linux, do not use ~/.config/nvim.
+# System-wide, there is /etc/xdg/nvim/ and /usr/local/share/nvim/. 
+# User local, there is ~/.local/share/nvim/ and ~/.config/nvim/.
 #
 # This script installs things locally for the current user.
+# Otherwise some trouble-some `sudo` on/off switches are needed in the script.
+
+# This script installs `nvim` for the current user only.
+# `sudo nvim` would not find `nvim`.
 
 # If the installed `nvim` is not working properly,
-# check the installed `init.vim` file.
-# Also check that the installed `$NVIM_CMD` is on the system path.
+# check the paths in the installed `init.vim` and `plugins.vim` files.
+# Also check that the installed `nvim` command is on the system path.
+# Another useful thing to check is: launch `nvim`, and type
+#  : echo &rtp
 
 thisfile="$0"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
@@ -26,40 +26,42 @@ if [[ ${platform} != Linux ]] && [[ ${platform} != Darwin ]]; then
     exit 1
 fi
 
+NVIM_HOME=~/.local/share/nvim
+NVIM_CFG=~/.config/nvim
 if [[ "${platform}" == Linux ]]; then
-    NVIM_HOME=/etc/xdg/nvim
-else
-    NVIM_HOME=~/.local/share/nvim
-    NVIM_CFG=~/.config/nvim
+    NVIM_CMD=~/.local/bin/nvim
 fi
-NVIM_CMD=/usr/local/bin/nvim
+# NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
 
-NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
 
 if [ -d ${NVIM_HOME} ]; then
     echo "Directory ${NVIM_HOME} exists, suggesting 'neovim' is installed. Please un-install first."
     exit 1
 fi
 
-if [[ "${platform}" == Darwin ]] && [ -d ${NVIM_CFG} ]; then
+if [ -d ${NVIM_CFG} ]; then
     echo "Directory ${NVIM_CFG} exists, suggesting 'neovim' is installed. Please un-install first."
     exit 1
 fi
 
-if [ -f ${NVIM_CMD} ]; then
-    echo "${NVIM_CMD} exists. Please un-install first."
+if [[ $(which nvim) != '' ]]; then
+    echo "'nvim' is installed. Please un-install first."
     exit 1
 fi
 
 
 function clean-up {
     rm -rf ${NVIM_HOME} ${NVIM_CFG}
-    rm -f ${NVIM_CMD}
+    if [[ "${platform}" == Linux ]]; then
+        rm -f ${NVIM_CMD}
+    else
+        brew uninstall nvim
+    fi
 }
 
 
 function check-status {
-    status=$1
+    status=$?
     if [[ ${status} != 0 ]]; then
         clean-up
         exit ${status}
@@ -80,21 +82,19 @@ if [[ "${platform}" == Linux ]]; then
 else
     brew install neovim
 fi
+check-status
 
-set -x
 
-check-status $?
-
-mkdir -p ${NVIM_HOME} \
+mkdir -p ${NVIM_HOME} ${NVIM_CFG} \
     && cp -rf "${thisdir}/dotfiles/"* ${NVIM_HOME}/ \
     && chmod -R +rX ${NVIM_HOME} \
-    && if [[ ${platform} == Darwin ]]; then mv ${NVIM_HOME}/init.vim ${NVIM_CFG}/ ; fi
-
-check-status $?
-
-
-mkdir -p ${NVIM_HOME}/bundle \
-    && git clone --branch 'v0.10.2' --single-branch --depth 1 https://github.com/VundleVim/Vundle.vim.git ${NVIM_HOME}/bundle/Vundle.vim \
+    && mv ${NVIM_HOME}/init.vim ${NVIM_CFG}/ \
+    \
+    && mkdir -p ${NVIM_HOME}/bundle \
+    && git clone --branch 'v0.10.2' --single-branch --depth 1 \
+        https://github.com/VundleVim/Vundle.vim.git \
+        ${NVIM_HOME}/bundle/Vundle.vim \
+    \
     && nvim +PluginInstall +qall \
     && nvim +UpdateRemotePlugins +qall \
     \
@@ -102,15 +102,9 @@ mkdir -p ${NVIM_HOME}/bundle \
     && rm -rf ${NVIM_HOME}/bundle/*/test \
     && rm -rf ${NVIM_HOME}/bundle/*/.git \
     && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
-    && rm -rf ${NVIM_HOME}/bundle/*/tests
-
-check-status $?
-
-if [[ ${USER} == root ]]; then
-    u=${HOME##*/}
-    chown -R $u ${HOME}/.local/share/nvim
-fi
-
-pip3 install --no-cache-dir pynvim jedi
+    && rm -rf ${NVIM_HOME}/bundle/*/tests \
+    \
+    && pip3 install --no-cache-dir --user pynvim jedi
+check-status
 
 # apt-get install --no-install-recommends --no-upgrade -y xclip

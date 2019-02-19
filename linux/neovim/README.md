@@ -1,8 +1,6 @@
 # Prerequisites
 
-- `Python 3` (this is required by a couple `neovim` extensions that we want to install)
-
--  Python packages `pynvim` and `jedi` have been `pip` (or `pip3`) installed
+- `Python 3` and `pip3` (this is required by a couple `neovim` extensions that we want to install)
 
 
 # Installation
