@@ -45,90 +45,60 @@ COPY bin/* /usr/local/bin/
 #-------------------------
 # The very basic utilities
 
-RUN apt-get update \
-    && apt-get-install \
-        apt-utils=1.4.9 \
-    && apt-get-install \
+# apt-utils=1.4.9
+
+RUN apt-update \
+    && apt-install \
         bzip2=1.0.6-8.1 \
-        curl=7.52.1-5+deb9u8 \
+        curl=7.52.1-5+deb9u9 \
         less=481-2.1 \
         tree=1.7.0-5 \
         unzip=6.0-21 \
         xz-utils=5.2.2-1.2+b1 \
-    && apt-get-clean
+    && apt-clean
 
 
 #===== BEGIN dev tools =====
 
-#--------------------------------
-# A nice editor for writing code.
-
-ENV NVIM_HOME=/etc/xdg/nvim
-ENV NVIM_RPLUGIN_MANIFEST=${NVIM_HOME}/rplugin.vim
-COPY dotfiles/nvim ${NVIM_HOME}/
-
-ARG NEOVIM_URL=https://github.com/neovim/neovim/releases/download/v0.3.4/nvim-linux64.tar.gz
-
-RUN curl -skL --retry 3 ${NEOVIM_URL} | tar xz -C /tmp \
-    && mv /tmp/nvim-linux64 /usr/local/sbin/neovim \
-    && ln -s /usr/local/sbin/neovim/bin/nvim /usr/local/bin/nvim \
-    \
-    && apt-get update \
-    && apt-get-install \
-        git=1:2.11.0-3+deb9u4 \
-        xclip=0.12+svn84-4+b1 \
-    \
-    && pip-install \
-        'neovim==0.3.1' \
-        'jedi==0.13.2' \
-    \
-    && chmod -R +rX ${NVIM_HOME} \
-    && mkdir -p ${NVIM_HOME}/bundle \
-    && git clone --branch 'v0.10.2' --single-branch --depth 1 https://github.com/VundleVim/Vundle.vim.git ${NVIM_HOME}/bundle/Vundle.vim \
-    && nvim +PluginInstall +qall \
-    && nvim +UpdateRemotePlugins +qall \
-    \
-    && ln -s $(which nvim) /usr/local/bin/vim \
-    \
-    && rm -rf ${NVIM_HOME}/bundle/*/doc \
-    && rm -rf ${NVIM_HOME}/bundle/*/test \
-    && rm -rf ${NVIM_HOME}/bundle/*/.git \
-    && rm -rf ${NVIM_HOME}/bundle/*/.gitignore \
-    && rm -rf ${NVIM_HOME}/bundle/*/tests \
-    \
-    && apt-get-remove git \
-    && apt-get-clean \
-    && rm -rf /tmp/*
-
-ENV EDITOR vim
-
-
 #---------------
 # C/C++ compiler
 
-ENV GCC_VERSION=8.2.0-15
-RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
-    && apt-get update \
-    && apt-get-install \
-        gcc-8=${GCC_VERSION} \
-        g++-8=${GCC_VERSION} \
-        make=4.2.1-1.2 \
-    && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
-    && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+# ENV GCC_VERSION=8.2.0-15
+# RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
+#     && apt-update \
+#     && apt-install \
+#         gcc-8=${GCC_VERSION} \
+#         g++-8=${GCC_VERSION} \
+#         make=4.2.1-1.2 \
+#     && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
+#     && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+#     && ldconfig \
+#     \
+#     && rm -f /etc/apt/sources.list.d/mygccrepo.list \
+#     && apt-clean \
+#     && rm -rf /tmp/*
+
+ENV GCC_VERSION=6.3.0-18+deb9u1
+RUN apt-update \
+    && apt-install \
+        gcc-6=${GCC_VERSION} \
+        g++-6=${GCC_VERSION} \
+        libc6-dev=2.24-11+deb9u4 \
+        make=4.1-9.1 \
+    && ln -s /usr/bin/gcc-6 /usr/bin/gcc \
+    && ln -s /usr/bin/g++-6 /usr/bin/g++ \
     && ldconfig \
     \
-    && rm -f /etc/apt/sources.list.d/mygccrepo.list \
-    && apt-get-clean \
-    && rm -rf /tmp/*
+    && apt-clean
 
 # Install `astyle` instead of `clang-format`, because
 # I don't like the latter's dependency on LLVM.
 
-ARG ASTYLE_VERSION=3.1
-ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
+# ARG ASTYLE_VERSION=3.1
+# ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
 
-RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
-    && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
+# RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
+#     && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
 
 # A reasonable way to use astyle:
 #
@@ -138,22 +108,27 @@ RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
 COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 RUN pip-install  \
-        'line_profiler==2.1.2' \
-        'memory_profiler==0.55.0' \
         'ptpython==2.0.4' \
-        'coverage==4.5.2' \
         'pylint==2.2.2' \
-        'mypy==0.660' \
-        'yapf==0.25.0' \
+        'mypy==0.670' \
+        'yapf==0.26.0' \
+        'black==18.9b0' \
     && chown -R docker-user /home/docker-user/.ptpython
 
 # Use `yapf` to format Python code in-place:
 #   yapf -ir -vv --no-local-style .
-
+#
+# Also check out `black`.
 
 # `pip install line_profiler` fails on Python 3.7.
 # See https://github.com/rkern/line_profiler/issues/132
 # Hopefully the fix will be integrated soon.
+#
+# Check out alternatives `pprofile` and `pyflame`.
+#
+# For other profilers, refer to
+#  https://devopedia.org/profiling-python-code
+
 
 # Installing `line_profiler` needs gcc.
 # Use `snakeviz` to view profiling stats.
@@ -161,10 +136,16 @@ RUN pip-install  \
 # installed on the hosting machine 'natively'.
 
 # Other useful packages:
+#    coverage
 #    flake8
 #    pudb
 #    pyflakes
 #    radon
+#    memory_profiler
+
+# Decided to not install Spinx; install it in specific images where needed.
+# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
+# one needs to install the system package `graphviz` and Python package `graphviz`.
 
 
 #===== END dev tools =====
@@ -188,10 +169,6 @@ RUN pip-install \
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
-# Decided to not install Spinx; install it in specific images where needed.
-# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
-# one needs to install the system package `graphviz` and Python package `graphviz`.
-
 
 # ------------------------------
 # Other widely useful packages
@@ -200,7 +177,6 @@ RUN pip-install \
 RUN pip-install  \
         'boltons==18.0.1' \
         'cytoolz==0.9.0.1' \
-        'pytz==2018.9' \
         'requests==2.21.0' \
         \
         'Faker==1.0.2' \
@@ -208,5 +184,4 @@ RUN pip-install  \
         \
         'numpy==1.16.0' \
         'scipy==1.2.0' \
-        'pandas==0.24.0' \
         'numba==0.42.0'

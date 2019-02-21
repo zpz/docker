@@ -203,7 +203,7 @@ else
 fi
 
 is_dev_image=no
-if [[ " dl jekyll mini nlp py3r data latex ml py3 " == *" ${imagename#zppz/} "* ]]; then
+if [[ " dl jekyll mini py3r latex ml py3 " == *" ${imagename#zppz/} "* ]]; then
     is_base_image=yes
 else
     is_base_image=no
