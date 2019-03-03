@@ -65,13 +65,13 @@ function host_prompt {
     if [[ -n "$IMAGE_NAME" ]]; then
         echo "$IMAGE_NAME"
     else
-        echo '\h'
+        echo "$(uname -n)"
     fi
 }
 
 B='\[\033['
 E='m\]'
-S="${B}0${E}"
+S="${B}${E}"
 BLUE="${B}1;34${E}"
 YELLOW="${B}1;33${E}"
 GREEN="${B}1;32${E}"
@@ -90,11 +90,10 @@ LIGHTYELLOW="${B}0;33${E}"
 #export PS1='[\u: \w] $ '
 
 WINDOWTITLE="\[\e]2;$(if [[ -n "$IMAGE_NAME" ]]; then echo "[ $IMAGE_NAME ]  "; else echo "[ docker ]  "; fi)\W\a\]"
-PS1="${WINDOWTITLE}\n\u@$(host_prompt) in ${BLUE}\w${S}\$(git_prompt)\n\$ "
+PS1="${WINDOWTITLE}\n[\u @ $(host_prompt)] ${BLUE}\w${S}\$(git_prompt)\n\$ "
   # window-title new-line
   # user-name@host-name in current-directory [branch] new-line
   # $
-# export PS1="\033]0;$(uname -n):  ${PWD} \007\n\W$ "
 
 #--- end of command prompt customization ---
 

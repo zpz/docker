@@ -252,21 +252,18 @@ else
 fi
 
 
-if [[ $(uname) == Linux && $(id -u) != 1000 ]]; then
-    # Other Linux machines --- not tested.
-    uid=$(id -u)
-    dockeruser=${uid}
-    dockerhomedir='/home/docker-user'
-    opts="${opts} -e USER=${dockeruser} -u ${dockeruser}:docker -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
+if [[ "${as_root}" == yes ]] || [[ "${is_ext_image}" == yes ]] || [[ "${imagename}" == zppz/mini ]] || [[ "$(id -un)" == root ]]; then
+    dockerhomedir=/root
+    opts="${opts} -e USER=root -u root"
+elif [[ $(uname) == Linux ]]; then
+    dockerhomedir="/home/$(id -un)"
+    opts="${opts} -e USER=$(id -un) -u $(id -u):$(id -g) -v /etc/passwd:/etc/passwd:ro"
+elif [[ $(uname) == Darwin ]]; then
+    dockerhomedir=/home/docker-user
+    opts="${opts} -e USER=docker-user -u docker-user"
 else
-    if [[ "${as_root}" == yes ]] || [[ "${is_ext_image}" == yes ]] || [[ "${imagename}" == zppz/mini ]]; then
-        dockeruser=root
-        dockerhomedir=/root
-    else
-        dockeruser=docker-user
-        dockerhomedir=/home/docker-user
-    fi
-    opts="${opts} -e USER=${dockeruser} -u ${dockeruser}"
+    echo "Platform $(uname) is not supported"
+    exit 1
 fi
 
 

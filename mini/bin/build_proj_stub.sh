@@ -4,20 +4,23 @@ if [ ! -d "${thisdir}/.git" ]; then
     exit 1
 fi
 
+REPO=$(basename "${thisdir}")
 
 PUSH=no
 if [ -z ${TRAVIS_BRANCH+x} ]; then
-    BRANCH=$(cat "${thisdir}/.git/HEAD")
-    BRANCH="${BRANCH##*/}"
+    if [ -d "${thisdir}/.git" ]; then
+        BRANCH=$(cat "${thisdir}/.git/HEAD")
+        BRANCH="${BRANCH##*/}"
+    else
+        BRANCH=branch
+    fi
 else
+    # `TRAVIS_BRANCH` is defined; this is happening on Github.
     BRANCH=${TRAVIS_BRANCH}
-    if [[ "${BRANCH}" == master ]] || [[ "${BRANCH}" == develop ]]; then
+    if [[ "${BRANCH}" == release ]] || [[ "${BRANCH}" == master ]]; then
         PUSH=yes
     fi
 fi
-
-
-REPO=$(basename "${thisdir}")
 
 
 function build-dev {
@@ -34,6 +37,12 @@ function build-branch {
     mkdir -p ${build_dir}
     cp -rf "${thisdir}" "${build_dir}/src"
 
+    if [ -f "${thisdir}/setup.py" ]; then
+        has_setup_py=yes
+    else
+        has_setup_py=no
+    fi
+
     cat > "${build_dir}/Dockerfile" << EOF
 ARG PARENT
 FROM \${PARENT}
@@ -43,7 +52,7 @@ RUN mkdir -p /tmp/build
 COPY src/ /tmp/build
 
 RUN cd /tmp/build \\
-    && pip-install . \\
+    && if [ "${has_setup_py}" == yes ]; then pip-install . ; fi \\
     && rm -rf /opt/${REPO} && mkdir -p /opt/${REPO} \\
     && mkdir -p bin tests \\
     && mv -f bin tests "/opt/${REPO}/" \\
@@ -60,7 +69,7 @@ EOF
 }
 
 
-if [[ "${BRANCH}" == master ]]; then
+if [[ "${BRANCH}" == release ]]; then
     old_branch_img=$(find-latest-image zppz/${REPO}-${BRANCH})
     build-branch || exit 1
     new_branch_img=$(find-latest-image zppz/${REPO}-${BRANCH})

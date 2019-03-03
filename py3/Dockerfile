@@ -14,18 +14,8 @@ RUN groupadd --gid 1000 docker \
 
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
 
-# If root privilage is needed, install `sudo`, and add
-# RUN usermod -a -G sudo docker-user \
-#   && echo 'docker-user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/docker-user \
-#   && chmod 0440 /etc/sudoers.d/docker-user
 
-# Subsequently, when you use `sudo command ...`, the environment is different.
-# To preserve environment, use the `-E -H` options.
-# However, strangely, `PYTHONPATH` is not preserved.
-# You can simply do this:
-#   sudo PYTHONPAH=$PYTHONPATH command ...
-
-COPY dotfiles/bash/bashrc /etc/bash.bashrc
+COPY dotfiles/bash/bash.bashrc /etc/
 RUN chmod +r /etc/bash.bashrc
 
 ENV SHELL=/bin/bash
@@ -105,15 +95,18 @@ RUN apt-update \
 # astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
 
 
-COPY dotfiles/ptpython/config.py /home/docker-user/.ptpython/
 
 RUN pip-install  \
         'ptpython==2.0.4' \
         'pylint==2.2.2' \
         'mypy==0.670' \
         'yapf==0.26.0' \
-        'black==18.9b0' \
-    && chown -R docker-user /home/docker-user/.ptpython
+        'black==18.9b0'
+
+COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
+COPY dotfiles/ptpython/ptpython /usr/local/bin/
+COPY dotfiles/ptpython/ptipython /usr/local/bin/
+
 
 # Use `yapf` to format Python code in-place:
 #   yapf -ir -vv --no-local-style .
