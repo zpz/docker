@@ -3,105 +3,78 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
-#---------------
-# group and user
 
-RUN groupadd --gid 1000 docker \
-    && mkdir -p /home/docker-user \
-    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
-    && chown -R docker-user:docker /home/docker-user \
-    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
-
-# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
-
-
-COPY dotfiles/bash/bash.bashrc /etc/
-RUN chmod +r /etc/bash.bashrc
-
-ENV SHELL=/bin/bash
-
-# COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
-# This controls behavior of `pip` when we use it to install Python packages.
-# In particular, the config instructs `pip` to not save cache, hence reducing size
-# of the resultant Docker image.
-# Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
-
-# COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-
-
-COPY bin/* /usr/local/bin/
+COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
+COPY bin/apt-update bin/apt-install bin/apt-remove bin/apt-clean /usr/local/bin/
 
 
 #-------------------------
 # The very basic utilities
 
-# apt-utils=1.4.9
-
 RUN apt-update \
     && apt-install \
         bzip2=1.0.6-8.1 \
-        curl=7.52.1-5+deb9u9 \
-        less=481-2.1 \
-        tree=1.7.0-5 \
-        unzip=6.0-21 \
-        xz-utils=5.2.2-1.2+b1 \
+        curl=7.58.0-2ubuntu3.6 \
+        less=487-0.1 \
+        unzip=6.0-21ubuntu1 \
+        xz-utils=5.2.2-1.3 \
+        apt-utils=1.6.8 \
     && apt-clean
 
-
-#===== BEGIN dev tools =====
 
 #---------------
 # C/C++ compiler
 
-# ENV GCC_VERSION=8.2.0-15
-# RUN echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" > /etc/apt/sources.list.d/mygccrepo.list \
-#     && apt-update \
-#     && apt-install \
-#         gcc-8=${GCC_VERSION} \
-#         g++-8=${GCC_VERSION} \
-#         make=4.2.1-1.2 \
-#     && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
-#     && ln -s /usr/bin/g++-8 /usr/bin/g++ \
-#     && ldconfig \
-#     \
-#     && rm -f /etc/apt/sources.list.d/mygccrepo.list \
-#     && apt-clean \
-#     && rm -rf /tmp/*
-
-ENV GCC_VERSION=6.3.0-18+deb9u1
+ENV GCC_VERSION=8.2.0-1ubuntu2~18.04
 RUN apt-update \
     && apt-install \
-        gcc-6=${GCC_VERSION} \
-        g++-6=${GCC_VERSION} \
-        libc6-dev=2.24-11+deb9u4 \
-        make=4.1-9.1 \
-    && ln -s /usr/bin/gcc-6 /usr/bin/gcc \
-    && ln -s /usr/bin/g++-6 /usr/bin/g++ \
+        gcc-8=${GCC_VERSION} \
+        g++-8=${GCC_VERSION} \
+        libc6-dev=2.27-3ubuntu1 \
+        make=4.1-9.1ubuntu1 \
+    && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
+    && ln -s /usr/bin/g++-8 /usr/bin/g++ \
     && ldconfig \
     \
     && apt-clean
 
-# Install `astyle` instead of `clang-format`, because
-# I don't like the latter's dependency on LLVM.
 
-# ARG ASTYLE_VERSION=3.1
-# ARG ASTYLE_URL=https://sourceforge.net/projects/astyle/files/astyle/astyle%20${ASTYLE_VERSION}/astyle_${ASTYLE_VERSION}_linux.tar.gz/download
+#--------------
+# Python 3
 
-# RUN curl -skL --retry 3 ${ASTYLE_URL} | tar xz -C /tmp \
-#     && ( cd /tmp/astyle/build/gcc && make && mv bin/astyle /usr/local/bin)
+ENV PYTHON_VERSION=3.6.7-1~18.04
+RUN apt-update \
+    && apt-install \
+        python3=${PYTHON_VERSION} \
+        python3-dev=${PYTHON_VERSION} \
+        python3-pip=9.0.1-2.3~ubuntu1 \
+    && ln -s /usr/bin/python3 /usr/bin/python \
+    && ln -s /usr/bin/pip3 /usr/bin/pip \
+    && ln -s /usr/bin/python3-config /usr/bin/python-config \
+    && apt-clean
 
-# A reasonable way to use astyle:
-#
-# astyle --style=kr --indent-modifiers --indent-switches --pad-oper --add-braces --preserve-date --recursive --suffix=none ./"*.h, *.cc, *.hpp, *.cpp"
+COPY bin/pip-install /usr/local/bin/
+COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
+# This controls behavior of `pip` when we use it to install Python packages.
+# In particular, the config instructs `pip` to not save cache, hence reducing size
+# of the resultant Docker image.
+# Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
 
 
+#--------------------
+# Very commonly useful packages for code development,
+# which are not dependencies for code execution.
+
+RUN pip-install \
+        'pip==19.0.3' \
+        'setuptools==40.8.0'
 
 RUN pip-install  \
         'ptpython==2.0.4' \
-        'pylint==2.2.2' \
+        'pylint==2.3.1' \
         'mypy==0.670' \
-        'yapf==0.26.0' \
-        'black==18.9b0'
+        'black==18.9b0' \
+        'pytest==4.3.0'
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
@@ -141,9 +114,6 @@ COPY dotfiles/ptpython/ptipython /usr/local/bin/
 # one needs to install the system package `graphviz` and Python package `graphviz`.
 
 
-#===== END dev tools =====
-
-
 #-----------------------------------------
 # Jupyter notebook
 #
@@ -154,8 +124,8 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
-        'ipython==7.2.0' \
-        'notebook==5.7.4' \
+        'ipython==7.3.0' \
+        'notebook==5.7.6' \
         'jupyterlab==0.35.4' \
         'ipywidgets==7.4.2' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
@@ -163,18 +133,22 @@ RUN pip-install \
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
 
 
-# ------------------------------
-# Other widely useful packages
+#-----------------
+# group and user
+#
+# Put this section at the end so that the installations above
+# do not accidentally assume existence of this particular user.
+
+RUN groupadd --gid 1000 docker \
+    && mkdir -p /home/docker-user \
+    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
+    && chown -R docker-user:docker /home/docker-user \
+    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
+
+# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
 
 
-RUN pip-install  \
-        'boltons==18.0.1' \
-        'cytoolz==0.9.0.1' \
-        'requests==2.21.0' \
-        \
-        'Faker==1.0.2' \
-        'pytest==4.1.1' \
-        \
-        'numpy==1.16.0' \
-        'scipy==1.2.0' \
-        'numba==0.42.0'
+COPY dotfiles/bash/bash.bashrc /etc/
+RUN chmod +r /etc/bash.bashrc
+
+ENV SHELL=/bin/bash

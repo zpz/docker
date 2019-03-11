@@ -1,8 +1,4 @@
 thisdir="$( pwd )"
-if [ ! -d "${thisdir}/.git" ]; then
-    echo "Please `cd` the root level of the repo and try again"
-    exit 1
-fi
 
 REPO=$(basename "${thisdir}")
 
@@ -37,12 +33,6 @@ function build-branch {
     mkdir -p ${build_dir}
     cp -rf "${thisdir}" "${build_dir}/src"
 
-    if [ -f "${thisdir}/setup.py" ]; then
-        has_setup_py=yes
-    else
-        has_setup_py=no
-    fi
-
     cat > "${build_dir}/Dockerfile" << EOF
 ARG PARENT
 FROM \${PARENT}
@@ -52,14 +42,12 @@ RUN mkdir -p /tmp/build
 COPY src/ /tmp/build
 
 RUN cd /tmp/build \\
-    && if [ "${has_setup_py}" == yes ]; then pip-install . ; fi \\
+    && if [ -f setup_py ]; then pip-install . ; fi \\
     && rm -rf /opt/${REPO} && mkdir -p /opt/${REPO} \\
     && mkdir -p bin tests \\
     && mv -f bin tests "/opt/${REPO}/" \\
     && cd / \\
     && rm -rf /tmp/build
-
-ENV PATH=/opt/${REPO}/bin:\${PATH}
 EOF
 
     echo zppz/${REPO} > "${build_dir}/parent"

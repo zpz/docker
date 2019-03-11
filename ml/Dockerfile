@@ -7,6 +7,10 @@ USER root
 
 
 RUN pip-install \
+        'numpy==1.16.0' \
+        'scipy==1.2.0' \
+        'numba==0.42.0' \
+        \
         'pandas==0.24.0' \
         'scikit-learn==0.20.2' \
         'statsmodels==0.9.0' \

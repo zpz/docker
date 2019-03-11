@@ -90,7 +90,7 @@ LIGHTYELLOW="${B}0;33${E}"
 #export PS1='[\u: \w] $ '
 
 WINDOWTITLE="\[\e]2;$(if [[ -n "$IMAGE_NAME" ]]; then echo "[ $IMAGE_NAME ]  "; else echo "[ docker ]  "; fi)\W\a\]"
-PS1="${WINDOWTITLE}\n[\u @ $(host_prompt)] ${BLUE}\w${S}\$(git_prompt)\n\$ "
+PS1="${WINDOWTITLE}\n[\u in $(host_prompt)] ${BLUE}\w${S}\$(git_prompt)\n\$ "
   # window-title new-line
   # user-name@host-name in current-directory [branch] new-line
   # $

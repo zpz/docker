@@ -201,15 +201,16 @@ if [[ "${imagename}" == zppz/* ]]; then
 else
     is_ext_image=yes
 fi
+imagename_base="${imagename##*/}"
 
 is_dev_image=no
-if [[ " dl jekyll mini py3r latex ml py3 " == *" ${imagename#zppz/} "* ]]; then
+if [[ " dl jekyll mini py3r latex ml py3 " == *" ${imagename_base} "* ]]; then
     is_base_image=yes
 else
     is_base_image=no
     if [[ "${is_ext_image}" == no ]]; then
-        if [[ "${imagename}" != *-* ]]; then
-            if [ -d "${hostworkdir}/src/${imagename}/src" ]; then
+        if [[ "${imagename_base}" != *-* ]]; then
+            if [ -d "${hostworkdir}/src/${imagename_base}/src" ]; then
                 is_dev_image=yes
             fi
         fi
@@ -275,19 +276,19 @@ opts="${opts}
 --init"
 
 if [[ "${is_ext_image}" == no ]] && [[ "${is_base_image}" == no ]]; then
-    LOGDIR_h="${hostworkdir}/log/${imagename}"
+    LOGDIR_h="${hostworkdir}/log/${imagename_base}"
     LOGDIR_d="${dockerhomedir}/log"
     mkdir -p "${LOGDIR_h}"
     opts="${opts} -v ${LOGDIR_h}:${LOGDIR_d}"
     opts="${opts} -e LOGDIR=${LOGDIR_d}"
 
-    DATADIR_h="${hostworkdir}/data/${imagename}"
+    DATADIR_h="${hostworkdir}/data/${imagename_base}"
     DATADIR_d="${dockerhomedir}/data"
     mkdir -p "${DATADIR_h}"
     opts="${opts} -v ${DATADIR_h}:${DATADIR_d}"
     opts="${opts} -e DATADIR=${DATADIR_d}"
 
-    CFGDIR_h="${hostworkdir}/config/${imagename}"
+    CFGDIR_h="${hostworkdir}/config/${imagename_base}"
     CFGDIR_d="${dockerhomedir}/config"
     mkdir -p "${CFGDIR_h}"
     opts="${opts} -v ${CFGDIR_h}:${CFGDIR_d}"
@@ -302,7 +303,7 @@ opts="${opts} -e TMPDIR=${TMPDIR_d}"
 
 
 if [[ "${is_dev_image}" == yes ]]; then
-    opts="${opts} -v ${hostworkdir}/src/${imagename}:${dockerhomedir}/src"
+    opts="${opts} -v ${hostworkdir}/src/${imagename_base}:${dockerhomedir}/src"
     if [[ "${with_pythonpath}" == yes ]]; then
         opts="${opts} -e PYTHONPATH=${dockerhomedir}/src/src"
     fi
