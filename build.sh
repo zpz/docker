@@ -24,7 +24,7 @@ if [ ! -d "${thisdir}/.git" ]; then
     exit 1
 fi
 
-source "${thisdir}/mini/bin/docker_build_utils.sh"
+source "${thisdir}/mini/bin/utils.sh"
 
 
 function add-image {
