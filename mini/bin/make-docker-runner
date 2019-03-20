@@ -5,4 +5,4 @@ thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
 
 cat "${thisdir}/utils.sh"
 echo
-cat "${thisdir}/proj_builder_stub.sh"
+cat "${thisdir}/docker_runner_stub.sh"

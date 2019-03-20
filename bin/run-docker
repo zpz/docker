@@ -70,5 +70,5 @@ if [[ "${IMG}" == - ]]; then
     exit 1
 fi
 
-cmd="$(docker run --rm ${IMG} cat /usr/local/bin/docker-run)"
+cmd="$(docker run --rm ${IMG} make-docker-runner)"
 bash -c "${cmd}" -- $@

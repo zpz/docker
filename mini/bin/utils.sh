@@ -22,7 +22,7 @@ function get-image-tags-local {
         echoerr "image name '${name}' already contains tag"
         return 1
     fi
-    tags=$(docker images "${name}" --format "{{.Tag}}" )
+    tags=$(docker images "${name}" --format "{{.Tag}}" ) || return 1
     if [[ "${tags}" == '' ]]; then
         echo -
     else
@@ -47,11 +47,11 @@ function get-image-tags-remote {
         return 1
     fi
     url=https://hub.docker.com/v2/repositories/${name}/tags
-    tags="$(curl -L -s ${url} | tr -d '{}[]"' | tr ',' '\n' | grep name)"
+    tags="$(curl -L -s ${url} | tr -d '{}[]"' | tr ',' '\n' | grep name)" || return 1
     if [[ "$tags" == "" ]]; then
         echo -
     else
-        tags="$(echo $tags | sed 's/name: //g' | sed 's/results: //g')"
+        tags="$(echo $tags | sed 's/name: //g' | sed 's/results: //g')" || return 1
         echo "${tags}"
     fi
 }
@@ -66,7 +66,7 @@ function has-image-local {
         echoerr "input image '${name}' does not contain tag"
         return 1
     fi
-    tag=$(docker images "${name}" --format "{{.Tag}}" )
+    tag=$(docker images "${name}" --format "{{.Tag}}" ) || return 1
     if [[ "${tag}" != '' ]]; then
         echo yes
     else
@@ -88,7 +88,7 @@ function has-image-remote {
     else
         tag="${name##*:}"
         name="${name%:*}"
-        tags=$(get-image-tags-remote "${name}")
+        tags=$(get-image-tags-remote "${name}") || return 1
         if [[ "${tags}" == *" ${tag} "* ]]; then
             echo yes
         else
@@ -110,13 +110,14 @@ function find-latest-image-local {
     name="$1"
     if [[ "${name}" == zppz/* ]]; then
         if [[ "${name}" == *:* ]]; then
-            if [[ $(has-image-local "${name}") == yes ]]; then
+            z=$(has-image-local "${name}") || return 1
+            if [[ "${z}" == yes ]]; then
                 echo "${name}"
             else
                 echo -
             fi
         else
-            tag=$(docker images "${name}" --format "{{.Tag}}" | sort | tail -n 1)
+            tag=$(docker images "${name}" --format "{{.Tag}}" | sort | tail -n 1) || return 1
             if [[ "${tag}" == '' ]]; then
                 echo -
             else
@@ -129,7 +130,8 @@ function find-latest-image-local {
             return 1
         fi
 
-        if [[ $(has-image-local "${name}") == yes ]]; then
+        z=$(has-image-local "${name}") || return 1
+        if [[ "${z}" == yes ]]; then
             echo "${name#library/}"
         else
             echo -
@@ -141,7 +143,8 @@ function find-latest-image-local {
 function find-latest-image-remote {
     name="$1"
     if [[ "${name}" == *:* ]]; then
-        if [[ $(has-image-remote "${name}") == yes ]]; then
+        z=$(has-image-remote "${name}") || return 1
+        if [[ "${z}" == yes ]]; then
             echo "${name}"
         else
             echo -
@@ -151,9 +154,9 @@ function find-latest-image-remote {
             echoerr "image '${name}' must have its exact tag specified"
             return 1
         fi
-        tags="$(get-image-tags-remote ${name})"
+        tags="$(get-image-tags-remote ${name})" || return 1
         if [[ "${tags}" != '-' ]]; then
-            tag=$(echo "${tags}" | tr ' ' '\n' | sort -r | head -n 1)
+            tag=$(echo "${tags}" | tr ' ' '\n' | sort -r | head -n 1) || return 1
             echo "${name}:${tag}"
         else
             echo -
@@ -189,7 +192,7 @@ function build-image {
     BUILDDIR="$1"
     NAME="$2"
     
-    parent=$(cat "${BUILDDIR}/parent")
+    parent=$(cat "${BUILDDIR}/parent") || return 1
     PARENT=$(find-latest-image ${parent}) || return 1
     if [[ "${PARENT}" == - ]]; then
         echoerr "Unable to find parent image '${parent}'"
@@ -219,8 +222,8 @@ function build-image {
 
     new_img="${FULLNAME}"
     if [[ "${old_img}" != - ]]; then
-        old_id=$(find-image-id-local "${old_img}")
-        new_id=$(find-image-id-local "${new_img}")
+        old_id=$(find-image-id-local "${old_img}") || return 1
+        new_id=$(find-image-id-local "${new_img}") || return 1
         echo
         echo "old_img: ${old_img}"
         echo "new_img: ${new_img}"
@@ -230,6 +233,9 @@ function build-image {
             echo
             echo "Newly built image is identical to an older build; discarding the new tag..."
             docker rmi "${new_img}"
+        else
+            echo "Deleting the old image..."
+            docker rmi "${old_img}"
         fi
     fi
 }

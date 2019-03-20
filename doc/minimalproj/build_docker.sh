@@ -54,5 +54,5 @@ if [[ "${IMG}" == - ]]; then
     exit 1
 fi
 
-cmd="$(docker run --rm ${IMG} /usr/local/bin/make-proj-builder)"
+cmd="$(docker run --rm ${IMG} make-proj-builder)"
 bash -c "${cmd}" -- $@

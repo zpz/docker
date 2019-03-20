@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 #set -o errexit
 set -o nounset
 set -o pipefail
@@ -38,7 +36,7 @@ with_pythonpath=yes
 daemon_mode=no
 as_root=no
 pull=no
-
+nb_port=8888
 
 # Parse arguments.
 # Before the argument for image name,
@@ -61,6 +59,12 @@ while [[ $# > 0 ]]; do
         elif [[ "$1" == -e ]]; then
             shift
             opts="${opts} -e $1"
+        elif [[ "$1" == --nb_port ]]; then
+            shift
+            nb_port="$1"
+        elif [[ "$1" == --nb_port=* ]]; then
+            nb_port="$1"
+            nb_port="${nb_port#*=}"
         elif [[ "$1" == "--no-pythonpath" ]]; then
             with_pythonpath=no
         elif [[ "$1" == "--root" ]]; then
@@ -90,15 +94,6 @@ if [[ "${imagename}" == "" ]]; then
     echo "${USAGE}"
     exit 1
 fi
-
-
-###############################################
-## Common content with ./docker_build_utils.sh
-## Use that version as reference.
-
-function echoerr {
-    >&2 echo "$@"
-}
 
 
 function find-latest-image-local {
@@ -182,7 +177,7 @@ function has-image-local {
         echoerr "input image '${name}' does not contain tag"
         return 1
     fi
-    tag=$(docker images "${name}" --format "{{.Tag}}" )
+    tag=$(docker images "${name}" --format "{{.Tag}}" ) || return 1
     if [[ "${tag}" != '' ]]; then
         echo yes
     else
@@ -190,8 +185,6 @@ function has-image-local {
     fi
 }
 
-## End of common content.
-############################
 
 hostworkdir="${HOME}/work"
 
@@ -237,10 +230,28 @@ else
         exit 1
     fi
     if [[ "${pull}" == yes ]]; then
-        imagefullname=$(find-latest-image ${imagename}) || exit 1
-        if [[ "${imagefullname}" == - ]]; then
-            echoerr "Unable to find image '${imagename}'"
-            exit 1
+        imagefullname_lo=$(find-latest-image-local ${imagename}) || exit 1
+        imagefullname_re=$(find-latest-image-remote ${imagename}) || exit 1
+        if [[ "${imagefullname_lo}" == - ]]; then
+            if [[ "${imagefullname_re}" == - ]]; then
+                echoerr "Unable to find image ${imagename}"
+                exit 1
+            else
+                imagefullname=${imagefullname_re}
+                docker pull "${imagefullname}"
+            fi
+        elif [[ "${imagefullname_re}" == - ]]; then
+            if [[ "${imagefullname_lo}" == - ]]; then
+                echoerr "Unable to find image ${imagename}"
+                exit 1
+            else
+                imagefullname=${imagefullname_lo}
+            fi
+        elif [[ "${imagefullname_lo}" < "${imagefullname_re}" ]]; then
+            docker pull "${imagefullname_re}"
+            docker rmi "${imagefullname_lo}"
+        else
+            imagefulename="${imagefullname_lo}"
         fi
     else
         imagefullname=$(find-latest-image-local ${imagename}) || exit 1
@@ -310,8 +321,8 @@ if [[ "${is_dev_image}" == yes ]]; then
 fi
 
 if [[ "${command}" == "notebook" ]]; then
-    opts="${opts} --expose=8888 -p 8888:8888"
-    command="jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${dockerhomedir}' --NotebookApp.token=''"
+    opts="${opts} --expose=${nb_port} -p ${nb_port}:${nb_port}"
+    command="jupyter notebook --port=${nb_port} --no-browser --ip=0.0.0.0 --NotebookApp.notebook_dir='${dockerhomedir}' --NotebookApp.token=''"
 elif [[ "${command}" == "py.test" ]]; then
     args="-p no:cacheprovider ${args}"
 fi
