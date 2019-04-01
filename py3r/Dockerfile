@@ -34,8 +34,6 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
-# To supprese the "geographic area" prompt related to `tzdata`:
-ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-update \
     && apt-install \

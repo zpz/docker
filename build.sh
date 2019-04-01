@@ -112,20 +112,20 @@ function main {
         fi
     done
 
-    echo
-    echo "Finished building new images: ${new_images[@]}"
-    echo
+    >&2 echo
+    >&2 echo "Finished building new images: ${new_images[@]}"
+    >&2 echo
 
     if [[ "${PUSH}" == yes ]] && [[ "${new_images}" != '' ]]; then
-        echo
-        echo
-        echo '=== pushing images to Dockerhub ==='
+        >&2 echo
+        >&2 echo
+        >&2 echo '=== pushing images to Dockerhub ==='
         docker login --username ${DOCKERHUBUSERNAME} --password ${DOCKERHUBPASSWORD} || return 1
-        echo
+        >&2 echo
         new_images=( ${new_images} )
         for img in "${new_images[@]}"; do
-            echo
-            echo "pushing ${img}"
+            >&2 echo
+            >&2 echo "pushing ${img}"
             docker push "${img}" || return 1
         done
     fi
@@ -155,7 +155,7 @@ else
     # IMAGES=( $(find-images) ) || exit 1
     IMAGES=( py3 ml dl py3r )
 fi
-echo "IMAGES: ${IMAGES[@]}"
+>&2 echo "IMAGES: ${IMAGES[@]}"
 
 # The images are pushed to Dockerhub only when built at github
 # by the integrated Travis-CI in branch `master`.
@@ -171,6 +171,6 @@ if [[ ${BRANCH} == master ]]; then
 else
     PUSH=no
 fi
-echo "PUSH: ${PUSH}"
+>&2 echo "PUSH: ${PUSH}"
 
 main

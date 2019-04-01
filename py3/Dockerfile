@@ -8,11 +8,15 @@ COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
 COPY bin/apt-update bin/apt-install bin/apt-remove bin/apt-clean /usr/local/bin/
 
 
+# To supprese the "geographic area" prompt related to `tzdata`:
+ENV DEBIAN_FRONTEND=noninteractive
+
 #-------------------------
 # The very basic utilities
 
 RUN apt-update \
     && apt-install \
+        apt-utils \
         bzip2 \
         curl \
         less \
