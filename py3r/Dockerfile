@@ -34,30 +34,18 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
-ENV R_VERSION=3.3.3-1
+# To supprese the "geographic area" prompt related to `tzdata`:
+ENV DEBIAN_FRONTEND=noninteractive
 
-# RUN apt-get update \
-#     && apt-get install -y --no-install-recommends \
-#         gnupg2 \
-#         dirmngr \
-#     \
-#     && echo 'deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/' > /etc/apt/sources.list.d/myrrepo.list \
-#     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FCAE2A0E115C3D8A \
-#     && apt-get update \
 RUN apt-update \
     && apt-install \
-        r-base=${R_VERSION} \
-        r-base-dev=${R_VERSION} \
+        r-base \
+        r-base-dev \
     \
-    && pip-install 'rpy2==2.9.5' \
+    && pip-install rpy2 \
     \
-    && apt-remove r-base-dev \
     && apt-clean \
     && rm -rf /tmp/*
-#     && rm -rf /var/lib/apt/lists/* /tmp/* \
-#     && rm -f /etc/apt/sources.list.d/myrrepo.list
-
-# `gnupg2` and `dirmngr` are needed to run `apt-key`.
 
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin

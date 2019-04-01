@@ -16,13 +16,16 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias grep='grep --color'
 
+export LS_COLORS=$LS_COLORS:'di=0;36:'
 
 # Customize command prompt. This is a big section---
 
 function git_branch {
     # -- Finds and outputs the current branch name.
     # -- If not in a Git repository, prints nothing
-    path=$(pwd)
+    local path=$(pwd)
+    local ff
+    local line
     while true; do
         ff="$path/.git/HEAD"
         if [[ -f "$ff" ]]; then
@@ -47,6 +50,8 @@ function git_prompt {
     # Empty output? Then we're not in a Git repository, so bypass the rest
     # of the function, producing no output
     if [[ -n "$branch" ]]; then
+        local color
+        local reset
         if [[ "$branch" == 'master' || "$branch" == release* || "$branch" == RELEASE* ]]; then
             color='\033[1;31m'  # red
         else
@@ -90,7 +95,12 @@ LIGHTYELLOW="${B}0;33${E}"
 #export PS1='[\u: \w] $ '
 
 WINDOWTITLE="\[\e]2;$(if [[ -n "$IMAGE_NAME" ]]; then echo "[ $IMAGE_NAME ]  "; else echo "[ docker ]  "; fi)\W\a\]"
-PS1="${WINDOWTITLE}\n[\u in $(host_prompt)] ${BLUE}\w${S}\$(git_prompt)\n\$ "
+if [ $(whoami) = root ]; then
+    PS1="${WINDOWTITLE}\n[${RED}\u${S} in $(host_prompt)] ${ORANGE}\w${S}\$(git_prompt)\n\$ "
+else
+    PS1="${WINDOWTITLE}\n[\u in $(host_prompt)] ${ORANGE}\w${S}\$(git_prompt)\n\$ "
+fi
+
   # window-title new-line
   # user-name@host-name in current-directory [branch] new-line
   # $

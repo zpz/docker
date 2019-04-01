@@ -13,27 +13,35 @@ COPY bin/apt-update bin/apt-install bin/apt-remove bin/apt-clean /usr/local/bin/
 
 RUN apt-update \
     && apt-install \
-        bzip2=1.0.6-8.1 \
-        curl=7.58.0-2ubuntu3.6 \
-        less=487-0.1 \
-        unzip=6.0-21ubuntu1 \
-        xz-utils=5.2.2-1.3 \
-        apt-utils=1.6.8 \
+        bzip2 \
+        curl \
+        less \
+        unzip \
+        xz-utils \
+        apt-utils \
     && apt-clean
 
 
 #---------------
 # C/C++ compiler
 
-ENV GCC_VERSION=8.2.0-1ubuntu2~18.04
 RUN apt-update \
     && apt-install \
-        gcc-8=${GCC_VERSION} \
-        g++-8=${GCC_VERSION} \
-        libc6-dev=2.27-3ubuntu1 \
-        make=4.1-9.1ubuntu1 \
+        gcc-8 \
+        g++-8 \
+        libc6-dev \
+        make \
     && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
     && ln -s /usr/bin/g++-8 /usr/bin/g++ \
+    && ln -s /usr/bin/x86_64-linux-gnu-cpp-8 /usr/bin/x86_64-linux-gnu-cpp \
+    && ln -s /usr/bin/x86_64-linux-gnu-g++-8 /usr/bin/x86_64-linux-gnu-g++ \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcc-8 /usr/bin/x86_64-linux-gnu-gcc \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcc-ar-8 /usr/bin/x86_64-linux-gnu-gcc-ar \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcc-nm-8 /usr/bin/x86_64-linux-gnu-gcc-nm \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcc-ranlib-8 /usr/bin/x86_64-linux-gnu-gcc-ranlib \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcov-8 /usr/bin/x86_64-linux-gnu-gcov \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcov-dump-8 /usr/bin/x86_64-linux-gnu-gcov-dump \
+    && ln -s /usr/bin/x86_64-linux-gnu-gcov-tool-8 /usr/bin/x86_64-linux-gnu-gcov-tool \
     && ldconfig \
     \
     && apt-clean
@@ -42,12 +50,11 @@ RUN apt-update \
 #--------------
 # Python 3
 
-ENV PYTHON_VERSION=3.6.7-1~18.04
 RUN apt-update \
     && apt-install \
-        python3=${PYTHON_VERSION} \
-        python3-dev=${PYTHON_VERSION} \
-        python3-pip=9.0.1-2.3~ubuntu1 \
+        python3 \
+        python3-dev \
+        python3-pip \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && ln -s /usr/bin/pip3 /usr/bin/pip \
     && ln -s /usr/bin/python3-config /usr/bin/python-config \
@@ -66,15 +73,15 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # which are not dependencies for code execution.
 
 RUN pip-install \
-        'pip==19.0.3' \
-        'setuptools==40.8.0'
+        'pip' \
+        'setuptools'
 
 RUN pip-install  \
-        'ptpython==2.0.4' \
-        'pylint==2.3.1' \
-        'mypy==0.670' \
-        'black==18.9b0' \
-        'pytest==4.3.0'
+        'ptpython' \
+        'pylint' \
+        'mypy' \
+        'black' \
+        'pytest'
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
@@ -124,10 +131,10 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
-        'ipython==7.3.0' \
-        'notebook==5.7.6' \
-        'jupyterlab==0.35.4' \
-        'ipywidgets==7.4.2' \
+        'ipython' \
+        'notebook' \
+        'jupyterlab' \
+        'ipywidgets' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.

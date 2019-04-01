@@ -7,19 +7,19 @@ USER root
 
 
 RUN pip-install \
-        https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp37-cp37m-linux_x86_64.whl \
-        torchvision==0.2.1 \
-        torchtext==0.3.1
+        https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl \
+        torchvision \
+        torchtext
 
-RUN pip-install tensorflow tensorflow-probability
+RUN pip-install tensorflow==2.0.0a0 tensorflow-probability
 
 RUN pip-install \
-        'nltk==3.4' \
-        'textblob==0.15.2' \
+        'nltk' \
+        'textblob' \
     && python -m nltk.downloader -d /usr/share/nltk_data \
         brown punkt wordnet averaged_perceptron_tagger \
         conll2000 movie_reviews \
-    && pip-install 'spacy==2.0.18' \
+    && pip-install 'spacy' \
     && python -m spacy download en
 
-RUN pip-install matplotlib==3.0.2
+RUN pip-install matplotlib
