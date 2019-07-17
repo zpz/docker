@@ -15,8 +15,7 @@ RUN pip-install \
         'scikit-learn' \
         'statsmodels' \
         'xgboost' \
-        'cvxpy' \
-        'lifelines'
+        'cvxpy'
 
 
 RUN apt-update \
@@ -29,12 +28,16 @@ RUN apt-update \
 
 
 RUN pip-install \
+        'nltk' \
+        'textblob' \
+    && python -m nltk.downloader -d /usr/share/nltk_data \
+        brown punkt wordnet averaged_perceptron_tagger \
+        conll2000 movie_reviews \
+    && pip-install 'spacy' \
+    && python -m spacy download en
+
+
+RUN pip-install \
         'bokeh' 'holoviews' 'chartify' \
         'matplotlib' 'seaborn' 'altair' \
-        'plotly' 'dash'
-
-# 'gif' support in Holoviews requires ImageMagick
-RUN apt-update \
-    && apt-install \
-        imagemagick \
-    && apt-clean
+        'plotly'

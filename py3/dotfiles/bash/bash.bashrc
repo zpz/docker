@@ -8,9 +8,9 @@ shopt -s checkwinsize
 # Basic aliases
 alias ..='cd ..'
 alias back='cd -'
-alias ls='ls -FGh --color'
+alias ls='ls -Fh --color'
 alias ll='ls -lA --color'
-alias dir='ls -alg --color'
+alias dir='ls -al --color'
 alias cp='cp -i'
 alias rm='rm -i'
 alias mv='mv -i'

@@ -19,10 +19,11 @@ RUN apt-update \
         apt-utils \
         bzip2 \
         curl \
+        iputils-ping \
         less \
+        telnet \
         unzip \
         xz-utils \
-        apt-utils \
     && apt-clean
 
 
@@ -52,7 +53,7 @@ RUN apt-update \
 
 
 #--------------
-# Python 3
+# Python 3.6
 
 RUN apt-update \
     && apt-install \
@@ -83,8 +84,7 @@ RUN pip-install \
 RUN pip-install  \
         'ptpython' \
         'pylint' \
-        'mypy' \
-        'black' \
+        'pyflakes' \
         'pytest'
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
@@ -113,6 +113,7 @@ COPY dotfiles/ptpython/ptipython /usr/local/bin/
 # installed on the hosting machine 'natively'.
 
 # Other useful packages:
+#    black
 #    coverage
 #    flake8
 #    pudb
@@ -120,7 +121,7 @@ COPY dotfiles/ptpython/ptipython /usr/local/bin/
 #    radon
 #    memory_profiler
 
-# Decided to not install Spinx; install it in specific images where needed.
+# Decided to not install Sphinx; install it in specific images where needed.
 # To generate some graphs such as class hierarchy diagrams with `Sphinx`,
 # one needs to install the system package `graphviz` and Python package `graphviz`.
 

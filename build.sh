@@ -16,42 +16,6 @@ thisfile="${BASH_SOURCE[0]}"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"
 
 
-# function add-image {
-#     local dd="$1"  # A directory name.
-#     shift
-#     if (( $# > 0)); then
-#         local images="${@}"  # Capture all remaining args as a string
-#     else
-#         local images=''
-#     fi
-
-#     if [ -e "${dd}/parent" ] && [ -e "${dd}/Dockerfile" ]; then
-#         if [[ " ${images} " != *\ ${dd}\ * ]]; then
-#             # Not yet processed and added to list.
-#             local parent="$(cat ${dd}/parent)"
-#             if [[ "${parent}" == zppz/* ]]; then
-#                 images="$(add-image ${parent#zppz/} ${images})"
-#             fi
-#             images="${images} ${dd}"
-#         fi
-#     fi
-#     echo "${images}"
-# }
-
-
-# function find-images {
-#     local images=''
-#     cd "${thisdir}"
-#     local subdirs=( $(ls -d */) )
-#     local dd
-#     for dd in "${subdirs[@]}"; do
-#         dd=${dd%%/*}
-#         images="$(add-image $dd ${images})" || return 1
-#     done
-#     echo "${images}"
-# }
-
-
 function get-latest-image {
     local name="$1"
 
@@ -142,9 +106,9 @@ if [[ "${IMG}" == '-' ]]; then
     exit 1
 fi
 
+# Need a few functions defined in the bash utility file `build_utils.sh`
 rm -f /tmp/build_utils.sh
-docker run --rm ${IMG} cat /usr/local/bin/utils.sh > /tmp/build_utils.sh
-[[ $? == 0 ]] || { >&2 echo "${IMG}"; exit 1; }
+docker run --rm ${IMG} cat /usr/local/bin/utils.sh > /tmp/build_utils.sh || exit 1
 source /tmp/build_utils.sh
 rm -f /tmp/build_utils.sh
 
@@ -152,7 +116,6 @@ rm -f /tmp/build_utils.sh
 if [[ $# > 0 ]]; then
     IMAGES=( $@ )
 else
-    # IMAGES=( $(find-images) ) || exit 1
     IMAGES=( py3 ml dl py3r )
 fi
 >&2 echo "IMAGES: ${IMAGES[@]}"
