@@ -41,3 +41,5 @@ RUN pip-install \
         'bokeh' 'holoviews' 'chartify' \
         'matplotlib' 'seaborn' 'altair' \
         'plotly'
+
+RUN pip-install dask
