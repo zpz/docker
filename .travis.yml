@@ -7,4 +7,3 @@ branches:
 install: true
 
 script: ./build.sh
-
