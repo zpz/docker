@@ -1,5 +1,4 @@
 # Docker
 
-A Python-centric stack of Docker images for data, machine learning, data science, and related work.
+A Docker base image for Python code development, emphasizing data science.
 
-Other images needed for personal work.

@@ -8,9 +8,6 @@ COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
 COPY bin/apt-update bin/apt-install bin/apt-remove bin/apt-clean /usr/local/bin/
 
 
-# To supprese the "geographic area" prompt related to `tzdata`:
-ENV DEBIAN_FRONTEND=noninteractive
-
 #-------------------------
 # The very basic utilities
 
@@ -24,45 +21,26 @@ RUN apt-update \
         telnet \
         unzip \
         xz-utils \
+    && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
     && apt-clean
 
+# `DEBIAN_FRONTEND=noninteractive` suppresses the "geographic area"
+# prompt related to `tzdata`.
 
-#---------------
-# C/C++ compiler
-
-RUN apt-update \
-    && apt-install \
-        gcc-8 \
-        g++-8 \
-        libc6-dev \
-        make \
-    && ln -s /usr/bin/gcc-8 /usr/bin/gcc \
-    && ln -s /usr/bin/g++-8 /usr/bin/g++ \
-    && ln -s /usr/bin/x86_64-linux-gnu-cpp-8 /usr/bin/x86_64-linux-gnu-cpp \
-    && ln -s /usr/bin/x86_64-linux-gnu-g++-8 /usr/bin/x86_64-linux-gnu-g++ \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcc-8 /usr/bin/x86_64-linux-gnu-gcc \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcc-ar-8 /usr/bin/x86_64-linux-gnu-gcc-ar \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcc-nm-8 /usr/bin/x86_64-linux-gnu-gcc-nm \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcc-ranlib-8 /usr/bin/x86_64-linux-gnu-gcc-ranlib \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcov-8 /usr/bin/x86_64-linux-gnu-gcov \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcov-dump-8 /usr/bin/x86_64-linux-gnu-gcov-dump \
-    && ln -s /usr/bin/x86_64-linux-gnu-gcov-tool-8 /usr/bin/x86_64-linux-gnu-gcov-tool \
-    && ldconfig \
-    \
-    && apt-clean
+# `iproute2` provides `ip`.
 
 
 #--------------
-# Python 3.6
+# Python 3
 
 RUN apt-update \
     && apt-install \
         python3 \
         python3-dev \
         python3-pip \
-    && ln -s /usr/bin/python3 /usr/bin/python \
-    && ln -s /usr/bin/pip3 /usr/bin/pip \
-    && ln -s /usr/bin/python3-config /usr/bin/python-config \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
+    && ln -sf /usr/bin/pip3 /usr/bin/pip \
+    && ln -sf /usr/bin/python3-config /usr/bin/python-config \
     && apt-clean
 
 COPY bin/pip-install /usr/local/bin/
@@ -72,20 +50,10 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
 
+# Enable printing unicode strings:
+ENV PYTHONIOENCODING=utf-8
 
-#--------------------
-# Very commonly useful packages for code development,
-# which are not dependencies for code execution.
-
-RUN pip-install \
-        'pip' \
-        'setuptools'
-
-RUN pip-install  \
-        'ptpython' \
-        'pylint' \
-        'pyflakes' \
-        'pytest'
+RUN pip-install 'setuptools==46.1.3' 'ptpython==3.0.1'
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
@@ -136,13 +104,28 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
-        'ipython' \
-        'notebook' \
-        'jupyterlab' \
-        'ipywidgets' \
+        'ipython==7.13.0' \
+        'notebook==6.0.3' \
+        'jupyterlab==2.0.1' \
+        'ipywidgets==7.5.1' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
+
+
+#-------------------------------
+# misc
+
+COPY dotfiles/bash/bash.bashrc /etc/
+RUN chmod +r /etc/bash.bashrc
+RUN rm -f /root/.bashrc /root/.profile
+
+# /opt/bin is for specific projects that want to put some executable
+# on the system path.
+RUN mkdir -p /opt/bin
+ENV PATH=/opt/bin:$PATH
+
+ENV SHELL=/bin/bash
 
 
 #-----------------
@@ -158,9 +141,3 @@ RUN groupadd --gid 1000 docker \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
-
-
-COPY dotfiles/bash/bash.bashrc /etc/
-RUN chmod +r /etc/bash.bashrc
-
-ENV SHELL=/bin/bash
