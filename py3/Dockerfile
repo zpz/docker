@@ -69,40 +69,6 @@ COPY dotfiles/ptpython/ptpython /usr/local/bin/
 COPY dotfiles/ptpython/ptipython /usr/local/bin/
 
 
-# Use `yapf` to format Python code in-place:
-#   yapf -ir -vv --no-local-style .
-#
-# Also check out `black`.
-
-# `pip install line_profiler` fails on Python 3.7.
-# See https://github.com/rkern/line_profiler/issues/132
-# Hopefully the fix will be integrated soon.
-#
-# Check out alternatives `pprofile` and `py-spy`.
-#
-# For other profilers, refer to
-#  https://devopedia.org/profiling-python-code
-
-
-# Installing `line_profiler` needs gcc.
-# Use `snakeviz` to view profiling stats.
-# `snakeviz` is not installed in this Docker image as it's better
-# installed on the hosting machine 'natively'.
-
-# Other useful packages:
-#    black
-#    coverage
-#    flake8
-#    pudb
-#    pyflakes
-#    radon
-#    memory_profiler
-
-# Decided to not install Sphinx; install it in specific images where needed.
-# To generate some graphs such as class hierarchy diagrams with `Sphinx`,
-# one needs to install the system package `graphviz` and Python package `graphviz`.
-
-
 #-----------------------------------------
 # Jupyter notebook
 #
