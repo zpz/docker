@@ -53,7 +53,16 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
 
-RUN pip-install 'setuptools==46.1.3' 'ptpython==3.0.1'
+
+#-----------------------------------------------
+# Commonly useful packages for code development
+
+RUN pip-install \
+        'ptpython==3.0.1' \
+        'pytest==5.4.1' \
+        'pytest-cov==2.8.1' \
+        'setuptools==46.1.3' \
+        'wheel==0.34.2'
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
@@ -69,7 +78,7 @@ COPY dotfiles/ptpython/ptipython /usr/local/bin/
 # See https://github.com/rkern/line_profiler/issues/132
 # Hopefully the fix will be integrated soon.
 #
-# Check out alternatives `pprofile` and `pyflame`.
+# Check out alternatives `pprofile` and `py-spy`.
 #
 # For other profilers, refer to
 #  https://devopedia.org/profiling-python-code
@@ -105,12 +114,10 @@ COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
         'ipython==7.13.0' \
-        'notebook==6.0.3' \
         'jupyterlab==2.0.1' \
-        'ipywidgets==7.5.1' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
-# `notebook` requires (and will install if not available) ipython, pyzmq, tornado, jinja2 and some other things.
+# `jupyterlab` requires (and will install if not available) ipython, notebook, pyzmq, tornado, jinja2 and some other things.
 
 
 #-------------------------------
