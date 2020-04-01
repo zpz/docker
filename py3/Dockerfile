@@ -14,6 +14,9 @@ COPY bin/apt-update bin/apt-install bin/apt-remove bin/apt-clean /usr/local/bin/
 RUN apt-update \
     && apt-install \
         apt-utils \
+        dialog \
+    && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+    && apt-install \
         bzip2 \
         curl \
         iputils-ping \
@@ -23,6 +26,7 @@ RUN apt-update \
         xz-utils \
     && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
     && apt-clean
+
 
 # `DEBIAN_FRONTEND=noninteractive` suppresses the "geographic area"
 # prompt related to `tzdata`.

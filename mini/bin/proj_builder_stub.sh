@@ -15,7 +15,7 @@ function build-dev {
 function build-branch {
     local build_dir="/tmp/${REPO}"
     rm -rf ${build_dir}
-    mkdir -p ${build_dir}
+    mkdir -p ${build_dir}/src
     [ -d ${thisdir}/src ] && cp -R ${thisdir}/src ${build_dir}/src/src
     [ -d ${thisdir}/bin ] && cp -R ${thisdir}/src ${build_dir}/src/bin
     [ -d ${thisdir}/sysbin ] && cp -R ${thisdir}/src ${build_dir}/src/sysbin
@@ -54,7 +54,7 @@ EOF
     build-image "${build_dir}" ${name} ${parent} || return 1
     rm -rf "${build_dir}"
 
-    if [[ "${PUSH}" == yes ]];
+    if [[ "${PUSH}" == yes ]]; then
         push-image ${name}
     fi
 }
