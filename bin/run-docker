@@ -15,25 +15,6 @@ for arg in "$@"; do
 fi
 
 
-# Use `run-docker dryrun ...`
-# to print out the script w/o executing it, like
-#
-#    $ run-docker dryrun --local -p 8080:8080 abc > tt.sh
-#
-# After that we can do
-#
-#    $ bash tt.sh
-#
-# and debug it.
-# `dryrun` must immediately follow `run-docker`.
-dryrun=no
-if [[ $# > 0 ]];
-    if [[ "$1" == dryrun ]]; then
-        dryrun=yes
-        shift
-fi
-
-
 ###########################################################
 ## Some common code with '../project-template/build_docker.sh';
 ## keep in sync.
@@ -85,6 +66,13 @@ function find-latest-mini {
 #############################
 
 
+if [[ $# < 1 ]]; then
+    >&2 echo "Usage:"
+    >&2 echo "    run-docker [dryrun] [options] <image>[:<tag>] [<command> [args]]"
+    exit 1
+fi
+
+
 IMG="$(find-latest-mini)" || exit 1
 if [[ "${IMG}" == - ]]; then
     echo "Unable to find image '${MINI_IMAGE_NAME}'"
@@ -92,7 +80,21 @@ if [[ "${IMG}" == - ]]; then
 fi
 
 cmd="$(docker run --rm ${IMG} /usr/local/bin/make-docker-runner)" || exit 1
-if [[ "${dryrun}" == yes ]]; then
+
+# Use `run-docker dryrun ...`
+# to print out the script w/o executing it, like
+#
+#    $ run-docker dryrun --local -p 8080:8080 abc > tt.sh
+#
+# After that we can do
+#
+#    $ bash tt.sh
+#
+# and debug it.
+# `dryrun` must immediately follow `run-docker`.
+
+if [[ "$1" == dryrun ]]; then
+    shift
     echo "# Your command-line arguments:"
     echo "set -- $@"
     echo

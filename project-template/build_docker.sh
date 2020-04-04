@@ -61,4 +61,16 @@ if [[ "${IMG}" == - ]]; then
 fi
 
 cmd="$(docker run --rm ${IMG} make-proj-builder)" || exit 1
-bash -c "${cmd}" -- $@
+
+
+if [[ $# > 0 ]] && [[ "$1" == dryrun ]]; then
+    shift
+    echo "# Your command-line arguments:"
+    echo "set -- $@"
+    echo
+    echo
+    echo "${cmd}"
+else
+    bash -c "${cmd}" -- $@
+fi
+
