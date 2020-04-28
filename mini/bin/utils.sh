@@ -224,6 +224,7 @@ function build-image {
     local BUILDDIR="$1"
     local NAME="$2"
     local parent="$3"
+    local VERSION="$4"
 
     local PARENT=$(find-latest-image ${parent}) || return 1
     if [[ "${PARENT}" == - ]]; then
@@ -237,10 +238,6 @@ function build-image {
         docker pull ${old_img} || return 1
     fi
 
-    local VERSION="$(date -u +%Y%m%dT%H%M%SZ)"
-    # UTC datetime. This works the same on Mac and Linux.
-    # Version format is like this:
-    #    20180913T081243Z
     local FULLNAME="${NAME}:${VERSION}"
 
     echo

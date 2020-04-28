@@ -89,11 +89,14 @@ function run_docker {
                 name="${name#*=}"
             elif [[ "$1" == --restart ]]; then
                 shift
+                opts="${opts} --restart $1"
                 restart="$1"
             elif [[ "$1" == --restart=* ]]; then
+                opts="${opts} $1"
                 restart="$1"
                 restart="${restart#*=}"
             elif [[ "$1" == "-d" ]] || [[ "$1" == "--detach" ]]; then
+                opts="${opts} $1"
                 daemon_mode=yes
 
             elif [[ "$1" == --hostdatadir ]]; then
@@ -160,13 +163,6 @@ function run_docker {
     if [[ "${imagename}" == "" ]]; then
         echo "${USAGE}"
         exit 1
-    fi
-
-    if [[ ${restart} != '' ]]; then
-        opts="${opts} --restart=${restart}"
-    fi
-    if [[ "${daemon_mode}" == yes ]]; then
-        opts="${opts} -d"
     fi
 
     local is_ext_image=no
@@ -242,10 +238,12 @@ function run_docker {
     local hostworkdir="${HOME}/work"
     mkdir -p ${hostworkdir}
 
+    reponame="${imagename}"
+
     if [[ " ${BASE_IMAGES} " == *" ${imagename} "* ]]; then
         is_base_image=yes
     elif [[ "${is_ext_image}" == no ]]; then
-        if [ -d "${hostworkdir}/src/${imagename}" ]; then
+        if [ -d "${hostworkdir}/src/${reponame}" ]; then
             is_dev_image=yes
         fi
     fi
@@ -264,13 +262,14 @@ function run_docker {
     --name ${name}
     --init"
 
-    if [ -z "${restart}" ] || [[ ${daemon_mode} == no ]]; then
+    if [ -z "${restart}" ] && [[ ${daemon_mode} == no ]]; then
         opts="${opts} --rm"
     fi
 
     opts="${opts} -e HOST_UNAME=$(uname) -e HOST_WHOAMI=$(whoami)"
     if [[ "$(uname)" == Linux ]]; then
-        opts="${opts} -e HOST_IP=$(hostname -i)"
+        # opts="${opts} -e HOST_IP=$(hostname -i)"
+        opts="${opts} -e HOST_IP=$(ip route get 1 | awk '{gsub("^.*src ",""); print $1; exit)')"
     fi
 
     if [[ "${is_ext_image}" == no ]] && [[ "${is_base_image}" == no ]]; then
@@ -305,7 +304,7 @@ function run_docker {
 
     if [[ "${is_dev_image}" == yes ]]; then
         if [[ "${hostsrcdir}" == '' ]]; then
-            hostsrcdir="${hostworkdir}/src/${imagename}"
+            hostsrcdir="${hostworkdir}/src/${reponame}"
         fi
         opts="${opts} -v ${hostsrcdir}:${dockerhomedir}/src"
         if [[ "${with_pythonpath}" == yes ]]; then

@@ -15,7 +15,7 @@ function main {
         IMG="${NAMESPACE}/${img}"
         builddir="${thisdir}/${img}"
         parent="$(cat ${builddir}/parent)"
-        build-image $builddir ${IMG} ${parent} || return 1
+        build-image $builddir ${IMG} ${parent} ${TIMESTAMP} || return 1
         if [[ ${PUSH} == yes ]]; then
             push-image ${IMG}
         fi
@@ -24,6 +24,7 @@ function main {
 
 
 NAMESPACE=zppz
+TIMESTAMP=$(${thisdir}/mini/bin/make-ts-tag)
 
 # The images are pushed to Dockerhub only when built at github
 # by the integrated Travis-CI in branch `master`.

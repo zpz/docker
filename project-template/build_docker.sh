@@ -60,17 +60,11 @@ if [[ "${IMG}" == - ]]; then
     exit 1
 fi
 
+timestamp=$(docker run --rm ${IMG} make-ts-tag)
+
 cmd="$(docker run --rm ${IMG} make-proj-builder)" || exit 1
 
-
-if [[ $# > 0 ]] && [[ "$1" == dryrun ]]; then
-    shift
-    echo "# Your command-line arguments:"
-    echo "set -- $@"
-    echo
-    echo
-    echo "${cmd}"
-else
-    bash -c "${cmd}" -- $@
-fi
+img=project-template
+parent=zppz/py3
+bash -c "${cmd}" -- --name ${img} --parent ${parent} --timestamp ${timestamp} || exit 1
 
