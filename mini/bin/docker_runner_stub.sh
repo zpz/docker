@@ -7,6 +7,33 @@ set -o pipefail
 # Do not use space in directory and file names in ${HOME}/work and under it.
 
 
+function get_mem_limit {
+    local mem=
+    # available memory in GB.
+    if [[ $(uname) == Linux ]]; then
+        mem=$(free -g | grep Mem)
+        mem=${mem##* }
+    elif [[ $(uname) == Darwin ]]; then
+        # https://apple.stackexchange.com/questions/4286/is-there-a-mac-os-x-terminal-version-of-the-free-command-in-linux-systems
+        FREE_BLOCKS=$(vm_stat | grep free | awk '{ print $3 }' | sed 's/\.//')
+        INACTIVE_BLOCKS=$(vm_stat | grep inactive | awk '{ print $3 }' | sed 's/\.//')
+        SPECULATIVE_BLOCKS=$(vm_stat | grep speculative | awk '{ print $3 }' | sed 's/\.//')
+        FREE=$((($FREE_BLOCKS+SPECULATIVE_BLOCKS)*4096/1048576))
+        INACTIVE=$(($INACTIVE_BLOCKS*4096/1048576))
+        TOTAL=$((($FREE+$INACTIVE)/1024))
+        mem=${TOTAL}
+    else
+        >&2 echo "platform $(uname) is not supported"
+        return 1
+    fi
+    local mem_limit=$(($mem*3/4))
+    if [[ $(number-smaller-than $mem 6) == yes ]]; then
+        >&2 echo "only ${mem_limit}GB memory available"
+    fi
+    echo "${mem_limit}"g
+}
+
+
 function run_docker {
     local imagename=""
     local name=""
@@ -18,7 +45,7 @@ function run_docker {
     local as_root=no
     local use_local=no
     local nb_port=8888
-    local memory_limit=12g
+    local memory_limit=$(get_mem_limit)
     local shm_size=4g
     local restart=
     local z
