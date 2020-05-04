@@ -19,6 +19,7 @@ RUN apt-update \
     && apt-install \
         bzip2 \
         curl \
+        iproute2 \
         iputils-ping \
         less \
         telnet \

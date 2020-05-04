@@ -296,7 +296,7 @@ function run_docker {
     opts="${opts} -e HOST_UNAME=$(uname) -e HOST_WHOAMI=$(whoami)"
     if [[ "$(uname)" == Linux ]]; then
         # opts="${opts} -e HOST_IP=$(hostname -i)"
-        opts="${opts} -e HOST_IP=$(ip route get 1 | awk '{gsub("^.*src ",""); print $1; exit)')"
+        opts="${opts} -e HOST_IP=$(ip route get 1 | awk '{gsub("^.*src ",""); print $1; exit}')"
     fi
 
     if [[ "${is_ext_image}" == no ]] && [[ "${is_base_image}" == no ]]; then

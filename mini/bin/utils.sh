@@ -11,6 +11,14 @@
 set -Eeuo pipefail
 
 
+function number-smaller-than {
+    local left=$1
+    local right=$2
+    # Inputs are integer or floating point numbers;
+    # can be a mix of types.
+    awk 'BEGIN { print ('${left}' < '${right}') ? "yes" : "no" }'
+}
+
 function get-image-tags-local {
     # Input is image name w/o tag.
     # Returns space separated list of tags;
