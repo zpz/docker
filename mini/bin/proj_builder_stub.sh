@@ -2,8 +2,8 @@ thisdir="$( pwd )"
 
 
 function build-dev {
-    timestamp="$1"
-    local name="${NAMESPACE}/${NAME}"
+    local timestamp="$1"
+    local name="$2"
     local builddir="${thisdir}/docker"
     local parent
     if [[ "${PARENT}" == '' ]]; then
@@ -12,14 +12,12 @@ function build-dev {
         parent="${PARENT}"
     fi
     build-image ${builddir} ${name} ${parent} ${timestamp} || return 1
-    if [[ ${PUSH} == yes ]]; then
-        push-image ${name}
-    fi
 }
 
 
 function build-branch {
-    timestamp="$1"
+    local timestamp="$1"
+    local name="$2"
     local build_dir="/tmp/${REPO}"
     rm -rf ${build_dir}
     mkdir -p ${build_dir}/src
@@ -27,10 +25,10 @@ function build-branch {
     [ -d ${thisdir}/bin ] && cp -R ${thisdir}/bin ${build_dir}/src/bin
     [ -d ${thisdir}/sysbin ] && cp -R ${thisdir}/sysbin ${build_dir}/src/sysbin
     [ -d ${thisdir}/tests ] && cp -R ${thisdir}/tests ${build_dir}/src/tests
-    [ -d ${thisdir}/setup.py ] && cp -R ${thisdir}/setup.py ${build_dir}/src/
-    [ -d ${thisdir}/setup.cfg ] && cp -R ${thisdir}/setup.cfg ${build_dir}/src/
-    [ -d ${thisdir}/MANIFEST.in ] && cp -R ${thisdir}/MANIFEST.in ${build_dir}/src/
-    [ -d ${thisdir}/install.sh ] && cp -R ${thisdir}/install.sh ${build_dir}/src/
+    [ -d ${thisdir}/setup.py ] && cp ${thisdir}/setup.py ${build_dir}/src/
+    [ -d ${thisdir}/setup.cfg ] && cp ${thisdir}/setup.cfg ${build_dir}/src/
+    [ -d ${thisdir}/MANIFEST.in ] && cp ${thisdir}/MANIFEST.in ${build_dir}/src/
+    [ -d ${thisdir}/install.sh ] && cp ${thisdir}/install.sh ${build_dir}/src/
 
     cat > "${build_dir}/Dockerfile" << EOF
 ARG PARENT
@@ -60,34 +58,18 @@ EOF
 
     build-image "${build_dir}" ${name} ${parent} ${timestamp} || return 1
     rm -rf "${build_dir}"
-
-    if [[ "${PUSH}" == yes ]]; then
-        push-image ${name}
-    fi
 }
 
 
 REPO=$(basename "${thisdir}")
 NAMESPACE=$(cat "${thisdir}/docker/namespace") || exit 
 
-
-PUSH=no
-if [ -z ${TRAVIS_BRANCH+x} ]; then
-    if [ -d "${thisdir}/.git" ]; then
-        BRANCH=$(cat "${thisdir}/.git/HEAD")
-        BRANCH="${BRANCH##*/}"
-    else
-        BRANCH=branch
-    fi
-else
-    # `TRAVIS_BRANCH` is defined; this is happening on Github.
-    BRANCH=${TRAVIS_BRANCH}
-    PUSH=yes
-fi
-
 NAME=
 PARENT=
 TIMESTAMP=
+run_tests=yes
+verbose_tests=
+cov_fail_under=1
 while [[ $# > 0 ]]; do
     if [[ "$1" == --name=* ]]; then
         NAME="$1"
@@ -125,33 +107,130 @@ while [[ $# > 0 ]]; do
         fi
         TIMESTAMP="$1"
         shift
+    elif [[ "$1" == --no-tests ]]; then
+        run_tests=no
+        shift
+    elif [[ "$1" == --verbose_tests ]]; then
+        verbose_tests='-s'
+        shift
+    elif [[ "$1" == --cov-fail-under=* ]]; then
+        cov_fail_under="$1"
+        cov_fail_under="${cov_fail_under#--cov-fail-under=}"
+        shift
+    elif [[ "$1" == --cov-fail-under ]]; then
+        shift
+        if [[ $# == 0 ]]; then
+            >&2 echo "covarage requirement expected following --cov-fail-under"
+            exit 1
+        fi
+        cov_fail_under="$1"
+        shift
     else
         >&2 echo "unknown argument '$@'"
         exit 1
     fi
 done
 
-if [[ "${TIMESTAMP}" == '' ]]; then
-    >&2 echo "timestamp is missing!"
-    exit 1
+if [[ ("${NAME}" == '' && "${PARENT}" != '' ) || ("${NAME}" != '' && "${PARENT}" == '') ]]; then
+    >&2 echo "WARNING! Usually --name and --parent are either both missing or both present, but you specified only one:"
+    if [[ "${NAME}" == '' ]]; then
+        >&2 echo "--parent="${PARENT}
+    else
+        >&2 echo "--name="${NAME}
+    fi
 fi
 
 if [[ "${NAME}" == '' ]]; then
     NAME="${REPO}"
 fi
 
+if [[ "${TIMESTAMP}" == '' ]]; then
+    >&2 echo "timestamp is missing!"
+    exit 1
+fi
+
 start_time=$(date)
 
+echo
 echo "start building dev image"
 echo
-build-dev ${TIMESTAMP} || exit 1
+dev_img_name="${NAMESPACE}/${NAME}"
+build-dev ${TIMESTAMP} ${dev_img_name} || exit 1
 echo
 
+
+if [ -z ${TRAVIS_BRANCH+x} ]; then
+    if [ -d "${thisdir}/.git" ]; then
+        BRANCH=$(cat "${thisdir}/.git/HEAD")
+        BRANCH="${BRANCH##*/}"
+    else
+        BRANCH=branch
+    fi
+    PUSH=no
+else
+    # `TRAVIS_BRANCH` is defined; this is happening on Github.
+    BRANCH=${TRAVIS_BRANCH}
+    PUSH=yes
+fi
+
+echo
 echo "start building branch image"
 echo
-build-branch ${TIMESTAMP} || exit 1
+branch_img_name="${NAMESPACE}/${NAME}-${BRANCH}"
+build-branch ${TIMESTAMP} ${branch_img_name} || exit 1
+echo
+
+
+if [[ "${run_tests}" == yes ]]; then
+    echo
+    echo '#########################'
+    echo "run tests in branch image"
+    echo '-------------------------'
+    echo
+    run -rf /tmp/docker-build-tests
+    mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
+    run_docker \
+        --no-host-binds \
+        ${branch_img_name}:${TIMESTAMP} \
+        py.test /opt/${REPO}/tests \
+        ${verbose_tests} \
+        --cov=/usr/local/lib/python3.8/dist-packages/${REPO//-/_} \
+        --cov-fail-under ${cov_fail_under}
+    if [[ $? == 0 ]]; then
+        rm -rf /tmp/docker-build-tests
+        echo
+        echo PASSED tests
+        echo
+    else
+        rm -rf /tmp/docker-build-tests
+        echo
+        echo FAILED tests
+        echo
+        exit 1
+    fi
+fi
+
+
+if [[ "${PUSH}" == yes ]]; then
+    echo
+    echo
+    echo '#######################'
+    echo 'start pushing dev image'
+    echo '-----------------------'
+    echo
+    push-image ${dev_img_name}
+    echo
+    echo
+    echo '##########################'
+    echo 'start pushing branch image'
+    echo '--------------------------'
+    echo
+    push-image ${branch_img_name}
+fi
+
 
 end_time=$(date)
 echo
 echo "Started at ${start_time}"
 echo "Finished at ${end_time}"
+echo

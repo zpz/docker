@@ -356,27 +356,3 @@ function run_docker {
 
     docker run ${opts} ${imagefullname}:${imageversion} ${command} ${args}
 }
-
-
-
-USAGE=$(cat <<'EOF'
-Usage:
-   run-docker [options] image-name[:tag] [command [...]]
-where 
-
-`image-name` is like 'zppz/py3', etc.
-
-`command` is command to be run within the container, followed by arguments to the command.
-(Default: /bin/bash)
-
-If image tag is not specified, the most up-to-date tag is used.
-EOF
-)
-
-
-if [[ $# < 1 ]]; then
-    echo "${USAGE}"
-    exit 0
-fi
-
-run_docker $@
