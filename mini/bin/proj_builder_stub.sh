@@ -194,7 +194,6 @@ if [[ "${run_tests}" == yes ]]; then
         rm -rf /tmp/docker-build-tests
         mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
         run_docker \
-            --no-host-binds \
             ${branch_img_name}:${TIMESTAMP} \
             py.test /opt/${REPO}/tests \
             ${verbose_tests} \
