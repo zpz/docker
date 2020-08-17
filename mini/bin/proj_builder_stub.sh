@@ -187,7 +187,7 @@ if [[ "${run_tests}" == yes ]]; then
     echo "run tests in branch image"
     echo '-------------------------'
     echo
-    run -rf /tmp/docker-build-tests
+    rm -rf /tmp/docker-build-tests
     mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
     run_docker \
         --no-host-binds \
