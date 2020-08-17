@@ -10,13 +10,6 @@ echo
 echo '#### finished copy of file utils.sh'
 echo
 
-echo '#### starting copy of run_utils.sh'
-echo
-cat "${thisdir}/run_utils.sh"
-echo
-echo '#### finished copy of file run_utils.sh'
-echo
-
 
 cat <<'eof'
 USAGE=$(cat <<'EOF'
