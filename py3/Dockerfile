@@ -101,7 +101,6 @@ RUN pip-install \
         'pytest-asyncio==0.14.0' \
         'pytest-cov==2.10.1' \
         'pytest-pudb==0.7.0' \
-        'wheel==0.35.1' \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
