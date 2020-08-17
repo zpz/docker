@@ -182,31 +182,36 @@ echo
 
 
 if [[ "${run_tests}" == yes ]]; then
-    echo
-    echo '#########################'
-    echo "run tests in branch image"
-    echo '-------------------------'
-    echo
-    rm -rf /tmp/docker-build-tests
-    mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
-    run_docker \
-        --no-host-binds \
-        ${branch_img_name}:${TIMESTAMP} \
-        py.test /opt/${REPO}/tests \
-        ${verbose_tests} \
-        --cov=/usr/local/lib/python3.8/dist-packages/${REPO//-/_} \
-        --cov-fail-under ${cov_fail_under}
-    if [[ $? == 0 ]]; then
-        rm -rf /tmp/docker-build-tests
-        echo
-        echo PASSED tests
-        echo
+    ver=$(find-latest-image-local ${branch_img_name})
+    if [[ "${ver}" != ${branch_img_name}:${TIMESTAMP} ]]; then
+        >&2 echo "Could not find the newly built image. Was it deleted b/c it is identical to an older one?"
     else
+        echo
+        echo '#########################'
+        echo "run tests in branch image"
+        echo '-------------------------'
+        echo
         rm -rf /tmp/docker-build-tests
-        echo
-        echo FAILED tests
-        echo
-        exit 1
+        mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
+        run_docker \
+            --no-host-binds \
+            ${branch_img_name}:${TIMESTAMP} \
+            py.test /opt/${REPO}/tests \
+            ${verbose_tests} \
+            --cov=/usr/local/lib/python3.8/dist-packages/${REPO//-/_} \
+            --cov-fail-under ${cov_fail_under}
+        if [[ $? == 0 ]]; then
+            rm -rf /tmp/docker-build-tests
+            echo
+            echo PASSED tests
+            echo
+        else
+            rm -rf /tmp/docker-build-tests
+            echo
+            echo FAILED tests
+            echo
+            exit 1
+        fi
     fi
 fi
 
