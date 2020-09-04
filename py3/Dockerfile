@@ -114,6 +114,10 @@ ENV PYTHONBREAKPOINT=pudb.set_trace
 ENV LC_ALL=C
 # refer to: https://stackoverflow.com/questions/14547631/python-locale-error-unsupported-locale-setting
 
+# For pudb's needs:
+ENV XDG_CONFIG_HOME /etc/xdg
+COPY dotfiles/pudb/pudb.cfg ${XDG_CONFIG_HOME}/pudb/
+RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 
 #-----------------------------------------
 # Jupyter notebook
@@ -125,6 +129,7 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
+        'ipywidgets==7.5.1' \
         'jupyterlab==2.2.4' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
