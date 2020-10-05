@@ -70,6 +70,7 @@ TIMESTAMP=
 run_tests=yes
 verbose_tests=
 cov_fail_under=1
+test_log_level=info
 while [[ $# > 0 ]]; do
     if [[ "$1" == --name=* ]]; then
         NAME="$1"
@@ -109,6 +110,18 @@ while [[ $# > 0 ]]; do
         shift
     elif [[ "$1" == --no-tests ]]; then
         run_tests=no
+        shift
+    elif [[ "$1" == --test-log-level=* ]]; then
+        test_log_level="$1"
+        test_log_level="${test_log_level#--test-log-level=}"
+        shift
+    elif [[ "$1" == --test-log-level ]]; then
+        shift
+        if [[ $# == 0 ]]; then
+            >&2 echo "--test-log-level is missing argument"
+            exit 1
+        fi
+        test_log_level="$1"
         shift
     elif [[ "$1" == --cov-fail-under=* ]]; then
         cov_fail_under="$1"
