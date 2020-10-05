@@ -224,6 +224,7 @@ if [[ "${run_tests}" == yes ]]; then
         echo
     else
         rm -rf /tmp/docker-build-tests
+        docker rmi -f ${branch_img_name}:${ver}
         echo
         echo TESTS FAILED
         echo
