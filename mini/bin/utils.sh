@@ -717,10 +717,12 @@ function run_docker {
         args="-p no:cacheprovider ${args}"
     fi
 
-    if [[ "${command}" == notebook ]] || [[ "${is_dev_image}" == no ]]; then
-        opts="${opts} --workdir ${dockerhomedir}"
-    else
-        opts="${opts} --workdir ${dockerhomedir}/src"
+    if [[ "${opts}" != *--workdir=* ]]; then
+        if [[ "${command}" == notebook ]] || [[ "${is_dev_image}" == no ]]; then
+            opts="${opts} --workdir ${dockerhomedir}"
+        else
+            opts="${opts} --workdir ${dockerhomedir}/src"
+        fi
     fi
 
     docker run ${opts} \

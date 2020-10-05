@@ -25,10 +25,10 @@ function build-branch {
     [ -d ${thisdir}/bin ] && cp -R ${thisdir}/bin ${build_dir}/src/bin
     [ -d ${thisdir}/sysbin ] && cp -R ${thisdir}/sysbin ${build_dir}/src/sysbin
     [ -d ${thisdir}/tests ] && cp -R ${thisdir}/tests ${build_dir}/src/tests
-    [ -d ${thisdir}/setup.py ] && cp ${thisdir}/setup.py ${build_dir}/src/
-    [ -d ${thisdir}/setup.cfg ] && cp ${thisdir}/setup.cfg ${build_dir}/src/
-    [ -d ${thisdir}/MANIFEST.in ] && cp ${thisdir}/MANIFEST.in ${build_dir}/src/
-    [ -d ${thisdir}/install.sh ] && cp ${thisdir}/install.sh ${build_dir}/src/
+    [ -f ${thisdir}/setup.py ] && cp ${thisdir}/setup.py ${build_dir}/src/
+    [ -f ${thisdir}/setup.cfg ] && cp ${thisdir}/setup.cfg ${build_dir}/src/
+    [ -f ${thisdir}/MANIFEST.in ] && cp ${thisdir}/MANIFEST.in ${build_dir}/src/
+    [ -f ${thisdir}/install.sh ] && cp ${thisdir}/install.sh ${build_dir}/src/
 
     cat > "${build_dir}/Dockerfile" << EOF
 ARG PARENT
@@ -39,7 +39,7 @@ RUN mkdir -p /tmp/build
 COPY src/ /tmp/build
 
 RUN cd /tmp/build \\
-    && ( if [ -f install.sh ]; then bash install.sh; elif [ -f setup_py ]; then pip-install . ; fi) \\
+    && ( if [ -f install.sh ]; then bash install.sh; elif [ -f setup.py ]; then pip-install . ; fi) \\
     && rm -rf /opt/${REPO} && mkdir -p /opt/${REPO} \\
     && ( if [ -d bin ]; then mv -f bin "/opt/${REPO}/"; fi ) \\
     && ( if [ -d tests ]; then mv -f tests "/opt/${REPO}/"; fi ) \\
@@ -198,35 +198,36 @@ echo
 
 if [[ "${run_tests}" == yes ]]; then
     ver=$(find-latest-image-local ${branch_img_name})
-    if [[ "${ver}" != ${branch_img_name}:${TIMESTAMP} ]]; then
+    ver="${ver#*:}"
+    if [[ "${ver}" != ${TIMESTAMP} ]]; then
         >&2 echo "Could not find the newly built image. Was it deleted b/c it is identical to an older one?"
-    else
-        echo
-        echo '###########################'
-        echo "run tests in branch image ${branch_img_name}:${TIMESTAMP}"
-        echo '---------------------------'
-        echo
+        >&2 echo "Proceed to run tests in the older image"
+    fi
+    echo
+    echo '###########################'
+    echo "run tests in branch image ${branch_img_name}:${ver}"
+    echo '---------------------------'
+    echo
+    rm -rf /tmp/docker-build-tests
+    mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
+    run_docker \
+        --workdir=/tmp \
+        ${branch_img_name}:${ver} \
+        py.test -s --log-cli-level info -v --showlocals \
+        /opt/${REPO}/tests \
+        --cov=/usr/local/lib/python3.8/dist-packages/${REPO//-/_} \
+        --cov-fail-under ${cov_fail_under}
+    if [[ $? == 0 ]]; then
         rm -rf /tmp/docker-build-tests
-        mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
-        run_docker \
-            --no-host-binds \
-            ${branch_img_name}:${TIMESTAMP} \
-            py.test -s --log-cli-level info -v --showlocals \
-            /opt/${REPO}/tests \
-            --cov=/usr/local/lib/python3.8/dist-packages/${REPO//-/_} \
-            --cov-fail-under ${cov_fail_under}
-        if [[ $? == 0 ]]; then
-            rm -rf /tmp/docker-build-tests
-            echo
-            echo TESTS PASSED
-            echo
-        else
-            rm -rf /tmp/docker-build-tests
-            echo
-            echo TESTS FAILED
-            echo
-            exit 1
-        fi
+        echo
+        echo TESTS PASSED
+        echo
+    else
+        rm -rf /tmp/docker-build-tests
+        echo
+        echo TESTS FAILED
+        echo
+        exit 1
     fi
 fi
 
