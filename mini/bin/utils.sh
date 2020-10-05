@@ -400,6 +400,7 @@ function run_docker {
     local nb_port=8888
     local memory_limit=$(get_mem_limit)
     local shm_size=4g
+    local no_host_binds=no
     local restart=
     local z
 
@@ -457,6 +458,9 @@ function run_docker {
                 # This has an effect only in the 'development' mode, i.e.
                 # when launching an image whose name does not end with '-[branchname]'.
                 with_pythonpath=no
+            elif [[ "$1" == --no-host-binds ]]; then
+                # This is for running tests.
+                no_host_binds=yes
             elif [[ "$1" == --root ]]; then
                 as_root=yes
             elif [[ "$1" == --local ]]; then
@@ -653,40 +657,52 @@ function run_docker {
     fi
 
     if [[ "${is_ext_image}" == no ]] && [[ "${is_base_image}" == no ]]; then
-        if [[ "${hostdatadir}" == '' ]]; then
-            hostdatadir=${hostworkdir}/data
-        fi
-        mkdir -p ${hostdatadir}
-        opts="${opts} -v ${hostdatadir}:${dockerhomedir}/data"
-        opts="${opts} -e DATADIR=${dockerhomedir}/data"
+        if [[ "${no_host_binds}" == no ]]; then
+            if [[ "${hostdatadir}" == '' ]]; then
+                hostdatadir=${hostworkdir}/data
+            fi
+            mkdir -p ${hostdatadir}
+            opts="${opts} -v ${hostdatadir}:${dockerhomedir}/data"
+            opts="${opts} -e DATADIR=${dockerhomedir}/data"
 
-        if [[ "${hostlogdir}" == '' ]]; then
-            hostlogdir=${hostworkdir}/log
-        fi
-        mkdir -p ${hostlogdir}
-        opts="${opts} -v ${hostlogdir}:${dockerhomedir}/log"
-        opts="${opts} -e LOGDIR=${dockerhomedir}/log"
+            if [[ "${hostlogdir}" == '' ]]; then
+                hostlogdir=${hostworkdir}/log
+            fi
+            mkdir -p ${hostlogdir}
+            opts="${opts} -v ${hostlogdir}:${dockerhomedir}/log"
+            opts="${opts} -e LOGDIR=${dockerhomedir}/log"
 
-        if [[ "${hostcfgdir}" == '' ]]; then
-            hostcfgdir=${hostworkdir}/cfg
+            if [[ "${hostcfgdir}" == '' ]]; then
+                hostcfgdir=${hostworkdir}/cfg
+            fi
+            mkdir -p ${hostcfgdir}
+            opts="${opts} -v ${hostcfgdir}:${dockerhomedir}/cfg"
+            opts="${opts} -e CFGDIR=${dockerhomedir}/cfg"
+        else
+            opts="${opts} -e DATADIR=/tmp -e LOGDIR=/tmp -e CFGDIR=/tmp"
         fi
-        mkdir -p ${hostcfgdir}
-        opts="${opts} -v ${hostcfgdir}:${dockerhomedir}/cfg"
-        opts="${opts} -e CFGDIR=${dockerhomedir}/cfg"
     fi
 
-    if [[ "${hosttmpdir}" == '' ]]; then
-        hosttmpdir=${hostworkdir}/tmp
+    if [[ "${no_host_binds}" == no ]]; then
+        if [[ "${hosttmpdir}" == '' ]]; then
+            hosttmpdir=${hostworkdir}/tmp
+        fi
+        mkdir -p ${hosttmpdir}
+        opts="${opts} -v ${hosttmpdir}:${dockerhomedir}/tmp"
+        opts="${opts} -e TMPDIR=${dockerhomedir}/tmp"
+    else
+        opts="${opts} -e TMPDIR=/tmp"
     fi
-    mkdir -p ${hosttmpdir}
-    opts="${opts} -v ${hosttmpdir}:${dockerhomedir}/tmp"
-    opts="${opts} -e TMPDIR=${dockerhomedir}/tmp"
 
     if [[ "${is_dev_image}" == yes ]]; then
         if [[ "${hostsrcdir}" == '' ]]; then
             hostsrcdir="${hostworkdir}/src/${reponame}"
         fi
-        opts="${opts} -v ${hostsrcdir}:${dockerhomedir}/src"
+
+        if [[ "${no_host_binds}" == no ]]; then
+            opts="${opts} -v ${hostsrcdir}:${dockerhomedir}/src"
+        fi
+
         if [[ "${with_pythonpath}" == yes ]]; then
             opts="${opts} -e PYTHONPATH=${dockerhomedir}/src/src"
         fi
@@ -707,5 +723,7 @@ function run_docker {
         opts="${opts} --workdir ${dockerhomedir}/src"
     fi
 
-    docker run ${opts} ${imagefullname}:${imageversion} ${command} ${args}
+    docker run ${opts} \
+        ${imagefullname}:${imageversion} \
+        ${command} ${args}
 }

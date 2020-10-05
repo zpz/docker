@@ -110,9 +110,6 @@ while [[ $# > 0 ]]; do
     elif [[ "$1" == --no-tests ]]; then
         run_tests=no
         shift
-    elif [[ "$1" == --verbose_tests ]]; then
-        verbose_tests='-s'
-        shift
     elif [[ "$1" == --cov-fail-under=* ]]; then
         cov_fail_under="$1"
         cov_fail_under="${cov_fail_under#--cov-fail-under=}"
@@ -152,7 +149,9 @@ fi
 start_time=$(date)
 
 echo
+echo '############################'
 echo "start building dev image"
+echo '----------------------------'
 echo
 dev_img_name="${NAMESPACE}/${NAME}"
 build-dev ${TIMESTAMP} ${dev_img_name} || exit 1
@@ -172,9 +171,12 @@ else
     BRANCH=${TRAVIS_BRANCH}
     PUSH=yes
 fi
+PUSH=no
 
 echo
+echo '############################'
 echo "start building branch image"
+echo '----------------------------'
 echo
 branch_img_name="${NAMESPACE}/${NAME}-${BRANCH}"
 build-branch ${TIMESTAMP} ${branch_img_name} || exit 1
@@ -187,27 +189,28 @@ if [[ "${run_tests}" == yes ]]; then
         >&2 echo "Could not find the newly built image. Was it deleted b/c it is identical to an older one?"
     else
         echo
-        echo '#########################'
-        echo "run tests in branch image"
-        echo '-------------------------'
+        echo '###########################'
+        echo "run tests in branch image ${branch_img_name}:${TIMESTAMP}"
+        echo '---------------------------'
         echo
         rm -rf /tmp/docker-build-tests
         mkdir -p /tmp/docker-build-tests/{data,log,cfg,tmp,src}
         run_docker \
+            --no-host-binds \
             ${branch_img_name}:${TIMESTAMP} \
-            py.test /opt/${REPO}/tests \
-            ${verbose_tests} \
+            py.test -s --log-cli-level info -v --showlocals \
+            /opt/${REPO}/tests \
             --cov=/usr/local/lib/python3.8/dist-packages/${REPO//-/_} \
             --cov-fail-under ${cov_fail_under}
         if [[ $? == 0 ]]; then
             rm -rf /tmp/docker-build-tests
             echo
-            echo PASSED tests
+            echo TESTS PASSED
             echo
         else
             rm -rf /tmp/docker-build-tests
             echo
-            echo FAILED tests
+            echo TESTS FAILED
             echo
             exit 1
         fi

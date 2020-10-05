@@ -29,13 +29,14 @@ TIMESTAMP=$(${thisdir}/mini/bin/make-ts-tag)
 # The images are pushed to Dockerhub only when built at github
 # by the integrated Travis-CI in branch `master`.
 
-if [ -z ${TRAVIS_BRANCH+x} ]; then
-    BRANCH=''
-    PUSH=no
-else
-    BRANCH=${TRAVIS_BRANCH}
-    PUSH=yes
-fi
+# if [ -z ${TRAVIS_BRANCH+x} ]; then
+#     BRANCH=''
+#     PUSH=no
+# else
+#     BRANCH=${TRAVIS_BRANCH}
+#     PUSH=yes
+# fi
+PUSH=no
 
 IMAGES=( mini py3 )
 main

@@ -7,10 +7,15 @@
 In a more serious setting, the image `mini` and script `run-docker` could be defined in a separate repo, so that they can evolve independent of the base image `py3`.
 
 
+## Structure of a Python repo
+
+Follow this [template](./project-template).
+
+
 ## Unit tests with `py.test`
 
-Put all tests in `tests/` in the root of the repo.
-Put package code in `src/<package-name>`.
+Put all tests in `/tests/` in the root of the repo.
+Put package code in `/src/<package-name>`.
 
 ### Run all tests
 
@@ -41,10 +46,23 @@ This does not require breakpoints to be set in advance.
 
 ## Debugging with `pudb`
 
+### Basic navigation
+
+- The top menu of the window shows the most commonly used commands: `?`, `s`, `b`, `!`, etc.
+- Hit `?` to bring up the help.
+- Use left/right arrow key to move between the left/right windows.
+- Use up/down arrow key to move up/down.
+- In the source code window, hit `b` to toggle breakpoint on the current line.
+- In the bottom-right `Breakpoints` window, turn on/off breakpoint using `b` or delete breakpoint using `d`.
+- In the upper-right `Variables` window, hit `<Enter>` or `<Space>` to expand/collapse on a variable.
+- In the middle-right `Stack` window, hit `<Enter>` to jump to the selected frame.
 - Use `Ctrl-x` to show/hide the Python console window at the bottom of the left panel.
 To adjust the height of this window, move focus onto the `< clear >` sign
 to the right, then use `+/-`.
 - When cursor is in the right panel, use `+/-` to adjust the width of the panel.
+- Hit `q` to exit. You'll get a confirmation window. Hit `q` to exit for real, or select `<Restart>` to restart (as if you have started the program with `pudb <script.py>`), or `<Examine>` to go back to the debugger.
+
+### Basic usage
 
 Suppose the script `program.py` has crashed.
 Take the following steps to debug.

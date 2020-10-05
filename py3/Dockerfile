@@ -32,7 +32,7 @@ RUN apt-update \
 # `DEBIAN_FRONTEND=noninteractive` suppresses the "geographic area"
 # prompt related to `tzdata`.
 
-# `iproute2` provides `ip`.
+# `iproute2` provides command `ip`.
 
 
 #-------------------------------
@@ -42,7 +42,7 @@ COPY dotfiles/bash/bash.bashrc /etc/
 RUN chmod +r /etc/bash.bashrc
 RUN rm -f /root/.bashrc /root/.profile
 
-# /opt/bin is for specific projects that want to put some executable
+# /opt/bin is for specific projects that want to put some executables
 # on the system path.
 RUN mkdir -p /opt/bin
 ENV PATH=/opt/bin:$PATH
@@ -95,9 +95,9 @@ ENV PYTHONIOENCODING=utf-8
 # Commonly useful packages for code development
 
 RUN pip-install \
-        'ptpython==3.0.5' \
+        'ptpython==3.0.7' \
         'pudb==2019.2' \
-        'pytest==6.0.1' \
+        'pytest==6.1.1' \
         'pytest-asyncio==0.14.0' \
         'pytest-cov==2.10.1' \
         'pytest-pudb==0.7.0' \
@@ -130,7 +130,8 @@ COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
         'ipywidgets==7.5.1' \
-        'jupyterlab==2.2.4' \
+        'jupyterlab==2.2.8' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
-# `jupyterlab` requires (and will install if not available) ipython, notebook, pyzmq, tornado, jinja2 and some other things.
+# `jupyterlab` requires (and will install if not available)
+# ipython, notebook, pyzmq, tornado, jinja2 and some other things.
