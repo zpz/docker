@@ -7,11 +7,10 @@ import sys
 
 sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
 
+# Make ptpython command history persistent across
+# Docker sessions.
 os.environ['XDG_CONFIG_HOME'] = '/etc/xdg'
-if os.environ.get('HOST_UNAME') == 'Darwin':
-    os.environ['XDG_DATA_HOME'] = os.environ.get('TMPDIR', '/tmp')
-else:
-    os.environ['XDG_DATA_HOME'] = '/tmp'
+os.environ['XDG_DATA_HOME'] = os.environ.get('TMPDIR', '/tmp')
 
 from ptpython.entry_points.run_ptpython import run
 

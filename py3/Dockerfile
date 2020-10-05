@@ -19,6 +19,7 @@ RUN apt-update \
     && apt-install \
         bzip2 \
         curl \
+        iproute2 \
         iputils-ping \
         less \
         telnet \
@@ -31,7 +32,37 @@ RUN apt-update \
 # `DEBIAN_FRONTEND=noninteractive` suppresses the "geographic area"
 # prompt related to `tzdata`.
 
-# `iproute2` provides `ip`.
+# `iproute2` provides command `ip`.
+
+
+#-------------------------------
+# misc
+
+COPY dotfiles/bash/bash.bashrc /etc/
+RUN chmod +r /etc/bash.bashrc
+RUN rm -f /root/.bashrc /root/.profile
+
+# /opt/bin is for specific projects that want to put some executables
+# on the system path.
+RUN mkdir -p /opt/bin
+ENV PATH=/opt/bin:$PATH
+
+ENV SHELL=/bin/bash
+
+
+#-----------------
+# group and user
+#
+
+RUN groupadd --gid 1000 docker \
+    && mkdir -p /home/docker-user \
+    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
+    && chown -R docker-user:docker /home/docker-user \
+    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
+
+# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
+
+USER root
 
 
 #--------------
@@ -54,6 +85,8 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
 
+RUN pip-install -U pip setuptools
+
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
 
@@ -62,16 +95,29 @@ ENV PYTHONIOENCODING=utf-8
 # Commonly useful packages for code development
 
 RUN pip-install \
-        'ptpython==3.0.1' \
-        'pytest==5.4.1' \
-        'pytest-cov==2.8.1' \
-        'setuptools==46.1.3' \
-        'wheel==0.34.2'
+        'ptpython==3.0.7' \
+        'pudb==2019.2' \
+        'pytest==6.1.1' \
+        'pytest-asyncio==0.14.0' \
+        'pytest-cov==2.10.1' \
+        'pytest-pudb==0.7.0' \
+    && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
 COPY dotfiles/ptpython/ptipython /usr/local/bin/
 
+# Use `breakpoint()` to take advantage of the following:
+ENV PYTHONBREAKPOINT=pudb.set_trace
+
+# `pudb` needs this:
+ENV LC_ALL=C
+# refer to: https://stackoverflow.com/questions/14547631/python-locale-error-unsupported-locale-setting
+
+# For pudb's needs:
+ENV XDG_CONFIG_HOME /etc/xdg
+COPY dotfiles/pudb/pudb.cfg ${XDG_CONFIG_HOME}/pudb/
+RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 
 #-----------------------------------------
 # Jupyter notebook
@@ -83,38 +129,9 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
-        'ipython==7.13.0' \
-        'jupyterlab==2.0.1' \
+        'ipywidgets==7.5.1' \
+        'jupyterlab==2.2.8' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
-# `jupyterlab` requires (and will install if not available) ipython, notebook, pyzmq, tornado, jinja2 and some other things.
-
-
-#-------------------------------
-# misc
-
-COPY dotfiles/bash/bash.bashrc /etc/
-RUN chmod +r /etc/bash.bashrc
-RUN rm -f /root/.bashrc /root/.profile
-
-# /opt/bin is for specific projects that want to put some executable
-# on the system path.
-RUN mkdir -p /opt/bin
-ENV PATH=/opt/bin:$PATH
-
-ENV SHELL=/bin/bash
-
-
-#-----------------
-# group and user
-#
-# Put this section at the end so that the installations above
-# do not accidentally assume existence of this particular user.
-
-RUN groupadd --gid 1000 docker \
-    && mkdir -p /home/docker-user \
-    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
-    && chown -R docker-user:docker /home/docker-user \
-    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
-
-# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
+# `jupyterlab` requires (and will install if not available)
+# ipython, notebook, pyzmq, tornado, jinja2 and some other things.
