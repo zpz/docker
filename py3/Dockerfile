@@ -92,15 +92,21 @@ ENV PYTHONIOENCODING=utf-8
 
 
 #-----------------------------------------------
+
+# `daemontools` provides `multilog`
+RUN apt-update && apt-install daemontools && apt-clean
+
+
+#-----------------------------------------------
 # Commonly useful packages for code development
 
 RUN pip-install \
-        'ptpython==3.0.7' \
-        'pudb==2019.2' \
-        'pytest==6.1.1' \
-        'pytest-asyncio==0.14.0' \
-        'pytest-cov==2.10.1' \
-        'pytest-pudb==0.7.0' \
+        'ptpython' \
+        'pudb' \
+        'pytest' \
+        'pytest-asyncio' \
+        'pytest-cov' \
+        'pytest-pudb' \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
@@ -129,8 +135,8 @@ COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
 COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
 RUN pip-install \
-        'ipywidgets==7.5.1' \
-        'jupyterlab==2.2.8' \
+        'ipywidgets' \
+        'jupyterlab' \
     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `jupyterlab` requires (and will install if not available)
