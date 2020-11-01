@@ -30,7 +30,8 @@ function build-branch {
     [ -f ${thisdir}/MANIFEST.in ] && cp ${thisdir}/MANIFEST.in ${build_dir}/src/
     [ -f ${thisdir}/install.sh ] && cp ${thisdir}/install.sh ${build_dir}/src/
 
-    cat > "${build_dir}/Dockerfile" << EOF
+    if [[ ${LANG} == py ]]; then
+        cat > "${build_dir}/Dockerfile" << EOF
 ARG PARENT
 FROM \${PARENT}
 USER root
@@ -47,6 +48,28 @@ RUN cd /tmp/build \\
     && cd / \\
     && rm -rf /tmp/build
 EOF
+    elif [[ $LANG == R ]]; then
+        cat > "${build_dir}/Dockerfile" << EOF
+ARG PARENT
+FROM \${PARENT}
+USER root
+
+RUN mkdir -p /tmp/build
+COPY src/ /tmp/build
+
+RUN cd /tmp/build \\
+    && ( if [ -f install.sh ]; then bash install.sh; else ( cd src; R CMD build .; R CMD INSTALL *.tar.gz ) ; fi) \\
+    && rm -rf /opt/${REPO} && mkdir -p /opt/${REPO} \\
+    && ( if [ -d bin ]; then mv -f bin "/opt/${REPO}/"; fi ) \\
+    && ( if [ -d tests ]; then mv -f tests "/opt/${REPO}/"; fi ) \\
+    && ( if [ -d sysbin ]; then mkdir -p /opt/bin && mv -f sysbin/* "/opt/bin/"; fi ) \\
+    && cd / \\
+    && rm -rf /tmp/build
+EOF
+    else
+        >&2 echo language "${LANG}" is not supported
+        return 1
+    fi
 
     local name="${NAMESPACE}/${NAME}-${BRANCH}"
 
@@ -185,6 +208,13 @@ else
     PUSH=yes
 fi
 PUSH=no
+
+if [ -f src/DESCRIPTION ] && [ -d src/R ]; then
+    LANG=R
+    run_tests=no  # change this once we've figured out how to run R tests.
+else
+    LANG=py
+fi
 
 echo
 echo '############################'
