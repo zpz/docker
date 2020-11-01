@@ -37,10 +37,10 @@ USER root
 
 RUN apt-update \
     && apt-install \
-        r-base \
-        r-base-dev \
+        r-base=4.0.2-1build1 \
+        r-base-dev=4.0.2-1build1 \
     \
-    && pip-install rpy2 \
+    && pip-install rpy2==3.3.6 \
     \
     && apt-clean \
     && rm -rf /tmp/*
@@ -50,3 +50,7 @@ COPY ./install.version.r /usr/local/bin
 
 RUN chmod +x /usr/local/bin/install.r /usr/local/bin/install.version.r
 RUN install.r versions
+RUN install.version.r roxygen2 7.1.1
+RUN install.version.r futile.logger 1.4.3
+RUN install.version.r testthat
+

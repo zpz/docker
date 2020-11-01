@@ -58,7 +58,13 @@ RUN mkdir -p /tmp/build
 COPY src/ /tmp/build
 
 RUN cd /tmp/build \\
-    && ( if [ -f install.sh ]; then bash install.sh; else ( cd src; R CMD build .; R CMD INSTALL *.tar.gz ) ; fi) \\
+    && ( if [ -f install.sh ]; then bash install.sh; \\
+         else ( \\
+             cd src; R CMD build .; \\
+             R CMD INSTALL *.tar.gz \\
+             ) ; \\
+         fi \\
+        ) \\
     && rm -rf /opt/${REPO} && mkdir -p /opt/${REPO} \\
     && ( if [ -d bin ]; then mv -f bin "/opt/${REPO}/"; fi ) \\
     && ( if [ -d tests ]; then mv -f tests "/opt/${REPO}/"; fi ) \\
