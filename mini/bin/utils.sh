@@ -54,16 +54,18 @@ function get-image-tags-remote {
     fi
     local url=https://hub.docker.com/v2/repositories/${name}/tags
     local tags="$(curl -L -s ${url})" || return 1
-    # >&2 echo tags: "${tags}"
 
-    tags="$(echo "${tags}" | tr -d '{}[]' | tr ',' '\n' | grep \"name\")" || return 1
-    # >&2 echo tags: "${tags}"
-
-    if [[ "$tags" == "" ]]; then
+    if [[ "${tags}" == *\"results\":\[\]\} ]]; then
         echo -
     else
-        tags="$(echo $tags | tr -d '"' | sed 's/name://g')" || return 1
-        echo "${tags}"
+        tags="$(echo "${tags}" | tr -d '{}[]' | tr ',' '\n' | grep \"name\")" || return 1
+
+        if [[ "$tags" == "" ]]; then
+            echo -
+        else
+            tags="$(echo $tags | tr -d '"' | sed 's/name://g')" || return 1
+            echo "${tags}"
+        fi
     fi
 }
 

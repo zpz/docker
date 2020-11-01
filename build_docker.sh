@@ -38,5 +38,9 @@ TIMESTAMP=$(${thisdir}/mini/bin/make-ts-tag)
 # fi
 PUSH=no
 
-IMAGES=( mini py3 py3r )
+if (( $# > 0 )); then
+    IMAGES=( $@ )
+else
+    IMAGES=( mini py3 py3-r )
+fi
 main
