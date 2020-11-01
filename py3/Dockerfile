@@ -76,6 +76,7 @@ RUN apt-update \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
+    && ln -sf /usr/local/lib/python3.8 /usr/local/lib/python \
     && apt-clean
 
 COPY bin/pip-install /usr/local/bin/
