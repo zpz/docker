@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 thisfile="$0"
 thisdir="$( cd $( dirname ${thisfile} ) && pwd )"

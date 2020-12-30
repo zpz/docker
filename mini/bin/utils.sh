@@ -53,12 +53,19 @@ function get-image-tags-remote {
         return 1
     fi
     local url=https://hub.docker.com/v2/repositories/${name}/tags
-    local tags="$(curl -L -s ${url} | tr -d '{}[]"' | tr ',' '\n' | grep name)" || return 1
-    if [[ "$tags" == "" ]]; then
+    local tags="$(curl -L -s ${url})" || return 1
+
+    if [[ "${tags}" == *\"results\":\[\]\} ]]; then
         echo -
     else
-        tags="$(echo $tags | sed 's/name: //g' | sed 's/results: //g')" || return 1
-        echo "${tags}"
+        tags="$(echo "${tags}" | tr -d '{}[]' | tr ',' '\n' | grep \"name\")" || return 1
+
+        if [[ "$tags" == "" ]]; then
+            echo -
+        else
+            tags="$(echo $tags | tr -d '"' | sed 's/name://g')" || return 1
+            echo "${tags}"
+        fi
     fi
 }
 
@@ -148,6 +155,7 @@ function find-latest-image-local {
 
 function find-latest-image-remote {
     local name="$1"
+
     if [[ "${name}" == *:* ]]; then
         local z=$(has-image-remote "${name}") || return 1
         if [[ "${z}" == yes ]]; then
@@ -161,6 +169,7 @@ function find-latest-image-remote {
             return 1
         fi
         local tags="$(get-image-tags-remote ${name})" || return 1
+
         if [[ "${tags}" != '-' ]]; then
             local tag=$(echo "${tags}" | tr ' ' '\n' | sort -r | head -n 1) || return 1
             echo "${name}:${tag}"
@@ -175,6 +184,7 @@ function find-latest-image {
     local name="$1"
     local localimg=$(find-latest-image-local "${name}") || return 1
     local remoteimg=$(find-latest-image-remote "${name}") || return 1
+
     if [[ "${localimg}" == - ]]; then
         echo "${remoteimg}"
     elif [[ "${remoteimg}" == - ]]; then
@@ -235,12 +245,14 @@ function build-image {
     local VERSION="$4"
 
     local PARENT=$(find-latest-image ${parent}) || return 1
+
     if [[ "${PARENT}" == - ]]; then
         >&2 echo "Unable to find parent image '${parent}'"
         return 1
     fi
 
     local old_img=$(find-latest-image ${NAME}) || return 1
+
     if [[ "${old_img}" != - ]] && [[ $(has-image-local "${old_img}") == no ]]; then
         echo
         docker pull ${old_img} || return 1
@@ -266,10 +278,6 @@ function build-image {
         local old_id=$(find-image-id-local "${old_img}") || return 1
         local new_id=$(find-image-id-local "${new_img}") || return 1
         echo
-        echo "old_img: ${old_img}"
-        echo "new_img: ${new_img}"
-        echo "old_id: ${old_id}"
-        echo "new_id: ${new_id}"
         if [[ "${old_id}" == "${new_id}" ]]; then
             echo
             echo "Newly built image is identical to an older build; discarding the new tag..."

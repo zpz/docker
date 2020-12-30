@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 echo $(date -u +%Y%m%dT%H%M%SZ)
 # UTC time. This command with these arguments work the same on Mac and Linux.

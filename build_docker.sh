@@ -36,7 +36,11 @@ TIMESTAMP=$(${thisdir}/mini/bin/make-ts-tag)
 #     BRANCH=${TRAVIS_BRANCH}
 #     PUSH=yes
 # fi
-PUSH=no
+PUSH=yes
 
-IMAGES=( mini py3 )
+if (( $# > 0 )); then
+    IMAGES=( $@ )
+else
+    IMAGES=( mini py3 py3-r )
+fi
 main
