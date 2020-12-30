@@ -40,7 +40,7 @@ RUN apt-update \
         r-base=4.0.2-1build1 \
         r-base-dev=4.0.2-1build1 \
     \
-    && pip-install rpy2==3.3.6 \
+    && pip-install rpy2==2.9.5 \
     \
     && apt-clean \
     && rm -rf /tmp/*

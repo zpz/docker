@@ -36,7 +36,7 @@ TIMESTAMP=$(${thisdir}/mini/bin/make-ts-tag)
 #     BRANCH=${TRAVIS_BRANCH}
 #     PUSH=yes
 # fi
-PUSH=no
+PUSH=yes
 
 if (( $# > 0 )); then
     IMAGES=( $@ )
