@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Find the latest tag of an image on local disk.
+
+NAME="$1"
+
+tag=$(docker image ls ${NAME} --format "{{.Tag}}" |sort |tail -n 1)
+if [ -z "${tag}" ]; then
+    >&2 echo "image '${NAME}' not found on local disk"
+    exit 1
+else
+    echo "${NAME}:${tag}"
+fi

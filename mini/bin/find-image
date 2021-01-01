@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Find the latest tag of an image between local and remote,
+# assuming the tags are sortable.
+
+set -e
+
+NAME="$1"
+
+### local ###
+
+tag=$(docker image ls ${NAME} --format "{{.Tag}}" |sort |tail -n 1)
+if [ -z "${tag}" ]; then
+    localimg=-
+else
+    localimg="${NAME}:${tag}"
+fi
+
+### remote ###
+
+# Ref: https://stackoverflow.com/a/39454426
+
+url=https://registry.hub.docker.com/v1/repositories/${NAME}/tags
+tags="$(wget -q ${url} -O - 2>/dev/null)"
+# tags="$(curl -L -s ${url})"
+
+if [ -z "${tags}" ]; then
+    if [[ "${localimg}" != - ]]; then
+        echo "$localimg"
+    fi
+    exit
+fi
+
+
+tags="$(echo ${tags} | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}')"
+remoteimg="$(echo ${tags} | sort | tail -n 1)"
+
+if [[ "${localimg}" == - ]]; then
+    echo "${remoteimg}"
+else
+    if [[ "${localimg}" < "${remoteimg}" ]]; then
+        echo "${remoteimg}"
+    else
+        echo "${localimg}"
+    fi
+fi

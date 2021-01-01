@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo $(date -u +%Y%m%dT%H%M%SZ)
+
+# UTC. This command with these arguments work the same
+# on Mac and Linux. Version format is like this:
+#     20180923%081243Z
