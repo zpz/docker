@@ -7,36 +7,9 @@
 #     debian
 #     zppz/py3
 
-
 set -e
 
 NAME="$1"
-
-
-function find-latest-local-image {
-    if [[ "${NAME}" == *:* ]]; then
-        if [ $(docker images -q "${NAME}") ]; then
-            # Exists locally.
-            echo "${NAME}"
-            return 0
-        else
-            return 1
-        fi
-    fi
-
-    tags=$(docker image ls ${NAME} --format "{{.Tag}}")
-    if [ -z "${tags}" ]; then
-        return 1
-    fi
-
-    if [[ $(echo "${tags}" |grep latest) == latest ]]; then
-        echo "${NAME}:latest"
-        exit 0
-    fi
-
-    tag=$(echo "${tags}" |sort |tail -n 1)
-    echo "${NAME}:${tag}"
-}
 
 
 function find-latest-remote-image {
@@ -78,25 +51,10 @@ function find-latest-remote-image {
     return 0
 }
 
-
-tag_local=$(find-latest-local-image)
-tag_remote=$(find-latest-remote-image)
-if [ "${tag_local}" ]; then
-    if [ "${tag_remote}" ]; then
-        if [[ "${tag_local}" < "${tag_remote}" ]]; then
-            echo "${tag_remote}"
-        else
-            echo "${tag_local}"
-        fi
-    else
-        echo "${tag_local}"
-    fi
+tag=$(find-latest-remote-image)
+if [ "${tag}" ]; then
+    echo "${tag}"
     exit 0
 else
-    if [ "${tag_remote}" ]; then
-        echo "${tag_remote}"
-        exit 0
-    else
-        exit 1
-    fi
+    exit 1
 fi

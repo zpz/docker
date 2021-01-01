@@ -24,7 +24,7 @@ function main {
 
 
 NAMESPACE=zppz
-TIMESTAMP=$(${thisdir}/mini/bin/make-ts-tag)
+TIMESTAMP=$(${thisdir}/mini/bin/make-version)
 
 # The images are pushed to Dockerhub only when built at github
 # by the integrated Travis-CI in branch `master`.
