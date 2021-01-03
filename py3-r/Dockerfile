@@ -34,6 +34,9 @@ ARG PARENT
 FROM ${PARENT}
 USER root
 
+ENV IMAGE_PARENT ${PARENT}
+
+ENV R_VERSION=4.0.2
 
 RUN apt-update \
     && apt-install \
@@ -48,7 +51,6 @@ RUN apt-update \
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin
 
-RUN chmod +x /usr/local/bin/install.r /usr/local/bin/install.version.r
 RUN install.r versions
 RUN install.version.r roxygen2 7.1.1
 RUN install.version.r futile.logger 1.4.3

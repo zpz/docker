@@ -1,3 +1,0 @@
-#!/bin/sh
-
-TZ=America/Los_Angeles echo $(date +%y.%m.%d)
