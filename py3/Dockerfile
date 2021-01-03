@@ -1,11 +1,12 @@
-ARG PARENT
+ARG PARENT=ubuntu:20.10
 
 FROM ${PARENT}
 USER root
 
+ENV IMAGE_PARENT ${PARENT}
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY bin/apt-update bin/apt-install bin/apt-remove bin/apt-clean /usr/local/bin/
+COPY bin/* /usr/local/bin/
 
 
 #-------------------------
@@ -42,11 +43,6 @@ COPY dotfiles/bash/bash.bashrc /etc/
 RUN chmod +r /etc/bash.bashrc
 RUN rm -f /root/.bashrc /root/.profile
 
-# /opt/bin is for specific projects that want to put some executables
-# on the system path.
-RUN mkdir -p /opt/bin
-ENV PATH=/opt/bin:$PATH
-
 ENV SHELL=/bin/bash
 
 
@@ -68,6 +64,8 @@ USER root
 #--------------
 # Python 3
 
+ENV PYTHON_VERSION=3.8
+
 RUN apt-update \
     && apt-install \
         python3 \
@@ -76,10 +74,9 @@ RUN apt-update \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
-    && ln -sf /usr/local/lib/python3.8 /usr/local/lib/python \
+    && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python \
     && apt-clean
 
-COPY bin/pip-install /usr/local/bin/
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # This controls behavior of `pip` when we use it to install Python packages.
 # In particular, the config instructs `pip` to not save cache, hence reducing size
@@ -107,6 +104,8 @@ RUN pip-install \
         'pytest' \
         'pytest-asyncio' \
         'pytest-cov' \
+        'pytest-flake8' \
+        'pytest-mypy' \
         'pytest-pudb' \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 

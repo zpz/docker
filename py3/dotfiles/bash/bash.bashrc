@@ -52,7 +52,7 @@ function git_prompt {
     if [[ -n "$branch" ]]; then
         local color
         local reset
-        if [[ "$branch" == 'master' || "$branch" == release* || "$branch" == RELEASE* ]]; then
+        if [[ "$branch" == 'master' || "$branch" == 'main' || "$branch" == release* || "$branch" == RELEASE* ]]; then
             color='\033[1;31m'  # red
         else
             if [[ "$branch" == 'develop' ]]; then
