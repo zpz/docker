@@ -104,7 +104,7 @@ RUN pip-install \
         'pytest' \
         'pytest-asyncio' \
         'pytest-cov' \
-        'pytest-flake8' \
+        'pytest-flakes' \
         'pytest-mypy' \
         'pytest-pudb' \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
