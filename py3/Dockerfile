@@ -103,6 +103,7 @@ RUN pip-install \
         'pudb' \
         'pytest' \
         'pytest-asyncio' \
+        'pytest-bandit' \
         'pytest-cov' \
         'pytest-flake8' \
         'pytest-mypy' \
