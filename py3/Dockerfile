@@ -20,6 +20,7 @@ RUN apt-update \
     && apt-install \
         bzip2 \
         curl \
+        daemontools \
         iproute2 \
         iputils-ping \
         less \
@@ -34,6 +35,7 @@ RUN apt-update \
 # prompt related to `tzdata`.
 
 # `iproute2` provides command `ip`.
+# `daemontools` provides `multilog`, used by our script `logged`.
 
 
 #-------------------------------
@@ -42,8 +44,6 @@ RUN apt-update \
 COPY dotfiles/bash/bash.bashrc /etc/
 RUN chmod +r /etc/bash.bashrc
 RUN rm -f /root/.bashrc /root/.profile
-
-ENV SHELL=/bin/bash
 
 
 #-----------------
@@ -75,6 +75,7 @@ RUN apt-update \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python \
+    && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
     && apt-clean
 
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
@@ -90,24 +91,18 @@ ENV PYTHONIOENCODING=utf-8
 
 
 #-----------------------------------------------
-
-# `daemontools` provides `multilog`
-RUN apt-update && apt-install daemontools && apt-clean
-
-
-#-----------------------------------------------
 # Commonly useful packages for code development
 
 RUN pip-install \
-        'ptpython' \
-        'pudb' \
-        'pytest' \
-        'pytest-asyncio' \
-        'pytest-bandit' \
-        'pytest-cov' \
-        'pytest-flake8' \
-        'pytest-mypy' \
-        'pytest-pudb' \
+        bandit \
+        mypy \
+        ptpython \
+        pyflakes \
+        pudb \
+        pytest \
+        pytest-asyncio \
+        pytest-cov \
+        pytest-pudb \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/

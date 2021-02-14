@@ -40,8 +40,8 @@ ENV R_VERSION=4.0.2
 
 RUN apt-update \
     && apt-install \
-        r-base=4.0.2-1build1 \
-        r-base-dev=4.0.2-1build1 \
+        r-base=${R_VERSION}-1build1 \
+        r-base-dev=${R_VERSION}-1build1 \
     \
     && pip-install rpy2==2.9.5 \
     \
