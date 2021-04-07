@@ -50,10 +50,10 @@ RUN rm -f /root/.bashrc /root/.profile
 # group and user
 #
 
-RUN groupadd --gid 1000 docker \
+RUN groupadd --gid 1234 docker-user \
     && mkdir -p /home/docker-user \
-    && useradd --uid 1000 --gid docker --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
-    && chown -R docker-user:docker /home/docker-user \
+    && useradd --uid 1234 --gid docker-user --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
+    && chown -R docker-user:docker-user /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
