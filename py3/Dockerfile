@@ -94,10 +94,7 @@ ENV PYTHONIOENCODING=utf-8
 # Commonly useful packages for code development
 
 RUN pip-install \
-        bandit \
-        mypy \
         ptpython \
-        pyflakes \
         pudb \
         pytest \
         pytest-asyncio \
