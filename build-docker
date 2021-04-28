@@ -18,12 +18,6 @@ function build-image {
     echo
     docker build -t "${name}" "${build_dir}" $@
     echo
-    if [ $PUSH ]; then
-        echo
-        echo pushing ${name} to dockerhub ...
-        echo
-        docker push ${name}
-    fi
 }
 
 
@@ -39,18 +33,7 @@ function build-py3-r {
 }
 
 
-IMAGES=
-PUSH=
-
-while [[ $# > 0 ]]; do
-    if [[ "$1" == --push ]]; then
-        PUSH=yes
-    else
-        IMAGES="${IMAGES} $1"
-    fi
-    shift
-done
-
+IMAGES="$@"
 if [ "${IMAGES}" ]; then
     IMAGES=( ${IMAGES} )
 else
