@@ -36,12 +36,14 @@ USER root
 
 ENV IMAGE_PARENT ${PARENT}
 
-ENV R_VERSION=4.0.2
+# ENV R_VERSION=4.0.2
+        # r-base=${R_VERSION}-1build1 \
+        # r-base-dev=${R_VERSION}-1build1 \
 
 RUN apt-update \
     && apt-install \
-        r-base=${R_VERSION}-1build1 \
-        r-base-dev=${R_VERSION}-1build1 \
+        r-base \
+        r-base-dev \
     \
     && pip-install rpy2==2.9.5 \
     \
