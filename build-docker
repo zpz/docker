@@ -33,21 +33,30 @@ function build-py3-r {
 }
 
 
-IMAGES="$@"
-if [ "${IMAGES}" ]; then
-    IMAGES=( ${IMAGES} )
+function build-py3-rust {
+    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
+    parent=$(bash -c "${cmd}" -- zppz/py3)
+    build-image ${NAMESPACE}/py3-rust:${TAG} ${THISDIR}/py3-rust --build-arg PARENT=${parent}
+}
+
+
+if [[ $# == 0 ]]; then
+    img=py3
+elif [[ $# == 1 ]]; then
+    img="$1"
 else
-    IMAGES=( py3 py3-r )
+    >&2 echo "too many arguments"
+    exit 1
 fi
 
-for img in "${IMAGES[@]}"; do
-    if [ "${img}" = py3 ]; then
-        build-py3
-    elif [ "${img}" = py3-r ]; then
-        build-py3-r
-    else
-        >&2 echo "unknown image name '${img}'"
-        exit 1
-    fi
-done
+if [ "${img}" = py3 ]; then
+    build-py3
+elif [ "${img}" = py3-r ]; then
+    build-py3-r
+elif [ "${img}" = py3-rust ]; then
+    build-py3-rust
+else
+    >&2 echo "unknown image name '${img}'"
+    exit 1
+fi
 

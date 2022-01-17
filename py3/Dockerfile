@@ -1,4 +1,4 @@
-ARG PARENT=ubuntu:20.10
+ARG PARENT=ubuntu:20.04
 
 FROM ${PARENT}
 USER root
