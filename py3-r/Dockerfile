@@ -32,9 +32,8 @@
 ARG PARENT
 
 FROM ${PARENT}
-USER root
-
 ENV IMAGE_PARENT ${PARENT}
+USER root
 
 # ENV R_VERSION=4.0.2
         # r-base=${R_VERSION}-1build1 \
@@ -58,3 +57,4 @@ RUN install.version.r roxygen2 7.1.1
 RUN install.version.r futile.logger 1.4.3
 RUN install.version.r testthat
 
+USER docker-user

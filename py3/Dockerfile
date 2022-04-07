@@ -1,9 +1,8 @@
 ARG PARENT=ubuntu:20.04
 
 FROM ${PARENT}
-USER root
-
 ENV IMAGE_PARENT ${PARENT}
+USER root
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
 COPY bin/* /usr/local/bin/
@@ -35,7 +34,7 @@ RUN apt-update \
 # prompt related to `tzdata`.
 
 # `iproute2` provides command `ip`.
-# `daemontools` provides `multilog`, used by our script `logged`.
+# `daemontools` provides `multilog`, which is used by our script `bin/logged`.
 
 
 #-------------------------------
@@ -46,31 +45,15 @@ RUN chmod +r /etc/bash.bashrc
 RUN rm -f /root/.bashrc /root/.profile
 
 
-#-----------------
-# group and user
-#
-
-RUN groupadd --gid 1234 docker-user \
-    && mkdir -p /home/docker-user \
-    && useradd --uid 1234 --gid docker-user --no-user-group --home /home/docker-user --shell /bin/bash docker-user \
-    && chown -R docker-user:docker-user /home/docker-user \
-    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
-
-# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
-
-USER root
-
-
 #--------------
 # Python 3
-
-ENV PYTHON_VERSION=3.8
 
 RUN apt-update \
     && apt-install \
         python3 \
         python3-dev \
         python3-pip \
+        python3.8-venv \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
@@ -84,7 +67,7 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
 
-RUN pip-install -U pip setuptools
+# RUN pip-install -U pip setuptools
 
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
@@ -94,11 +77,10 @@ ENV PYTHONIOENCODING=utf-8
 # Commonly useful packages for code development
 
 RUN pip-install \
+        build \
         ptpython \
         pudb \
         pytest \
-        pytest-asyncio \
-        pytest-cov \
         pytest-pudb \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
@@ -123,14 +105,27 @@ RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 #
 # TODO:
 # it is possible that this config file is not loaded by Jupyter Notebook.
-ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
-COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
-COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
+# ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
+# COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
+# COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
-RUN pip-install \
-        'ipywidgets' \
-        'jupyterlab' \
-    && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
+# RUN pip-install \
+#         'ipywidgets' \
+#         'jupyterlab' \
+#     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `jupyterlab` requires (and will install if not available)
 # ipython, notebook, pyzmq, tornado, jinja2 and some other things.
+
+
+#-----------------
+# group and user
+#
+
+RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /bin/bash docker-user \
+    && chown -R docker-user:docker-user /home/docker-user \
+    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
+# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
+RUN rm -f /home/docker-user/.bashrc /home/docker-user/.profile
+
+USER docker-user
