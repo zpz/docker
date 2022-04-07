@@ -67,7 +67,7 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
 
-RUN pip-install -U pip setuptools
+# RUN pip-install -U pip setuptools
 
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
@@ -78,13 +78,9 @@ ENV PYTHONIOENCODING=utf-8
 
 RUN pip-install \
         build \
-        flake8 \
         ptpython \
         pudb \
         pytest \
-        pytest-asyncio \
-        pytest-cov \
-        pytest-mock \
         pytest-pudb \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
@@ -109,14 +105,14 @@ RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 #
 # TODO:
 # it is possible that this config file is not loaded by Jupyter Notebook.
-ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
-COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
-COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
+# ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
+# COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
+# COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
 
-RUN pip-install \
-        'ipywidgets' \
-        'jupyterlab' \
-    && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
+# RUN pip-install \
+#         'ipywidgets' \
+#         'jupyterlab' \
+#     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
 
 # `jupyterlab` requires (and will install if not available)
 # ipython, notebook, pyzmq, tornado, jinja2 and some other things.

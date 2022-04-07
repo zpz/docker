@@ -40,6 +40,13 @@ function build-py3-rust {
 }
 
 
+function build-py3-build {
+    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
+    parent=$(bash -c "${cmd}" -- zppz/py3)
+    build-image ${NAMESPACE}/py3-build:${TAG} ${THISDIR}/py3-build --build-arg PARENT=${parent}
+}
+
+
 if [[ $# == 0 ]]; then
     img=py3
 elif [[ $# == 1 ]]; then
@@ -55,6 +62,8 @@ elif [ "${img}" = py3-r ]; then
     build-py3-r
 elif [ "${img}" = py3-rust ]; then
     build-py3-rust
+elif [ "${img}" = py3-build ]; then
+    build-py3-build
 else
     >&2 echo "unknown image name '${img}'"
     exit 1
