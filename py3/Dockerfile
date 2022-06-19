@@ -130,13 +130,19 @@ RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --crea
     && chown -R docker-user:docker-user /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
+# -- Now I don't understand the line above. (2022/6/19)
 RUN rm -f /home/docker-user/.bashrc /home/docker-user/.profile
+
+# TODO: use `umask` to give broader permission to users in the same group.
+
+RUN set -eux; \
+	apt-update; \
+	apt-install -y gosu; \
+	gosu nobody true \
+    apt-clean
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-
-USER docker-user
-
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 CMD ["/bin/bash"]

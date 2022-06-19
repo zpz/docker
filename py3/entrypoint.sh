@@ -1,8 +1,12 @@
 #!/bin/bash
 
-if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
-    usermod -u ${HOST_UID} docker-user
-    groupmod -g ${HOST_GID} docker-user
-fi
+if [[ "${USER}" == root ]]; then
+    exec "$@"
+else
+    if [[ -n "${HOST_UID}" && -n "${HOST_GID}" ]]; then
+        usermod -u ${HOST_UID} docker-user > /dev/null
+        groupmod -g ${HOST_GID} docker-user > /dev/null
+    fi
 
-exec "$@"
+    exec gosu docker-user "$@"
+fi
