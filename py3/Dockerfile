@@ -61,13 +61,14 @@ RUN apt-update \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
     && apt-clean
 
+# RUN pip-install -U pip setuptools
+RUN pip-install -U pip
+
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # This controls behavior of `pip` when we use it to install Python packages.
 # In particular, the config instructs `pip` to not save cache, hence reducing size
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
-
-# RUN pip-install -U pip setuptools
 
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
@@ -122,10 +123,20 @@ RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 # group and user
 #
 
+# About permission related to mapped volumes:
+# https://techflare.blog/permission-problems-in-bind-mount-in-docker-volume/
+
 RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /bin/bash docker-user \
     && chown -R docker-user:docker-user /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
 RUN rm -f /home/docker-user/.bashrc /home/docker-user/.profile
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+
 USER docker-user
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["/bin/bash"]
