@@ -19,7 +19,6 @@ RUN apt-update \
     && apt-install \
         bzip2 \
         curl \
-        daemontools \
         iproute2 \
         iputils-ping \
         less \
@@ -34,7 +33,6 @@ RUN apt-update \
 # prompt related to `tzdata`.
 
 # `iproute2` provides command `ip`.
-# `daemontools` provides `multilog`, which is used by our script `bin/logged`.
 
 
 #-------------------------------
@@ -79,9 +77,14 @@ ENV PYTHONIOENCODING=utf-8
 
 RUN pip-install \
         build \
+        coverage[toml] \
+        flake8 \
         ptpython \
         pudb \
+        pylint \
+        pylint-exit \
         pytest \
+        pytest-asyncio \
         pytest-pudb \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
@@ -144,5 +147,7 @@ RUN set -eux; \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+USER docker-user
 
 CMD ["/bin/bash"]
