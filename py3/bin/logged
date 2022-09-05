@@ -4,6 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# The Linux package `daemontools` provides `multilog`.
+
 USAGE=$(cat <<'EOF'
 Usage:
     logged [-s] command [args]
