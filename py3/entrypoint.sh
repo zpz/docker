@@ -3,7 +3,7 @@
 if [[ "${USER}" == root ]]; then
     exec "$@"
 else
-    if [[ -n "${HOST_UID}" && -n "${HOST_GID}" ]]; then
+    if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
         usermod -u ${HOST_UID} docker-user > /dev/null
         groupmod -g ${HOST_GID} docker-user > /dev/null
     fi
