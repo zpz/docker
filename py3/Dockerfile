@@ -88,6 +88,10 @@ RUN pip-install \
         pytest-pudb \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
+# New problem on 22/9/7:
+# somehow /usr/local/bin/ptpython and /usr/local/bin/ptipython lose executable flag
+# (what would be added by `chmod +x`) in containers.
+
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
 COPY dotfiles/ptpython/ptipython /usr/local/bin/
