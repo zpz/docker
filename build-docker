@@ -69,3 +69,5 @@ else
     exit 1
 fi
 
+
+# Use `docker image push zppz/py3:xxxxxx` to push the image to Dockerhub.

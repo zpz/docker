@@ -46,12 +46,14 @@ RUN rm -f /root/.bashrc /root/.profile
 #--------------
 # Python 3
 
+ENV PYTHON_VERSION=3.8
+
 RUN apt-update \
     && apt-install \
         python3 \
         python3-dev \
         python3-pip \
-        python3.8-venv \
+        python${PYTHON_VERSION}-venv \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
@@ -88,9 +90,19 @@ RUN pip-install \
         pytest-pudb \
     && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
+# New problem on 22/9/7:
+# somehow /usr/local/bin/ptpython and /usr/local/bin/ptipython lose executable flag
+# (what would be added by `chmod +x`) in containers.
+
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
 COPY dotfiles/ptpython/ptipython /usr/local/bin/
+
+# Just to be sure; this is not needed if the source scripts
+# are already executable.
+RUN chmod +x /usr/local/bin/ptpython /usr/local/bin/ptipython
+# `ptipython` requires ipython, which is not installed in this image.
+
 
 # Use `breakpoint()` to take advantage of the following:
 ENV PYTHONBREAKPOINT=pudb.set_trace
@@ -148,6 +160,6 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-USER docker-user
+# USER docker-user
 
 CMD ["/bin/bash"]
