@@ -56,6 +56,7 @@ RUN apt-update \
         python${PYTHON_VERSION}-venv \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
+    && ln -sf /usr/bin/pip3 /usr/bin/pip3.8 \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
@@ -87,8 +88,9 @@ RUN pip-install \
         pylint-exit \
         pytest \
         pytest-asyncio \
-        pytest-pudb \
-    && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
+        pytest-pudb
+
+    # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 # New problem on 22/9/7:
 # somehow /usr/local/bin/ptpython and /usr/local/bin/ptipython lose executable flag
@@ -145,7 +147,10 @@ RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --crea
     && chown -R docker-user:docker-user /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
-# -- Now I don't understand the line above. (2022/6/19)
+# On Linux, if the host user has uid 1000 and is a member of group 100 ("users"),
+# then intra-container code should have the same file access permissions as the host account.
+# (Now I don't fully understand this. - 22.10.15)
+
 RUN rm -f /home/docker-user/.bashrc /home/docker-user/.profile
 
 # TODO: use `umask` to give broader permission to users in the same group.
@@ -163,3 +168,5 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # USER docker-user
 
 CMD ["/bin/bash"]
+
+# TODO: pre-create ffolder
