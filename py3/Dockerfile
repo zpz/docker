@@ -22,6 +22,7 @@ RUN apt-update \
         iproute2 \
         iputils-ping \
         less \
+        make \
         telnet \
         unzip \
         xz-utils \
@@ -88,13 +89,10 @@ RUN pip-install \
         pylint-exit \
         pytest \
         pytest-asyncio \
-        pytest-pudb
+        pytest-pudb \
+        pytest-xdist
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
-
-# New problem on 22/9/7:
-# somehow /usr/local/bin/ptpython and /usr/local/bin/ptipython lose executable flag
-# (what would be added by `chmod +x`) in containers.
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
 COPY dotfiles/ptpython/ptpython /usr/local/bin/
