@@ -5,7 +5,7 @@ ENV IMAGE_PARENT ${PARENT}
 USER root
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY bin/apt-clean bin/apt-install /bin/apt-remove /bin/apt-update /usr/local/bin/
+COPY bin/apt-clean bin/apt-install bin/apt-remove bin/apt-update /usr/local/bin/
 
 
 #-------------------------
@@ -153,7 +153,7 @@ RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 # About permission related to mapped volumes:
 # https://techflare.blog/permission-problems-in-bind-mount-in-docker-volume/
 
-RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /bin/bash docker-user \
+RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /usr/bin/bash docker-user \
     && chown -R docker-user:docker-user /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user
 # Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
@@ -189,7 +189,7 @@ ENV TMPDIR=/home/docker-user/mnt/tmp
 # RUN chmod +x /usr/local/bin/entrypoint.sh
 # ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# CMD ["/bin/bash"]
+# CMD ["/usr/bin/bash"]
 
 WORKDIR /home/docker-user
 USER docker-user

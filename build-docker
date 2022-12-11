@@ -17,7 +17,7 @@ function build-image {
     echo
     echo "building $name ..."
     echo
-    docker build -t "${name}" "${build_dir}" $@
+    docker build --no-cache -t "${name}" "${build_dir}" $@
     echo
 }
 
