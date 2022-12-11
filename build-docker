@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 set -Eeuo pipefail
 
-TINY=zppz/tiny:21.01.02
+TINY=zppz/tiny:22.12.11
 TAG=$(docker run --rm ${TINY} make-date-version)
 NAMESPACE=zppz
 THISDIR=$(cd $( dirname "${BASH_SOURCE[0]}") && pwd )
@@ -27,21 +27,21 @@ function build-py3 {
 
 
 function build-py3-r {
-    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
+    cmd="$(docker run --rm ${TINY} cat /tools/find-image)"
     parent=$(bash -c "${cmd}" -- zppz/py3)
     build-image ${NAMESPACE}/py3-r:${TAG} ${THISDIR}/py3-r --build-arg PARENT=${parent}
 }
 
 
 function build-py3-rust {
-    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
+    cmd="$(docker run --rm ${TINY} cat /tools/find-image)"
     parent=$(bash -c "${cmd}" -- zppz/py3)
     build-image ${NAMESPACE}/py3-rust:${TAG} ${THISDIR}/py3-rust --build-arg PARENT=${parent}
 }
 
 
 function build-py3-build {
-    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
+    cmd="$(docker run --rm ${TINY} cat /tools/find-image)"
     parent=$(bash -c "${cmd}" -- zppz/py3)
     build-image ${NAMESPACE}/py3-build:${TAG} ${THISDIR}/py3-build --build-arg PARENT=${parent}
 }

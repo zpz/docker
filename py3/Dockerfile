@@ -5,7 +5,7 @@ ENV IMAGE_PARENT ${PARENT}
 USER root
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY bin/* /usr/local/bin/
+COPY bin/apt-clean bin/apt-install /bin/apt-remove /bin/apt-update /usr/local/bin/
 
 
 #-------------------------
@@ -22,6 +22,7 @@ RUN apt-update \
         iproute2 \
         iputils-ping \
         less \
+        make \
         telnet \
         unzip \
         xz-utils \
@@ -62,8 +63,7 @@ RUN apt-update \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
     && apt-clean
 
-# RUN pip-install -U pip setuptools
-RUN pip-install -U pip
+# `python3.8-venv` is required when building Python packages via `build`.
 
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # This controls behavior of `pip` when we use it to install Python packages.
@@ -71,12 +71,17 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
 
+COPY bin/pip-install /usr/local/bin/
+
+# RUN pip-install -U pip setuptools
+RUN pip-install -U pip
+
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
 
 
 #-----------------------------------------------
-# Commonly useful packages for code development
+# Commonly useful packages for Python code development
 
 RUN pip-install \
         build \
@@ -88,7 +93,12 @@ RUN pip-install \
         pylint-exit \
         pytest \
         pytest-asyncio \
-        pytest-pudb
+        pytest-cov \
+        pytest-mock \
+        pytest-pudb \
+        pytest-xdist \
+        toml \
+        Flake8-pyproject
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
@@ -153,20 +163,33 @@ RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --crea
 
 RUN rm -f /home/docker-user/.bashrc /home/docker-user/.profile
 
+RUN mkdir -p /home/docker-user/mnt/data /home/docker-user/mnt/log /home/docker-user/mnt/tmp \
+    && chown -R docker-user:docker-user /home/docker-user/mnt
+
+# In usage, mount a data volume to /home/docker-user/mnt like this
+#   docker run --mount source=my-data-volume,target=/home/docker-user/mnt <image> ...
+# then there will be no write-permission issues.
+
+ENV DATADIR=/home/docker-user/mnt/data
+ENV LOGDIR=/home/docker-user/mnt/log
+ENV TMPDIR=/home/docker-user/mnt/tmp
+
+# Env set by `docker run -e X=y ...` will override the same env se here by ENV.
+
+
 # TODO: use `umask` to give broader permission to users in the same group.
 
-RUN set -eux; \
-	apt-update; \
-	apt-install -y gosu; \
-	gosu nobody true \
-    apt-clean
+# RUN set -eux; \
+# 	apt-update; \
+# 	apt-install -y gosu; \
+# 	gosu nobody true \
+#     apt-clean
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# RUN chmod +x /usr/local/bin/entrypoint.sh
+# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# USER docker-user
+# CMD ["/bin/bash"]
 
-CMD ["/bin/bash"]
-
-# TODO: pre-create ffolder
+WORKDIR /home/docker-user
+USER docker-user
