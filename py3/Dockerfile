@@ -84,9 +84,11 @@ ENV PYTHONIOENCODING=utf-8
 # Commonly useful packages for Python code development
 
 RUN pip-install \
+        bandit \
         build \
         coverage[toml] \
         flake8 \
+        mypy \
         ptpython \
         pudb \
         pylint \
