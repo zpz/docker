@@ -84,25 +84,27 @@ ENV PYTHONIOENCODING=utf-8
 # Commonly useful packages for Python code development
 
 RUN pip-install \
-        bandit \
         build \
         coverage[toml] \
-        flake8 \
-        mypy \
         ptpython \
         pudb \
-        pylint \
-        pylint-exit \
         pytest \
-        pytest-asyncio \
         pytest-cov \
-        pytest-mock \
         pytest-pudb \
-        pytest-xdist \
-        toml \
-        Flake8-pyproject
+        toml
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
+
+# Some packages useful to testing
+        # bandit
+        # flake8 \
+        # mypy \
+        # pylint \
+        # pylint-exit \
+        # pytest-asyncio \
+        # pytest-xdist \
+        # Flake8-pyproject
+        # pytest-mock
 
 # New problem on 22/9/7:
 # somehow /usr/local/bin/ptpython and /usr/local/bin/ptipython lose executable flag
