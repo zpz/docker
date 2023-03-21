@@ -1,4 +1,4 @@
-ARG PARENT=ubuntu:20.04
+ARG PARENT=ubuntu:22.04
 
 FROM ${PARENT}
 ENV IMAGE_PARENT ${PARENT}
@@ -47,17 +47,17 @@ RUN rm -f /root/.bashrc /root/.profile
 #--------------
 # Python 3
 
-ENV PYTHON_VERSION=3.8
+ENV PYTHON_VERSION=3.10
 
 RUN apt-update \
     && apt-install \
-        python3 \
-        python3-dev \
+        python${PYTHON_VERSION} \
+        python${PYTHON_VERSION}-dev \
         python3-pip \
         python${PYTHON_VERSION}-venv \
+    && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
+    && ln -sf /usr/bin/python${PYTHON_VERSION}-config /usr/bin/python-config3 \
     && ln -sf /usr/bin/python3 /usr/bin/python \
-    && ln -sf /usr/bin/pip3 /usr/bin/pip \
-    && ln -sf /usr/bin/pip3 /usr/bin/pip3.8 \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
@@ -73,8 +73,7 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 
 COPY bin/pip-install /usr/local/bin/
 
-# RUN pip-install -U pip setuptools
-RUN pip-install -U pip
+RUN pip-install -U pip setuptools
 
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
@@ -116,7 +115,7 @@ COPY dotfiles/ptpython/ptipython /usr/local/bin/
 
 # Just to be sure; this is not needed if the source scripts
 # are already executable.
-RUN chmod +x /usr/local/bin/ptpython /usr/local/bin/ptipython
+# RUN chmod +x /usr/local/bin/ptpython /usr/local/bin/ptipython
 # `ptipython` requires ipython, which is not installed in this image.
 
 
