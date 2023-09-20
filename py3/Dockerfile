@@ -19,6 +19,7 @@ RUN apt-update \
     && apt-install \
         bzip2 \
         curl \
+        htop \
         iproute2 \
         iputils-ping \
         less \
@@ -95,11 +96,7 @@ RUN pip-install \
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 # Some packages useful to testing
-        # bandit
-        # flake8 \
         # mypy \
-        # pylint \
-        # pylint-exit \
         # pytest-asyncio \
         # pytest-xdist \
         # Flake8-pyproject
