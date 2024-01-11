@@ -31,7 +31,7 @@ elif [[ ${BUILDARCH} != arm && ${TARGETARCH} == arm64 ]]; then
     >&2 echo "building for target ${TARGETARCH} on an ${BUILDARCH} machine is not supported"
     exit 1
 else
-    buildopts="build --progress=plain"
+    buildopts="build"
 fi
 
 
