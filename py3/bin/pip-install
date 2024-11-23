@@ -1,3 +1,4 @@
 #!/usr/bin/bash
 
-python -m pip install --no-cache-dir $@
+python -m pip install --no-cache-dir "$@"
+

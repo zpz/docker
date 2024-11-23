@@ -1,17 +1,21 @@
-ARG PARENT=ubuntu:22.04
+ARG PARENT=ubuntu:24.04
 
 FROM ${PARENT}
 ENV IMAGE_PARENT ${PARENT}
 USER root
 
+# https://askubuntu.com/a/1515958
+RUN userdel -r ubuntu
+
+
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY bin/apt-clean bin/apt-install bin/apt-remove bin/apt-update /usr/local/bin/
+COPY bin/apt-clean bin/apt-install bin/apt-remove bin/apt-update bin/apt-upgrade /usr/local/bin/
 
 
 #-------------------------
 # The very basic utilities
 
-RUN apt-update \
+RUN apt-update && apt-upgrade \
     && apt-install \
         apt-utils \
         dialog \
@@ -23,11 +27,12 @@ RUN apt-update \
         iproute2 \
         iputils-ping \
         less \
-        make \
         telnet \
+        tree \
         unzip \
         xz-utils \
     && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
+    && apt-install gcc g++ make libc6 libc6-dev \
     && apt-clean
 
 
@@ -48,7 +53,7 @@ RUN rm -f /root/.bashrc /root/.profile
 #--------------
 # Python 3
 
-ENV PYTHON_VERSION=3.10
+ENV PYTHON_VERSION=3.12
 
 RUN apt-update \
     && apt-install \
@@ -64,7 +69,7 @@ RUN apt-update \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
     && apt-clean
 
-# `python3.8-venv` is required when building Python packages via `build`.
+# `python3.x-venv` is required when building Python packages via `build`.
 
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # This controls behavior of `pip` when we use it to install Python packages.
@@ -74,10 +79,12 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 
 COPY bin/pip-install /usr/local/bin/
 
-RUN pip-install -U pip setuptools
+# RUN pip-install -U pip setuptools
 
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
+
+
 
 
 #-----------------------------------------------
@@ -189,7 +196,6 @@ ENV TMPDIR=/home/docker-user/mnt/tmp
 # RUN chmod +x /usr/local/bin/entrypoint.sh
 # ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# CMD ["/usr/bin/bash"]
-
+CMD ["bash"]
 WORKDIR /home/docker-user
 USER docker-user
