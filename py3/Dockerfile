@@ -1,11 +1,12 @@
-ARG PARENT=ubuntu:24.04
+ARG PARENT=ubuntu:22.04
 
 FROM ${PARENT}
 ENV IMAGE_PARENT ${PARENT}
 USER root
 
+# Do this on ubuntu 24.04
 # https://askubuntu.com/a/1515958
-RUN userdel -r ubuntu
+# RUN userdel -r ubuntu
 
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
@@ -53,7 +54,7 @@ RUN rm -f /root/.bashrc /root/.profile
 #--------------
 # Python 3
 
-ENV PYTHON_VERSION=3.12
+ENV PYTHON_VERSION=3.10
 
 RUN apt-update \
     && apt-install \
