@@ -1,15 +1,63 @@
-ARG PARENT=ubuntu:20.04
+ARG PARENT
+
 
 FROM ${PARENT}
 ENV IMAGE_PARENT ${PARENT}
 USER root
 
-COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY bin/* /usr/local/bin/
+
+#-----------------
+# group and user
+#
+
+# About permission related to mapped volumes:
+# https://techflare.blog/permission-problems-in-bind-mount-in-docker-volume/
+
+RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /bin/bash docker-user \
+    && chown -R docker-user:docker-user /home/docker-user \
+    && chmod -R u=rwx,g=rwx,o=r /home/docker-user \
+    && rm -f /home/docker-user/.bashrc /home/docker-user/.profile
+# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
+# On Linux, if the host user has uid 1000 and is a member of group 100 ("users"),
+# then intra-container code should have the same file access permissions as the host account.
+# (Now I don't fully understand this. - 22.10.15)
+# Have since moved to prefer "data volume" to "mapped volume".
+
+RUN mkdir -p /home/docker-user/mnt/data /home/docker-user/mnt/log /home/docker-user/mnt/tmp \
+    && chown -R docker-user:docker-user /home/docker-user/mnt \
+    && mkdir -p /tmp
+
+ENV DATADIR=/home/docker-user/mnt/data
+ENV LOGDIR=/home/docker-user/mnt/log
+ENV TMPDIR=/tmp
+
+# Mount a data volume to /home/docker-user/mnt like this:
+#
+#   docker run --mount source=my-data-volume,target=/home/docker-user/mnt <image> ...
+
+# Env set by `docker run -e DATADIR=... ` will override the same-named env set here by `ENV ...`.
+
+
+# # TODO: use `umask` to give broader permission to users in the same group.
+# RUN set -eux; \
+# 	apt-update; \
+# 	apt-install -y gosu; \
+# 	gosu nobody true \
+#     apt-clean
+#
+# COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# RUN chmod +x /usr/local/bin/entrypoint.sh
+# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 
 
 #-------------------------
 # The very basic utilities
+
+COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
+COPY bin/* /usr/local/bin/
+
+
 
 RUN apt-update \
     && apt-install \
@@ -19,11 +67,12 @@ RUN apt-update \
     && apt-install \
         bzip2 \
         curl \
+        htop \
         iproute2 \
         iputils-ping \
         less \
-        make \
         telnet \
+        tree \
         unzip \
         xz-utils \
     && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
@@ -34,6 +83,9 @@ RUN apt-update \
 # prompt related to `tzdata`.
 
 # `iproute2` provides command `ip`.
+
+# For building, install
+#    make gcc g++ libc6 libc6-dev
 
 
 #-------------------------------
@@ -47,20 +99,22 @@ RUN rm -f /root/.bashrc /root/.profile
 #--------------
 # Python 3
 
-ENV PYTHON_VERSION=3.8
+ARG PYTHON_VERSION
+ENV PYTHON_VERSION=${PYTHON_VERSION}
 
 RUN apt-update \
     && apt-install \
-        python3 \
+        python${PYTHON_VERSION} \
         python3-dev \
         python3-pip \
         python${PYTHON_VERSION}-venv \
+    && ln -sf /usr/bin/python3.10 /usr/bin/python3 \
     && ln -sf /usr/bin/python3 /usr/bin/python \
-    && ln -sf /usr/bin/pip3 /usr/bin/pip \
-    && ln -sf /usr/bin/pip3 /usr/bin/pip3.8 \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
-    && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
+    && ln -sf /usr/local/lib/python3 /usr/local/lib/python \
+    \
+    && apt-install make gcc g++ libc6 libc6-dev \
     && apt-clean
 
 # RUN pip-install -U pip setuptools
@@ -75,6 +129,34 @@ COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
 
+# Some extension packages need to be built.
+RUN apt-install make gcc g++ libc6 libc6-dev && apt-clean
+
+
+#-----------------------------------------
+# Jupyter notebook
+#
+
+RUN pip-install 'ipywidgets' 'jupyterlab'
+
+# `jupyterlab` requires (and will install if not available)
+# ipython, notebook, pyzmq, tornado, jinja2 and some other things.
+
+
+# TODO:
+# it is possible that this config file is not loaded by Jupyter Notebook.
+ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter
+COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
+COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}/
+
+RUN chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
+    ${JUPYTER_CONFIG_DIR}/jupyter_notebook_config.py
+
+ENV JUPYTER_DATA_DIR=/tmp/.jupyter/data
+ENV JUPYTER_RUNTIME_DIR=/tmp/.jupyter/runtime
+ENV JUPYTERLAB_WORKSPACES_DIR=/tmp/.jupyter/workspaces
+ENV JUPYTERLAB_SETTINGS_DIR=/tmp/.jupyter/settings
+
 
 #-----------------------------------------------
 # Commonly useful packages for code development
@@ -82,26 +164,24 @@ ENV PYTHONIOENCODING=utf-8
 RUN pip-install \
         build \
         coverage[toml] \
-        flake8 \
         ptpython \
         pudb \
-        pylint \
-        pylint-exit \
         pytest \
+        pytest-cov \
         pytest-asyncio \
         pytest-pudb \
-        pytest-xdist
+        toml
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
 COPY dotfiles/ptpython/config.py /etc/xdg/ptpython/
-COPY dotfiles/ptpython/ptpython /usr/local/bin/
-COPY dotfiles/ptpython/ptipython /usr/local/bin/
+# COPY dotfiles/ptpython/ptpython /usr/local/bin/
+# COPY dotfiles/ptpython/ptipython /usr/local/bin/
 
 # Just to be sure; this is not needed if the source scripts
 # are already executable.
-RUN chmod +x /usr/local/bin/ptpython /usr/local/bin/ptipython
-# `ptipython` requires ipython, which is not installed in this image.
+# RUN chmod +x /usr/local/bin/ptpython /usr/local/bin/ptipython
+# `ptipython` requires ipython.
 
 
 # Use `breakpoint()` to take advantage of the following:
@@ -116,55 +196,11 @@ ENV XDG_CONFIG_HOME /etc/xdg
 COPY dotfiles/pudb/pudb.cfg ${XDG_CONFIG_HOME}/pudb/
 RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 
-#-----------------------------------------
-# Jupyter notebook
-#
-# TODO:
-# it is possible that this config file is not loaded by Jupyter Notebook.
-# ENV JUPYTER_CONFIG_DIR=/etc/xdg/jupyter/
-# COPY dotfiles/ipython/ipython_config.py /etc/xdg/ipython/profile_default/
-# COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}
-
-# RUN pip-install \
-#         'ipywidgets' \
-#         'jupyterlab' \
-#     && chmod +r /etc/xdg/ipython/profile_default/ipython_config.py
-
-# `jupyterlab` requires (and will install if not available)
-# ipython, notebook, pyzmq, tornado, jinja2 and some other things.
 
 
-#-----------------
-# group and user
-#
+######################
 
-# About permission related to mapped volumes:
-# https://techflare.blog/permission-problems-in-bind-mount-in-docker-volume/
 
-RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /bin/bash docker-user \
-    && chown -R docker-user:docker-user /home/docker-user \
-    && chmod -R u=rwx,g=rwx,o=r /home/docker-user
-# Giving 'g=rwx' to /home/docker-user is a hack around mapped-volume permission issues.
-# On Linux, if the host user has uid 1000 and is a member of group 100 ("users"),
-# then intra-container code should have the same file access permissions as the host account.
-# (Now I don't fully understand this. - 22.10.15)
-
-RUN rm -f /home/docker-user/.bashrc /home/docker-user/.profile
-
-# TODO: use `umask` to give broader permission to users in the same group.
-
-RUN set -eux; \
-	apt-update; \
-	apt-install -y gosu; \
-	gosu nobody true \
-    apt-clean
-
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-# USER docker-user
-
-CMD ["/bin/bash"]
-
-# TODO: pre-create ffolder
+USER docker-user
+WORKDIR /home/docker-user
+CMD ["bash"]

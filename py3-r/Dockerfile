@@ -43,11 +43,10 @@ RUN apt-update \
     && apt-install \
         r-base \
         r-base-dev \
-    \
-    && pip-install rpy2==2.9.5 \
-    \
     && apt-clean \
     && rm -rf /tmp/*
+
+RUN pip-install rpy2  # 2.9.5 ?
 
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin
