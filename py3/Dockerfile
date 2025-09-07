@@ -169,7 +169,6 @@ RUN pip-install \
         pytest \
         pytest-cov \
         pytest-asyncio \
-        pytest-pudb \
         toml
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
