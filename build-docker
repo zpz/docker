@@ -8,8 +8,7 @@ PYTHON_TAG=310
 # ubuntu 20.04 default python 3.8, 22.04 3.10, 24.04 3.12.
 
 
-TINY=zppz/tiny:25.08.30
-TAG=$(docker run --rm ${TINY} make-date-version)
+TAG=$(python3 -m minidocker make-date-version)
 NAMESPACE=zppz
 THISDIR=$(cd $( dirname "${BASH_SOURCE[0]}") && pwd )
 
@@ -33,15 +32,13 @@ function build-py3 {
 
 
 function build-py3-r {
-    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
-    parent=$(bash -c "${cmd}" -- zppz/py${PYTHON_TAG})
+    parent=$(python3 -m minidocker find-image zppz/py${PYTHON_TAG})
     build-image ${NAMESPACE}/py${PYTHON_TAG}-r:${TAG} ${THISDIR}/py3-r --build-arg PARENT=${parent}
 }
 
 
 function build-py3-rust {
-    cmd="$(docker run --rm ${TINY} cat /usr/tools/find-image)"
-    parent=$(bash -c "${cmd}" -- zppz/py${PYTHON_TAG})
+    parent=$(python3 -m minidocker find-image zppz/py${PYTHON_TAG})
     build-image ${NAMESPACE}/py${PYTHON_TAG}-rust:${TAG} ${THISDIR}/py3-rust --build-arg PARENT=${parent}
 }
 
