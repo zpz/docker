@@ -50,6 +50,7 @@ RUN pip-install rpy2  # 2.9.5 ?
 
 COPY ./install.r /usr/local/bin
 COPY ./install.version.r /usr/local/bin
+RUN chmod +x /usr/local/bin/install.r /usr/local/bin/install.version.r 
 
 RUN install.r versions
 RUN install.version.r roxygen2 7.1.1

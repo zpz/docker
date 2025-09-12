@@ -12,6 +12,9 @@ TAG=$(python3 -m minidocker make-date-version)
 NAMESPACE=zppz
 THISDIR=$(cd $( dirname "${BASH_SOURCE[0]}") && pwd )
 
+NOCACHE=
+# NOCACHE=--no-cache
+
 
 function build-image {
     name="$1"
@@ -21,7 +24,7 @@ function build-image {
     echo
     echo "building $name ..."
     echo
-    docker build -t "${name}" "${build_dir}" $@
+    docker build ${NOCACHE} -t "${name}" "${build_dir}" $@
     echo
 }
 

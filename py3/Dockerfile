@@ -76,6 +76,7 @@ RUN apt-update \
         unzip \
         xz-utils \
     && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
+    && apt-install --reinstall ca-certificates && update-ca-certificates \
     && apt-clean
 
 
@@ -91,7 +92,8 @@ RUN apt-update \
 #-------------------------------
 # misc
 
-COPY dotfiles/bash/bash.bashrc /etc/
+# COPY dotfiles/bash/bash.bashrc /etc/
+RUN curl https://raw.githubusercontent.com/zpz/dotfiles/refs/heads/master/bash/bashrc -o /etc/bash.bashrc
 RUN chmod +r /etc/bash.bashrc
 RUN rm -f /root/.bashrc /root/.profile
 
