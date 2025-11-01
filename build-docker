@@ -3,9 +3,9 @@
 
 set -Eeuo pipefail
 
-UBUNTU_VERSION=22.04
-PYTHON_VERSION=3.10
-PYTHON_TAG=310
+UBUNTU_VERSION=24.04
+PYTHON_VERSION=3.12
+PYTHON_TAG=312
 # ubuntu 20.04 default python 3.8, 22.04 3.10, 24.04 3.12.
 
 
@@ -28,15 +28,14 @@ fi
 
 if [[ ${BUILDARCH} == arm && ${TARGETARCH} == amd64 ]]; then
     # https://stackoverflow.com/a/58225906
-    DOCKER_BUILDKIT=1
+    # DOCKER_BUILDKIT=1
     # https://stackoverflow.com/a/64805337
-    BUILDKIT_PROGRESS=plain
-    buildopts="buildx build --platform linux/amd64"
+    buildopts="buildx build --platform linux/amd64 --progress=plain --no-cache"
 elif [[ ${BUILDARCH} != arm && ${TARGETARCH} == arm64 ]]; then
     >&2 echo "building for target ${TARGETARCH} on an ${BUILDARCH} machine is not supported"
     exit 1
 else
-    buildopts="build"
+    buildopts="build --progress=plain --no-cache"
 fi
 
 
@@ -51,7 +50,7 @@ function build-image {
     echo
     echo "building $name ..."
     echo
-    docker build -t "${name}" --no-cache --progress=plain "${build_dir}" $@
+    docker ${buildopts} -t "${name}" "${build_dir}" $@
     echo
 }
 
