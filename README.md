@@ -4,6 +4,8 @@ This repo defines a few Docker images that are intended to be used as base image
 
 Some of these images may be pushed to the [repository 'zppz' on Dockerhub](https://hub.docker.com/u/zppz).
 
+UPDATE: the description below is obsolete; this code base is evolving.
+
 My Docker workflow has these main components:
 
 - The image [zppz/tiny](https://github.com/zpz/docker-tiny). This minimalistic image intends to be quite stable. It contains commands to generate image versions based on date or datetime in fixed length and format. It also contains commands to find the latest version of an image that is tagged by such sortable versions.

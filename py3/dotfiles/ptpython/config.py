@@ -1,9 +1,7 @@
 """
 Configuration example for ``ptpython``.
 
-Copy this file to $XDG_CONFIG_HOME/ptpython/config.py
-On Linux, this is: ~/.config/ptpython/config.py
-On macOS, this is: ~/Library/Application Support/ptpython/config.py
+Copy this file to $XDG_CONFIG_HOME/ptpython/config.py.
 """
 from prompt_toolkit.filters import ViInsertMode
 from prompt_toolkit.key_binding.key_processor import KeyPress
@@ -58,7 +56,7 @@ def configure(repl):
     # repl.wrap_lines = True
 
     # Mouse support.
-    repl.enable_mouse_support = False
+    repl.enable_mouse_support = False  # allows scrolling in terminal and copy/paste
 
     # Complete while typing. (Don't require tab before the
     # completion menu is shown.)
@@ -76,6 +74,7 @@ def configure(repl):
 
     # Use the classic prompt. (Display '>>>' instead of 'In [1]'.)
     repl.prompt_style = "classic"  # 'classic' or 'ipython'
+
 
     # Don't insert a blank line after the output.
     repl.insert_blank_line_after_output = False
@@ -108,12 +107,10 @@ def configure(repl):
     repl.enable_input_validation = True
 
     # Use this colorscheme for the code.
-    # Ptpython uses Pygments for code styling, so you can choose from Pygments'
-    # color schemes. See:
-    # https://pygments.org/docs/styles/
-    # https://pygments.org/demo/
-    # repl.use_code_colorscheme("default")
-    # A colorscheme that looks good on dark backgrounds is 'native':
+    # Ptpython uses Pygments for code styling.
+    # Choose from Pygment's color schemes.
+    # 'native' looks good on dark background.
+    # repl.use_code_colorscheme("pastie")
     repl.use_code_colorscheme("native")
 
     # Set color depth (keep in mind that not all terminals support true color).
