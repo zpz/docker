@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 if [[ "${USER}" == root ]]; then
     exec "$@"

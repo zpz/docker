@@ -55,11 +55,11 @@ ENV TMPDIR=/tmp
 # The very basic utilities
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
-COPY bin/* /usr/local/bin/
+COPY bin/apt-clean bin/apt-install bin/apt-remove bin/apt-update bin/apt-upgrade /usr/local/bin/
 
 
 
-RUN apt-update \
+RUN apt-update && apt-upgrade \
     && apt-install \
         apt-utils \
         dialog \
@@ -119,14 +119,17 @@ RUN apt-update \
     && apt-install make gcc g++ libc6 libc6-dev \
     && apt-clean
 
-# RUN pip-install -U pip setuptools
-RUN pip-install -U pip
+# `python3.x-venv` is required when building Python packages via `build`.
 
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
 # This controls behavior of `pip` when we use it to install Python packages.
 # In particular, the config instructs `pip` to not save cache, hence reducing size
 # of the resultant Docker image.
 # Without this config, we can use option `--no-cache-dir`  in each use of `pip`.
+
+COPY bin/pip-install /usr/local/bin/
+
+# RUN pip-install -U pip setuptools
 
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
@@ -160,8 +163,10 @@ ENV JUPYTERLAB_WORKSPACES_DIR=/tmp/.jupyter/workspaces
 ENV JUPYTERLAB_SETTINGS_DIR=/tmp/.jupyter/settings
 
 
+
+
 #-----------------------------------------------
-# Commonly useful packages for code development
+# Commonly useful packages for Python code development
 
 RUN pip-install \
         build \
