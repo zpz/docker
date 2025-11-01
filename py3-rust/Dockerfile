@@ -1,7 +1,7 @@
 ARG PARENT
 
 FROM ${PARENT}
-ENV IMAGE_PARENT ${PARENT}
+ENV IMAGE_PARENT=${PARENT}
 USER root
 
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y

@@ -2,7 +2,7 @@ ARG PARENT
 
 
 FROM ${PARENT}
-ENV IMAGE_PARENT ${PARENT}
+ENV IMAGE_PARENT=${PARENT}
 USER root
 
 
@@ -193,7 +193,7 @@ ENV LC_ALL=C
 # refer to: https://stackoverflow.com/questions/14547631/python-locale-error-unsupported-locale-setting
 
 # For pudb's needs:
-ENV XDG_CONFIG_HOME /etc/xdg
+ENV XDG_CONFIG_HOME=/etc/xdg
 COPY dotfiles/pudb/pudb.cfg ${XDG_CONFIG_HOME}/pudb/
 RUN chmod -R 777 ${XDG_CONFIG_HOME}/pudb/
 
