@@ -13,6 +13,10 @@ USER root
 # About permission related to mapped volumes:
 # https://techflare.blog/permission-problems-in-bind-mount-in-docker-volume/
 
+# Remove the user `ubuntu` in ubuntu 24.04 base image
+# https://askubuntu.com/questions/1513927/ubuntu-24-04-docker-images-now-includes-user-ubuntu-with-uid-gid-1000
+RUN touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu
+
 RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --create-home --shell /bin/bash docker-user \
     && chown -R docker-user:docker-user /home/docker-user \
     && chmod -R u=rwx,g=rwx,o=r /home/docker-user \
@@ -21,7 +25,10 @@ RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --crea
 # On Linux, if the host user has uid 1000 and is a member of group 100 ("users"),
 # then intra-container code should have the same file access permissions as the host account.
 # (Now I don't fully understand this. - 22.10.15)
-# Have since moved to prefer "data volume" to "mapped volume".
+# In this docker stack of utilities, this is mainly for volume-mapping source code 
+# so that minor edits to them within the container will have exactly the same effect
+# as editing them on the host.
+
 
 RUN mkdir -p /home/docker-user/mnt/data /home/docker-user/mnt/log /home/docker-user/mnt/tmp \
     && chown -R docker-user:docker-user /home/docker-user/mnt \
@@ -110,7 +117,7 @@ RUN apt-update \
         python3-dev \
         python3-pip \
         python${PYTHON_VERSION}-venv \
-    && ln -sf /usr/bin/python3.10 /usr/bin/python3 \
+    && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && ln -sf /usr/bin/python3-config /usr/bin/python-config \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
