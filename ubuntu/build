@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+
+set -Eeuo pipefail
+
+UBUNTU_VERSION=24.04
+
+
+TAG=$(python3 -m minidocker make-date-version)
+NAMESPACE=zppz
+
+>&2 echo
+>&2 echo "Build machine info: $(uname -a)"
+>&2 echo "Build machine kernel: $(uname -s)"
+BUILDARCH=$(uname -p)
+>&2 echo "Build machine arch: ${BUILDARCH}"
+if [[ ${BUILDARCH} == arm && $(uname -s) == Darwin ]]; then
+    TARGETARCH=arm64
+else
+    TARGETARCH=amd64
+fi
+# To test build AMD images on an Apple ARM machine, just set
+# `TARGETARCH` to 'amd64'.
+
+if [[ ${BUILDARCH} == arm && ${TARGETARCH} == amd64 ]]; then
+    # https://stackoverflow.com/a/58225906
+    # DOCKER_BUILDKIT=1
+    # https://stackoverflow.com/a/64805337
+    buildopts="buildx build --platform linux/amd64 --progress=plain --no-cache"
+elif [[ ${BUILDARCH} != arm && ${TARGETARCH} == arm64 ]]; then
+    >&2 echo "building for target ${TARGETARCH} on an ${BUILDARCH} machine is not supported"
+    exit 1
+else
+    buildopts="build --progress=plain --no-cache"
+fi
+
+
+NAME=${NAMESPACE}/ubuntu:${TAG}
+echo "building $NAME ..."
+
+docker ${buildopts} -t "${NAME}" . --build-arg PARENT=ubuntu:${UBUNTU_VERSION}

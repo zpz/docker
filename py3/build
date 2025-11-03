@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+# This image is based on the zppz/ubuntu image built in ../ubuntu.
+
+set -Eeuo pipefail
+
+PYTHON_VERSION=3.12
+PYTHON_TAG=312
+# ubuntu 20.04 default python 3.8, 22.04 3.10, 24.04 3.12.
+
+NAMESPACE=zppz
+PARENT=$(python3 -m minidocker find-local-image ${NAMESPACE}/ubuntu)
+TAG=$(python3 -m minidocker make-date-version)
+NAME=${NAMESPACE}/py${PYTHON_TAG}:${TAG}
+
+echo "building $NAME ..."
+
+docker build -t "${NAME}" . --build-arg PARENT=${PARENT} --build-arg PYTHON_VERSION=${PYTHON_VERSION}  
+
