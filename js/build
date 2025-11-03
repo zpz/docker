@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+# This image is based on the zppz/ubuntu image built in ../ubuntu.
+
+set -Eeuo pipefail
+
+
+NAMESPACE=zppz
+PARENT=$(python3 -m minidocker find-local-image ${NAMESPACE}/ubuntu)
+TAG=$(python3 -m minidocker make-date-version)
+NAME=${NAMESPACE}/js:${TAG}
+
+echo "building $NAME ..."
+
+docker build --progress=plain --no-cache -t "${NAME}" . --build-arg PARENT=${PARENT}
+
