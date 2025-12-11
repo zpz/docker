@@ -8,7 +8,7 @@ set -Eeuo pipefail
 NAMESPACE=zppz
 PARENT=$(python3 -m minidocker find-local-image ${NAMESPACE}/ubuntu)
 TAG=$(python3 -m minidocker make-date-version)
-NAME=${NAMESPACE}/js:${TAG}
+NAME=${NAMESPACE}/node:${TAG}
 
 echo "building $NAME ..."
 
