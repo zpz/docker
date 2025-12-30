@@ -9,6 +9,7 @@ UBUNTU_VERSION=24.04
 TAG=$(python3 -m minidocker make-date-version)
 NAMESPACE=zppz
 
+
 >&2 echo
 >&2 echo "Build machine info: $(uname -a)"
 >&2 echo "Build machine kernel: $(uname -s)"

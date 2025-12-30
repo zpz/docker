@@ -63,8 +63,7 @@ ENV TMPDIR=/tmp
 
 COPY dotfiles/apt/apt.conf /etc/apt/apt.conf
 COPY bin/apt-clean bin/apt-install bin/apt-remove bin/apt-update bin/apt-upgrade /usr/local/bin/
-
-
+RUN (cd /usr/local/bin; chmod +x apt-clean apt-install apt-remove apt-update apt-upgrade)
 
 RUN apt-update && apt-upgrade \
     && apt-install \
@@ -85,6 +84,27 @@ RUN apt-update && apt-upgrade \
     && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
     && apt-install --reinstall ca-certificates && update-ca-certificates \
     && apt-clean
+
+
+# RUN apt-update && apt-upgrade \
+#     && apt-install \
+#         apt-utils \
+#         dialog \
+#     && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+#     && apt-install \
+#         bzip2 \
+#         curl \
+#         htop \
+#         iproute2 \
+#         iputils-ping \
+#         less \
+#         telnet \
+#         tree \
+#         unzip \
+#         xz-utils \
+#     && DEBIAN_FRONTEND=noninteractive apt-install tzdata \
+#     && apt-install --reinstall ca-certificates && update-ca-certificates \
+#     && apt-clean
 
 
 # `DEBIAN_FRONTEND=noninteractive` suppresses the "geographic area"
