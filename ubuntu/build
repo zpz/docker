@@ -3,7 +3,7 @@
 
 set -Eeuo pipefail
 
-UBUNTU_VERSION=24.04
+UBUNTU_VERSION=26.04
 
 
 TAG=$(python3 -m minidocker make-date-version)

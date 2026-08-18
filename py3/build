@@ -4,9 +4,9 @@
 
 set -Eeuo pipefail
 
-PYTHON_VERSION=3.12
-PYTHON_TAG=312
-# ubuntu 20.04 default python 3.8, 22.04 3.10, 24.04 3.12.
+PYTHON_VERSION=3.14
+PYTHON_TAG=314
+# ubuntu 20.04 default python 3.8, 22.04 3.10, 24.04 3.12, 26.04 3.14.
 
 NAMESPACE=zppz
 PARENT=$(python3 -m minidocker find-local-image ${NAMESPACE}/ubuntu)

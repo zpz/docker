@@ -1,10 +1,12 @@
 ARG PARENT
-
-
 FROM ${PARENT}
-ENV IMAGE_PARENT=${PARENT}
-USER root
 
+# Re-declare inside the build stage to bring the global variable into scope.
+ARG PARENT
+RUN echo "PARENT: ${PARENT}"
+ENV IMAGE_PARENT=${PARENT}
+
+USER root
 
 #-----------------
 # group and user

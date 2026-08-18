@@ -2,6 +2,7 @@ ARG PARENT
 
 
 FROM ${PARENT}
+ARG PARENT
 ENV IMAGE_PARENT=${PARENT}
 USER root
 
@@ -78,13 +79,11 @@ ENV JUPYTERLAB_SETTINGS_DIR=/tmp/.jupyter/settings
 
 RUN pip-install \
         build \
-        coverage[toml] \
+        coverage \
         ptpython \
         pudb \
         pytest \
-        pytest-cov \
-        pytest-asyncio \
-        toml
+        pytest-cov
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 
