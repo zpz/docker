@@ -99,16 +99,15 @@ RUN apt-update && apt upgrade -y && apt-update \
 #-------------------------------
 # misc
 
-# COPY dotfiles/bash/bash.bashrc /etc/
-RUN curl https://raw.githubusercontent.com/zpz/dotfiles/refs/heads/master/bash/bashrc -o /etc/bash.bashrc
-RUN chmod +r /etc/bash.bashrc
-RUN rm -f /root/.bashrc /root/.profile
+USER docker-user
 
+RUN curl https://raw.githubusercontent.com/zpz/dotfiles/refs/heads/master/shell/shellrc -o /home/docker-user/.shellrc
+RUN curl https://raw.githubusercontent.com/zpz/dotfiles/refs/heads/master/shell/bashrc -o /home/docker-user/.bashrc
+RUN curl https://raw.githubusercontent.com/zpz/dotfiles/refs/heads/master/shell/inputrc -o /home/docker-user/.inputrc
 
 
 ######################
 
 
-USER docker-user
 WORKDIR /home/docker-user
 CMD ["bash"]

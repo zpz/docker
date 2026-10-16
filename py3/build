@@ -9,8 +9,8 @@ PYTHON_TAG=314
 # ubuntu 20.04 default python 3.8, 22.04 3.10, 24.04 3.12, 26.04 3.14.
 
 NAMESPACE=zppz
-PARENT=$(python3 -m minidocker find-local-image ${NAMESPACE}/ubuntu)
-TAG=$(python3 -m minidocker make-date-version)
+PARENT=$(minidocker find-local-image ${NAMESPACE}/ubuntu)
+TAG=$(minidocker make-date-version)
 NAME=${NAMESPACE}/py${PYTHON_TAG}:${TAG}
 
 echo "building $NAME ..."

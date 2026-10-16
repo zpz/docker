@@ -6,7 +6,7 @@ set -Eeuo pipefail
 UBUNTU_VERSION=26.04
 
 
-TAG=$(python3 -m minidocker make-date-version)
+TAG=$(minidocker make-date-version)
 NAMESPACE=zppz
 
 
