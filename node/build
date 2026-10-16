@@ -12,5 +12,10 @@ NAME=${NAMESPACE}/node:${TAG}
 
 echo "building $NAME ..."
 
-docker build --progress=plain --no-cache -t "${NAME}" . --build-arg PARENT=${PARENT}
+docker build --progress=plain --no-cache \
+    -t "${NAME}" \
+    --build-arg PARENT=${PARENT} \
+    --build-arg BUILDKIT_DOCKERFILE_CHECK=skip=InvalidDefaultArgInFrom \
+    . \
+
 

@@ -39,4 +39,7 @@ fi
 NAME=${NAMESPACE}/ubuntu:${TAG}
 echo "building $NAME ..."
 
-docker ${buildopts} -t "${NAME}" . --build-arg PARENT=ubuntu:${UBUNTU_VERSION}
+docker ${buildopts} -t "${NAME}" \
+    --build-arg PARENT=ubuntu:${UBUNTU_VERSION} \
+    --build-arg BUILDKIT_DOCKERFILE_CHECK=skip=InvalidDefaultArgInFrom \
+    . 

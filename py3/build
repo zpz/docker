@@ -15,5 +15,10 @@ NAME=${NAMESPACE}/py${PYTHON_TAG}:${TAG}
 
 echo "building $NAME ..."
 
-docker build --progress=plain --no-cache -t "${NAME}" . --build-arg PARENT=${PARENT} --build-arg PYTHON_VERSION=${PYTHON_VERSION}  
+docker build --progress=plain --no-cache \
+    -t "${NAME}" \
+    --build-arg PARENT=${PARENT} \
+    --build-arg PYTHON_VERSION=${PYTHON_VERSION}  \
+    --build-arg BUILDKIT_DOCKERFILE_CHECK=skip=InvalidDefaultArgInFrom \
+    . 
 
