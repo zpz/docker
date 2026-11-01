@@ -2,6 +2,7 @@ ARG PARENT
 
 
 FROM ${PARENT}
+ARG PARENT
 ENV IMAGE_PARENT=${PARENT}
 USER root
 
@@ -15,7 +16,6 @@ ENV PYTHON_VERSION=${PYTHON_VERSION}
 RUN apt-update \
     && apt-install \
         python${PYTHON_VERSION} \
-        python3-dev \
         python3-pip \
         python${PYTHON_VERSION}-venv \
     && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
@@ -24,9 +24,8 @@ RUN apt-update \
     && ln -sf /usr/local/lib/python${PYTHON_VERSION} /usr/local/lib/python3 \
     && ln -sf /usr/local/lib/python3 /usr/local/lib/python \
     \
-    && apt-install make gcc g++ libc6 libc6-dev \
     && apt-clean
-
+    
 # `python3.x-venv` is required when building Python packages via `build`.
 
 COPY dotfiles/pip/pip.conf /etc/xdg/pip/pip.conf
@@ -42,12 +41,15 @@ COPY bin/pip-install /usr/local/bin/
 # Enable printing unicode strings:
 ENV PYTHONIOENCODING=utf-8
 
-# Some extension packages need to be built.
-RUN apt-install make gcc g++ libc6 libc6-dev && apt-clean
 
+# Some extension packages need to be built after installing
+#
+#   python3-dev
+#   make gcc g++ libc6 libc6-dev
 
+    
 #-----------------------------------------
-# Jupyter notebook
+    # Jupyter notebook
 #
 
 RUN pip-install 'ipywidgets' 'jupyterlab'
@@ -78,13 +80,11 @@ ENV JUPYTERLAB_SETTINGS_DIR=/tmp/.jupyter/settings
 
 RUN pip-install \
         build \
-        coverage[toml] \
+        coverage \
         ptpython \
         pudb \
         pytest \
-        pytest-cov \
-        pytest-asyncio \
-        toml
+        pytest-cov
 
     # && ln -s /usr/local/bin/pudb3 /usr/local/bin/pudb
 

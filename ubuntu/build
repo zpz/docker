@@ -3,11 +3,12 @@
 
 set -Eeuo pipefail
 
-UBUNTU_VERSION=24.04
+UBUNTU_VERSION=26.04
 
 
-TAG=$(python3 -m minidocker make-date-version)
+TAG=$(minidocker make-date-version)
 NAMESPACE=zppz
+
 
 >&2 echo
 >&2 echo "Build machine info: $(uname -a)"
@@ -38,4 +39,7 @@ fi
 NAME=${NAMESPACE}/ubuntu:${TAG}
 echo "building $NAME ..."
 
-docker ${buildopts} -t "${NAME}" . --build-arg PARENT=ubuntu:${UBUNTU_VERSION}
+docker ${buildopts} -t "${NAME}" \
+    --build-arg PARENT=ubuntu:${UBUNTU_VERSION} \
+    --build-arg BUILDKIT_DOCKERFILE_CHECK=skip=InvalidDefaultArgInFrom \
+    . 
