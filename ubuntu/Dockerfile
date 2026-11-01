@@ -1,11 +1,6 @@
 ARG PARENT
 FROM ${PARENT}
 
-# Re-declare inside the build stage to bring the global variable into scope.
-ARG PARENT
-RUN echo "PARENT: ${PARENT}"
-ENV IMAGE_PARENT=${PARENT}
-
 USER root
 
 #-----------------
@@ -35,6 +30,7 @@ RUN useradd --uid 1000 --user-group --groups 100 --home /home/docker-user --crea
 RUN mkdir -p /home/docker-user/mnt/data /home/docker-user/mnt/log /home/docker-user/mnt/tmp \
     && chown -R docker-user:docker-user /home/docker-user/mnt \
     && mkdir -p /tmp
+
 
 ENV DATADIR=/home/docker-user/mnt/data
 ENV LOGDIR=/home/docker-user/mnt/log
