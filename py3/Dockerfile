@@ -67,12 +67,10 @@ COPY dotfiles/jupyter/jupyter_notebook_config.py ${JUPYTER_CONFIG_DIR}/
 RUN chmod +r /etc/xdg/ipython/profile_default/ipython_config.py \
     ${JUPYTER_CONFIG_DIR}/jupyter_notebook_config.py
 
-ENV JUPYTER_DATA_DIR=/tmp/.jupyter/data
-ENV JUPYTER_RUNTIME_DIR=/tmp/.jupyter/runtime
-ENV JUPYTERLAB_WORKSPACES_DIR=/tmp/.jupyter/workspaces
-ENV JUPYTERLAB_SETTINGS_DIR=/tmp/.jupyter/settings
-
-
+ENV JUPYTER_DATA_DIR=/home/docker-user/mnt/tmp/.jupyter/data
+ENV JUPYTER_RUNTIME_DIR=/home/docker-user/mnt/tmp/.jupyter/runtime
+ENV JUPYTERLAB_WORKSPACES_DIR=/home/docker-user/mnt/tmp/.jupyter/workspaces
+ENV JUPYTERLAB_SETTINGS_DIR=/home/docker-user/mnt/tmp/.jupyter/settings
 
 
 #-----------------------------------------------
